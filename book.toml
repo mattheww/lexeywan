@@ -1,0 +1,19 @@
+[book]
+title = "Writeup of Rust's lexer"
+src = "writeup"
+
+[rust]
+edition = "2021"
+
+[build]
+build-dir = "book"
+create-missing = false
+
+[preprocessor.index]
+[preprocessor.links]
+
+[output.html]
+default-theme = "rust"
+additional-css = ["css/writeup.css"]
+git-repository-url = "https://github.com/mattheww/lexeywan"
+git-repository-icon = "fa-code-fork"

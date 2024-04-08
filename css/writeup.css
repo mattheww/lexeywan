@@ -1,0 +1,67 @@
+h4.rule {
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 1ex 0.5em;
+    background-color: var(--table-header-bg);
+    vertical-align: baseline;
+    height: 1.55em;
+    font-weight: bold;
+}
+
+h4.rcase {
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 1ex 0.5em;
+    background-color: var(--table-header-bg);
+    vertical-align: baseline;
+    height: 1.55em;
+    font-weight: bold;
+}
+
+h5.subcase {
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 1ex 0.5em;
+    background-color: var(--table-header-bg);
+    vertical-align: baseline;
+    height: 1.3em;
+    font-weight: bold;
+    margin-bottom:1em;
+}
+
+h5 {
+    margin-bottom: 0;
+}
+
+h5 + p {
+    margin-top: 0;
+}
+
+h5 + pre {
+    margin-top: 0;
+}
+
+table {
+    margin-left: 0;
+}
+
+th:empty {
+    display: none;
+}
+
+/* we abuse <var> for token attributes */
+var {
+    color: var(--links);
+}
+
+/* we abuse <b> for literal characters and character sequences */
+b {
+    font-family: var(--mono-font);
+    font-weight: normal;
+    font-style: normal;
+    background-color: var(--searchresults-li-bg);
+}
+
+/* we abuse <kbd> for named control characters */
+kbd {
+}

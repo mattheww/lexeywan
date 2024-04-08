@@ -1,0 +1,23 @@
+[package]
+name = "lexeywan"
+version = "0.1.0"
+edition = "2021"
+
+[package.metadata.rust-analyzer]
+rustc_private=true
+
+[dependencies]
+pico-args = { version = "0.5.0", features = ["eq-separator"] }
+regex = "1.10.3"
+# These are the exact versions used by
+# rustc 1.78.0-nightly (7d3702e47 2024-03-06)
+unicode-normalization = "=0.1.11"
+unicode-xid = "=0.2.4"
+
+[dependencies.proptest]
+version = "1.4.0"
+default-features = false
+features = ["std", "regex-syntax", "tempfile"]
+
+[lints.clippy]
+print_with_newline = "allow"
