@@ -9,7 +9,7 @@ There are a number of forms which are errors at lexing time, even though in prin
 Examples include
 
 - the [rfc3101] "reserved prefixes" (in Rust 2021 and newer): `k#abc`,  `f"..."`, or `f'...'`.
-- the [rfc0879] variants of numeric literals reserved in , eg `0x1.2` or `0b123`
+- the variants of numeric literals reserved in [rfc0879], eg `0x1.2` or `0b123`
 - adjacent-lifetime-like forms such as `'ab'c`
 - stringlike literals with a single `_` as a suffix
 - byte or C strings with unacceptable contents that would be accepted in plain strings, eg `b"€"`, `b"\u{00a0}"`, or `c"\x00"`
@@ -17,7 +17,7 @@ Examples include
 The Reference tries to account for some of these cases by adding rules which match the forms that cause errors, while keeping the forms matched by those rules disjoint from the forms matched by the non-error-causing rules.
 
 The resulting rules for reserved prefixes and numeric literals are quite complicated (and still have mistakes).
-Rules of this sort haven't been attempted stringlike literals.
+Rules of this sort haven't been attempted for stringlike literals.
 
 The rules are simpler in a model with a 'pretokenising' step which can match a form such as `c"\x00"` (preventing it being matched as `c` followed by `"\x00"`), leaving it to a later stage to decide whether it's a valid token or a lexing-time error.
 
@@ -57,7 +57,7 @@ See [Defining the block-comment constraint][block-comment-constraint].
 
 ### Producing tokens with attributes
 
-The "output" of the lexing process described in this document is a stream of tokens which have attributes, of their own, rather than simply representing slices of the input source.
+The "output" of the lexing process described in this document is a stream of tokens which have attributes of their own, rather than simply representing slices of the input source.
 
 The main motivation for this is to deal with stringlike literals:
 it means we don't need to separate the description of the result of "unescaping" strings from the description of which strings contain well-formed escapes.
