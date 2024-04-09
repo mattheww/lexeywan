@@ -63,6 +63,7 @@ fn check_lexing(input: &str, edition: Edition) -> ComparisonStatus {
     if edition == Edition::E2015 {
         // In Rust 2015 and 2018, emoji in unknown prefixes aren't reported as an error.
         // I think this is a rustc bug, so exclude such cases from testing.
+        // See https://github.com/rust-lang/rust/issues/123696
         let re =
             make_regex_with_default_flags!(r#"[\p{EMOJI}--!-~][\p{XID_Continue}\p{EMOJI}]*[#'"]"#);
         if re.is_match(input) {

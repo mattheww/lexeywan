@@ -8,9 +8,7 @@ treating it as an identifier `🦁` followed by punctuation `#`.
 
 This is surprising, because `🦁` would normally be rejected as an identifier.
 
-I assume this is just a bug.
-
-TO DO: file a bug report
+I assume this is just a bug (filed as [#123696]).
 
 This document doesn't attempt to characterise this behaviour,
 and the comparable implementation doesn't attempt to imitate it.
@@ -39,3 +37,4 @@ reaction to being given a spec to review.
 
 [rfc2457]: https://rust-lang.github.io/rfcs/2457-non-ascii-idents.html
 
+[#123696]: https://github.com/rust-lang/rust/issues/123696
