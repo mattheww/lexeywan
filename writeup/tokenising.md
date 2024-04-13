@@ -32,7 +32,7 @@ the output is the sequence of fine-grained tokens produced by the repetitions of
 > reprocessing doesn't involve any combination or splitting.
 
 > Note: it doesn't make any difference whether we treat this as one pass with interleaved pretoken-extraction and reprocessing, or as two passes.
-> The comparison implementation uses a single interleaved pass, which means when it reports an error it describes the earliest part of the input which caused trouble.
+> The comparable implementation uses a single interleaved pass, which means when it reports an error it describes the earliest part of the input which caused trouble.
 
 
 [Pretokenising]: pretokenising.md
