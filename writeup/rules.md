@@ -200,7 +200,7 @@ when `character_sequence` represents an iterator over the sequence of characters
 
 Forbidden followers:
 
-- The character @`'`@
+- The character <b>'</b>
 
 ##### Pretoken kind
 `LifetimeOrLabel`
@@ -543,8 +543,8 @@ The constraint is satisfied if (and only if) the character sequence captured by 
 
 Forbidden followers:
 
-- The character @`_`@
-- The character @`.`@
+- The character <b>_</b>
+- The character <b>.</b>
 - The characters with the Unicode property `XID_start`
 
 ##### Pretoken kind
