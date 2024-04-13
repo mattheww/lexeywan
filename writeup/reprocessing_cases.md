@@ -88,7 +88,7 @@ Fine-grained token kind produced:
 
 - otherwise, if the <var>comment content</var> begins with `*` and contains at least one further character,
   - <var>style</var> is **outer doc**
-  - <var>body</var> is the characters from the <var>comment content</var> after that `/`
+  - <var>body</var> is the characters from the <var>comment content</var> after that `*`
 
 - otherwise, if the <var>comment content</var> begins with `!`,
   - <var>style</var> is **inner doc**
