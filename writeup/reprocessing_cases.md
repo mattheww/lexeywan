@@ -390,7 +390,7 @@ the pretoken is rejected.
 
 ##### Attributes
 
-<var>represented_bytes</var>: the UTF-8 encoding of the pretoken's <var>literal content</var>
+<var>represented bytes</var>: the UTF-8 encoding of the pretoken's <var>literal content</var>
 
 <var>suffix</var>: copied
 

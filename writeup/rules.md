@@ -64,7 +64,7 @@ the value of that attribute is the sequence of characters captured by the captur
 ##### Attributes
 |                            |                     |
 |:---------------------------|:--------------------|
-| <var>comment_content</var> | captured characters |
+| <var>comment content</var> | captured characters |
 
 
 #### Block comment { .rule }
@@ -114,7 +114,7 @@ when `character_sequence` represents an iterator over the sequence of characters
 ##### Attributes
 |                            |                     |
 |:---------------------------|:--------------------|
-| <var>comment_content</var> | captured characters |
+| <var>comment content</var> | captured characters |
 
 
 > See also [Defining the block-comment constraint][block-comment-constraint]
