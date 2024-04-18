@@ -215,8 +215,8 @@ Forbidden followers:
 
 #### Double-quoted non-raw literal (Rust 2015 and 2018) { .rule }
 
-```
 ##### Pattern
+```
 (?<prefix>
   b ?
 )
