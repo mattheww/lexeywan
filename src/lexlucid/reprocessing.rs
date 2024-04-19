@@ -173,11 +173,18 @@ pub fn reprocess(pretoken: &Pretoken) -> Result<FineToken, Error> {
             literal_content,
             suffix,
         } => lex_raw_double_quote_literal(prefix, literal_content, suffix)?,
-        PretokenData::IntegerLiteral {
-            base,
-            digits,
-            suffix,
-        } => lex_integer_literal(base, digits, suffix)?,
+        PretokenData::IntegerDecimalLiteral { digits, suffix } => {
+            lex_integer_decimal_literal(digits, suffix)?
+        }
+        PretokenData::IntegerHexadecimalLiteral { digits, suffix } => {
+            lex_integer_hexadecimal_literal(digits, suffix)?
+        }
+        PretokenData::IntegerOctalLiteral { digits, suffix } => {
+            lex_integer_octal_literal(digits, suffix)?
+        }
+        PretokenData::IntegerBinaryLiteral { digits, suffix } => {
+            lex_integer_binary_literal(digits, suffix)?
+        }
         PretokenData::FloatLiteral {
             has_base,
             body,
@@ -341,38 +348,58 @@ fn lex_raw_double_quote_literal(
     }
 }
 
-/// Validates and interprets an integer literal.
-fn lex_integer_literal(
-    pretoken_base: &Option<Charseq>,
+/// Validates and interprets a decimal integer literal.
+fn lex_integer_decimal_literal(digits: &Charseq, suffix: &Charseq) -> Result<FineTokenData, Error> {
+    if digits.iter().all(|c| *c == '_') {
+        return Err(rejected("no digits"));
+    }
+    Ok(FineTokenData::IntegerLiteral {
+        base: NumericBase::Decimal,
+        digits: digits.clone(),
+        suffix: suffix.clone(),
+    })
+}
+
+/// Validates and interprets a hexadecimal integer literal.
+fn lex_integer_hexadecimal_literal(
     digits: &Charseq,
     suffix: &Charseq,
 ) -> Result<FineTokenData, Error> {
     if digits.iter().all(|c| *c == '_') {
         return Err(rejected("no digits"));
     }
-
-    let base = match pretoken_base {
-        Some(base_chars) => match base_chars[1] {
-            'b' => {
-                if !digits.iter().all(|c| *c == '_' || (*c >= '0' && *c < '2')) {
-                    return Err(rejected("invalid digit"));
-                }
-                NumericBase::Binary
-            }
-            'o' => {
-                if !digits.iter().all(|c| *c == '_' || (*c >= '0' && *c < '8')) {
-                    return Err(rejected("invalid digit"));
-                }
-                NumericBase::Octal
-            }
-            'x' => NumericBase::Hexadecimal,
-            _ => return Err(model_error("impossible base")),
-        },
-        None => NumericBase::Decimal,
-    };
-
     Ok(FineTokenData::IntegerLiteral {
-        base,
+        base: NumericBase::Hexadecimal,
+        digits: digits.clone(),
+        suffix: suffix.clone(),
+    })
+}
+
+/// Validates and interprets an octal integer literal.
+fn lex_integer_octal_literal(digits: &Charseq, suffix: &Charseq) -> Result<FineTokenData, Error> {
+    if digits.iter().all(|c| *c == '_') {
+        return Err(rejected("no digits"));
+    }
+    if !digits.iter().all(|c| *c == '_' || (*c >= '0' && *c < '8')) {
+        return Err(rejected("invalid digit"));
+    }
+    Ok(FineTokenData::IntegerLiteral {
+        base: NumericBase::Octal,
+        digits: digits.clone(),
+        suffix: suffix.clone(),
+    })
+}
+
+/// Validates and interprets a binary integer literal.
+fn lex_integer_binary_literal(digits: &Charseq, suffix: &Charseq) -> Result<FineTokenData, Error> {
+    if digits.iter().all(|c| *c == '_') {
+        return Err(rejected("no digits"));
+    }
+    if !digits.iter().all(|c| *c == '_' || (*c >= '0' && *c < '2')) {
+        return Err(rejected("invalid digit"));
+    }
+    Ok(FineTokenData::IntegerLiteral {
+        base: NumericBase::Binary,
         digits: digits.clone(),
         suffix: suffix.clone(),
     })

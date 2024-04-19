@@ -11,7 +11,10 @@
 [`SingleQuoteLiteral`](#singlequoteliteral)\
 [`DoubleQuoteLiteral`](#doublequoteliteral)\
 [`RawDoubleQuoteLiteral`](#rawdoublequoteliteral)\
-[`IntegerLiteral`](#integerliteral)\
+[`IntegerDecimalLiteral`](#integerdecimalliteral)\
+[`IntegerHexadecimalLiteral`](#integerhexadecimalliteral)\
+[`IntegerOctalLiteral`](#integeroctalliteral)\
+[`IntegerBinaryLiteral`](#integerbinaryliteral)\
 [`FloatLiteral`](#floatliteral)
 
 
@@ -397,33 +400,82 @@ the pretoken is rejected.
 If any of the resulting <var>represented bytes</var> have value 0, the pretoken is rejected.
 
 
-#### `IntegerLiteral` { .rcase }
+#### `IntegerDecimalLiteral` { .rcase }
 
 Fine-grained token kind produced:
 `IntegerLiteral`
 
-The pretoken is rejected if its <var>digits</var> attribute consists entirely of <b>_</b> characters.
+The pretoken is rejected if (and only if) its <var>digits</var> attribute consists entirely of <b>_</b> characters.
 
 ##### Attributes
 
-<var>base</var>: determined from the pretoken's <var>base</var> attribute as follows:
-
-- `0b` -> **binary**
-- `0o` -> **octal**
-- `0x` -> **hexadecimal**
-- **none** -> **decimal**
+<var>base</var>: **decimal**
 
 <var>digits</var>: copied
 
 <var>suffix</var>: copied
 
-If the resulting <var>base</var> is **binary** and <var>digits</var> contains any character other than <b>0</b>, <b>1</b>, or <b>_</b>,
-the pretoken is rejected.
+> Note: in particular, an `IntegerDecimalLiteral` whose <var>digits</var> is empty is rejected.
 
-If the resulting <var>base</var> is **octal** and <var>digits</var> contains any character other than <b>0</b>, <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b>, <b>5</b>, <b>6</b>, <b>7</b>, or <b>_</b>,
-the pretoken is rejected.
 
-> Note: in particular, a `FloatLiteral` whose <var>digits</var> is empty is rejected.
+#### `IntegerHexadecimalLiteral` { .rcase }
+
+Fine-grained token kind produced:
+`IntegerLiteral`
+
+The pretoken is rejected if (and only if) its <var>digits</var> attribute consists entirely of <b>_</b> characters.
+
+##### Attributes
+
+<var>base</var>: **hexadecimal**
+
+<var>digits</var>: copied
+
+<var>suffix</var>: copied
+
+> Note: in particular, an `IntegerHexadecimalLiteral` whose <var>digits</var> is empty is rejected.
+
+
+#### `IntegerOctalLiteral` { .rcase }
+
+Fine-grained token kind produced:
+`IntegerLiteral`
+
+The pretoken is rejected if (and only if):
+
+- its <var>digits</var> attribute consists entirely of <b>_</b> characters; or
+- its <var>digits</var> attribute contains any character other than <b>0</b>, <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b>, <b>5</b>, <b>6</b>, <b>7</b>, or <b>_</b>.
+
+##### Attributes
+
+<var>base</var>: **octal**
+
+<var>digits</var>: copied
+
+<var>suffix</var>: copied
+
+> Note: in particular, an `IntegerOctalLiteral` whose <var>digits</var> is empty is rejected.
+
+
+#### `IntegerBinaryLiteral` { .rcase }
+
+Fine-grained token kind produced:
+`IntegerLiteral`
+
+The pretoken is rejected if (and only if):
+
+- its <var>digits</var> attribute consists entirely of <b>_</b> characters; or
+- its <var>digits</var> attribute contains any character other than <b>0</b>, <b>1</b>, or <b>_</b>.
+
+##### Attributes
+
+<var>base</var>: **binary**
+
+<var>digits</var>: copied
+
+<var>suffix</var>: copied
+
+> Note: in particular, an `IntegerBinaryLiteral` whose <var>digits</var> is empty is rejected.
 
 
 #### `FloatLiteral` { .rcase }

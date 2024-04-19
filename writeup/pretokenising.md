@@ -16,8 +16,7 @@ To *extract a pretoken from the input*:
 
 > Note: If lexical analysis succeeds, concatenating the extents of the pretokens extracted during the analysis produces an exact copy of the input.
 
-> Note: I believe this "earliest in the list" resolution always gives the same result as choosing the rule which matches the longest extent
-> (in particular, if multiple rules match then one has a longer extent than any of the others).
+> See open question [Rule priority]
 
 
 ### Rules
@@ -86,3 +85,4 @@ the resulting extent is the *shortest maximal match*, defined as follows:
 
 [pretokenisation rules]: rules.md
 [patterns]: patterns.md
+[Rule priority]: open_questions.md#rule-priority

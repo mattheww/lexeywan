@@ -23,7 +23,6 @@ I've tried to keep the patterns used here as simple as possible.
 
 There's no use of non-greedy matches.
 
-Apart from the case discussed under [Integer literal base-vs-suffix ambiguity][base-vs-suffix] below,
 I think all the uses of alternation are obviously unambiguous.
 
 In particular, all uses of alternation inside repetition have disjoint sets of accepted first characters.
@@ -43,20 +42,28 @@ So I think addressing this should be treated as part of choosing a pattern notat
 
 ### Rule priority
 
-At present when multiple pretokenisation rules succeed,
-we can say that the rule which matches the longest extent "wins" (which is the usual way),
-or we can assign a priority to each rule and say the highest priority rule wins.
+At present this document gives the pretokenisation rules explicit priorities,
+used to determine which rule is chosen in positions where more than one rule matches.
 
-This document currently promises that these approaches give the same answer.
+I believe that in almost all cases it would be equivalent to say that the rule which matches the longest extent is chosen
+(in particular, if multiple rules match then one has a longer extent than any of the others).
 
-It uses the order in which the rules are presented as the priority,
+See [Integer literal base-vs-suffix ambiguity][base-vs-suffix] below for the exception,
+where explicit priority is needed to disambiguate equal-length matches.
+
+This document uses the order in which the rules are presented as the priority,
 which has the downside of forcing an unnatural presentation order
 (for example, [Raw identifier] and [Non-raw identifier] are separated).
 
-See [Integer literal base-vs-suffix ambiguity][base-vs-suffix] below for a possible reason to use explicit priority.
+Perhaps it would be better to say that longest-extent is the primary way to disambiguate,
+and add a secondary principle to cover the exceptional cases.
+
+The comparable implementation reports (as "model error") any cases where the priority principle doesn't agree with the longest-extent principle,
+or where there wasn't a unique longest match
+(other than the Integer literal base-vs-suffix ambiguity).
 
 
-### Integer literal base-vs-suffix ambiguity { #base-vs-suffix }
+#### Integer literal base-vs-suffix ambiguity { #base-vs-suffix }
 
 The Reference's lexer rules for input such as `0x3` allow two interpretations, matching the same extent:
 - as a hexadecimal integer literal: `0x3` with no suffix
@@ -68,11 +75,12 @@ both cases have the same kind.
 But if we want to make the lexer responsible for identifying which part of the input is the suffix,
 we need to make sure it gets the right answer (ie, the one with no suffix).
 
-This document currently relies on `Regex`'s [handling of alternation][regex-composites],
-in which the left-hand branch is preferred.
+Similarly `0b1e2` needs to be rejected, not accepted as a decimal integer literal `0` with suffix `b1e2`.
+In this case we can't avoid dealing with the distinction in the lexer.
 
-Perhaps it would be better to be explicit about this and split the [Integer literal] rule into two,
-with explicit higher priority for the suffixless one.
+This model uses a separate rule for integer decimal literals,
+with lower priority than all other numeric literals,
+to make sure we get these results.
 
 
 ### Token kinds and attributes
@@ -163,7 +171,6 @@ Should the spec say anything?
 [base-vs-suffix]: #base-vs-suffix
 
 [Block comment]: rules.md#block-comment
-[Integer literal]: rules.md#integer-literal
 [Raw identifier]: rules.md#raw-identifier
 [Non-raw identifier]: rules.md#non-raw-identifier
 
@@ -179,5 +186,4 @@ Should the spec say anything?
 [ref-string-continuation]: https://doc.rust-lang.org/nightly/reference/expressions/literal-expr.html#string-continuation-escapes
 
 [`regex` crate]: https://docs.rs/regex/1.10.4/regex/
-[regex-composites]: https://docs.rs/regex/1.10.4/regex/#composites
 

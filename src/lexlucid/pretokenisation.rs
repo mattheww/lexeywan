@@ -73,8 +73,19 @@ pub enum PretokenData {
         literal_content: Charseq,
         suffix: Charseq,
     },
-    IntegerLiteral {
-        base: Option<Charseq>,
+    IntegerDecimalLiteral {
+        digits: Charseq,
+        suffix: Charseq,
+    },
+    IntegerHexadecimalLiteral {
+        digits: Charseq,
+        suffix: Charseq,
+    },
+    IntegerBinaryLiteral {
+        digits: Charseq,
+        suffix: Charseq,
+    },
+    IntegerOctalLiteral {
         digits: Charseq,
         suffix: Charseq,
     },
@@ -206,11 +217,55 @@ fn resolve(matches: Vec<Pretoken>) -> LexOutcome {
     let violators: Vec<_> = iter
         .filter(|pretoken| pretoken.char_length() >= best_length)
         .collect();
-    if violators.is_empty() {
+    if violators.is_empty() || is_exception_to_longest_match_principle(&best, &violators) {
         Lexed(best)
     } else {
         PriorityViolation { best, violators }
     }
+}
+
+/// Returns true if we have a known exception to the "unique longest match" principle.
+///
+/// We want to be able to write that the priority-based system for choosing a successful rule gives
+/// the same result as choosing the rule which matched the longest sequence of characters, with only
+/// known exceptions.
+///
+/// At present the only exception is that an additional rule for a decimal integer literal may
+/// succeed when the chosen rule is for a non-decimal float or integer literal (eg for `0x3` or
+/// `0b1e2`).
+///
+/// 'best' is the pretoken from the highest-priority successful rule.
+/// 'violators' are the pretokens from successful rules which are at least as long as 'best'.
+fn is_exception_to_longest_match_principle(best: &Pretoken, violators: &Vec<Pretoken>) -> bool {
+    fn is_decimal_integer_literal(pretoken: &Pretoken) -> bool {
+        matches!(
+            pretoken,
+            Pretoken {
+                data: PretokenData::IntegerDecimalLiteral { .. },
+                ..
+            }
+        )
+    }
+    fn is_nondecimal_numeric_literal(pretoken: &Pretoken) -> bool {
+        matches!(
+            pretoken,
+            Pretoken {
+                data: PretokenData::IntegerBinaryLiteral { .. }
+                    | PretokenData::IntegerOctalLiteral { .. }
+                    | PretokenData::IntegerHexadecimalLiteral { .. }
+                    | PretokenData::FloatLiteral { has_base: true, .. },
+                ..
+            }
+        )
+    }
+    if is_nondecimal_numeric_literal(&best)
+        && violators.len() == 1
+        && is_decimal_integer_literal(&violators[0])
+        && violators[0].char_length() == best.char_length()
+    {
+        return true;
+    }
+    false
 }
 
 fn describe_priority_violations(best: Pretoken, violators: Vec<Pretoken>) -> Vec<String> {

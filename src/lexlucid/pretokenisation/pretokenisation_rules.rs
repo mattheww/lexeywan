@@ -39,7 +39,10 @@ enum RuleName {
     FloatLiteralWithExponent,
     FloatLiteralWithoutExponent,
     FloatLiteralWithFinalDot,
-    IntegerLiteral,
+    IntegerBinaryLiteral,
+    IntegerOctalLiteral,
+    IntegerHexadecimalLiteral,
+    IntegerDecimalLiteral,
     RawIdentifier,
     UnterminatedLiteral2015,
     ReservedPrefixOrUnterminatedLiteral2021,
@@ -60,7 +63,10 @@ const RULES_FOR_EDITION_2015: &[RuleName] = [
     RuleName::FloatLiteralWithExponent,
     RuleName::FloatLiteralWithoutExponent,
     RuleName::FloatLiteralWithFinalDot,
-    RuleName::IntegerLiteral,
+    RuleName::IntegerBinaryLiteral,
+    RuleName::IntegerOctalLiteral,
+    RuleName::IntegerHexadecimalLiteral,
+    RuleName::IntegerDecimalLiteral,
     RuleName::RawIdentifier,
     RuleName::UnterminatedLiteral2015,
     RuleName::NonrawIdentifier,
@@ -81,7 +87,10 @@ const RULES_FOR_EDITION_2021: &[RuleName] = [
     RuleName::FloatLiteralWithExponent,
     RuleName::FloatLiteralWithoutExponent,
     RuleName::FloatLiteralWithFinalDot,
-    RuleName::IntegerLiteral,
+    RuleName::IntegerBinaryLiteral,
+    RuleName::IntegerOctalLiteral,
+    RuleName::IntegerHexadecimalLiteral,
+    RuleName::IntegerDecimalLiteral,
     RuleName::RawIdentifier,
     RuleName::ReservedPrefixOrUnterminatedLiteral2021,
     RuleName::NonrawIdentifier,
@@ -469,46 +478,81 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
             "##,
             |c| c == '_' || c == '.' || unicode_xid::UnicodeXID::is_xid_start(c))),
 
-       // Integer literal
-       (RuleName::IntegerLiteral,
+       // Integer binary literal
+       (RuleName::IntegerBinaryLiteral,
         Rule::new_regex(
-            // Note we're relying on regex's prefer-left rule for alternations, to avoid
-            // matches where the base-indicating character is interpreted as a suffix.
             |cp| {
-                let (base, digits) = match cp.name("base1") {
-                    Some(base) => (Some(base.as_str().into()), &cp["based_digits"]),
-                    None => match cp.name("base2") {
-                        Some(base) => (Some(base.as_str().into()), &cp["hex_digits"]),
-                        None => (None, &cp["decimal_digits"]),
-                    },
-                };
-                PretokenData::IntegerLiteral {
-                    base,
-                    digits: digits.into(),
+                PretokenData::IntegerBinaryLiteral {
+                    digits: cp["digits"].into(),
                     suffix: cp["suffix"].into(),
                 }
             }, r##"\A
-                (?:
+                0b
+                (?<digits>
+                  [ 0-9 _ ] *
+                )
+                (?<suffix>
                   (?:
-                    (?<base1>
-                      0b | 0o
-                    )
-                    (?<based_digits>
-                      [ 0-9 _ ] *
-                    )
-                  |
-                    (?<base2>
-                      0x
-                    )
-                    (?<hex_digits>
-                      [ 0-9 a-f A-F _ ] *
-                    )
-                  )
-                |
-                  (?<decimal_digits>
-                    [ 0-9 ]
-                    [ 0-9 _ ] *
-                  )
+                    [ \p{XID_Start} -- eE]
+                    \p{XID_Continue} *
+                  ) ?
+                )
+            "##)),
+
+       // Integer octal literal
+       (RuleName::IntegerOctalLiteral,
+        Rule::new_regex(
+            |cp| {
+                PretokenData::IntegerOctalLiteral {
+                    digits: cp["digits"].into(),
+                    suffix: cp["suffix"].into(),
+                }
+            }, r##"\A
+                0o
+                (?<digits>
+                  [ 0-9 _ ] *
+                )
+                (?<suffix>
+                  (?:
+                    [ \p{XID_Start} -- eE]
+                    \p{XID_Continue} *
+                  ) ?
+                )
+            "##)),
+
+       // Integer hexadecimel literal
+       (RuleName::IntegerHexadecimalLiteral,
+        Rule::new_regex(
+            |cp| {
+                PretokenData::IntegerHexadecimalLiteral {
+                    digits: cp["digits"].into(),
+                    suffix: cp["suffix"].into(),
+                }
+            }, r##"\A
+                0x
+                (?<digits>
+                  [ 0-9 a-f A-F _ ] *
+                )
+                (?<suffix>
+                  (?:
+                    [ \p{XID_Start} -- eE]
+                    \p{XID_Continue} *
+                  ) ?
+                )
+            "##)),
+
+       // Integer decimal literal
+       (RuleName::IntegerDecimalLiteral,
+        Rule::new_regex(
+            |cp| {
+                PretokenData::IntegerDecimalLiteral {
+                    digits: cp["digits"].into(),
+                    suffix: cp["suffix"].into(),
+                }
+            }, r##"\A
+                (?<digits>
+                  [ 0-9 ]
+                  [ 0-9 _ ] *
                 )
                 (?<suffix>
                   (?:

@@ -16,7 +16,10 @@
 [Float literal with exponent](#float-literal-with-exponent)\
 [Float literal without exponent](#float-literal-without-exponent)\
 [Float literal with final dot](#float-literal-with-final-dot)\
-[Integer literal](#integer-literal)\
+[Integer binary literal](#integer-binary-literal)\
+[Integer octal literal](#integer-octal-literal)\
+[Integer hexadecimal literal](#integer-hexadecimal-literal)\
+[Integer decimal literal](#integer-decimal-literal)\
 [Raw identifier](#raw-identifier)\
 [Unterminated literal (Rust 2015 and 2018)](#unterminated-literal-rust-2015-and-2018)\
 [Reserved prefix or unterminated literal (Rust 2021)](#reserved-prefix-or-unterminated-literal-rust-2021)\
@@ -559,31 +562,13 @@ Forbidden followers:
 | <var>suffix</var>          | empty character sequence                                                                |
 
 
-#### Integer literal { .rule }
+#### Integer binary literal { .rule }
 
 ##### Pattern
 ```
-(?:
-  (?:
-    (?<base1>
-      0b | 0o
-    )
-    (?<based_digits>
-      [ 0-9 _ ] *
-    )
-  |
-    (?<base2>
-      0x
-    )
-    (?<hex_digits>
-      [ 0-9 a-f A-F _ ] *
-    )
-  )
-|
-  (?<decimal_digits>
-    [ 0-9 ]
-    [ 0-9 _ ] *
-  )
+0b
+(?<digits>
+  [ 0-9 _ ] *
 )
 (?<suffix>
   (?:
@@ -594,36 +579,96 @@ Forbidden followers:
 ```
 
 ##### Pretoken kind
-`IntegerLiteral`
+`IntegerBinaryLiteral`
+
+##### Attributes
+|                   |                     |
+|:------------------|:--------------------|
+| <var>digits</var> | captured characters |
+| <var>suffix</var> | captured characters |
+
+
+#### Integer octal literal { .rule }
+
+##### Pattern
+```
+0o
+(?<digits>
+  [ 0-9 _ ] *
+)
+(?<suffix>
+  (?:
+    [ \p{XID_Start} -- eE]
+    \p{XID_Continue} *
+  ) ?
+)
+```
+
+##### Pretoken kind
+`IntegerOctalLiteral`
+
+##### Attributes
+|                   |                     |
+|:------------------|:--------------------|
+| <var>digits</var> | captured characters |
+| <var>suffix</var> | captured characters |
+
+
+#### Integer hexadecimal literal { .rule }
+
+##### Pattern
+```
+0x
+(?<digits>
+  [ 0-9 a-f A-F _ ] *
+)
+(?<suffix>
+  (?:
+    [ \p{XID_Start} -- eE]
+    \p{XID_Continue} *
+  ) ?
+)
+```
+
+##### Pretoken kind
+`IntegerHexadecimalLiteral`
+
+##### Attributes
+|                   |                     |
+|:------------------|:--------------------|
+| <var>digits</var> | captured characters |
+| <var>suffix</var> | captured characters |
+
+
+#### Integer decimal literal { .rule }
+
+##### Pattern
+```
+(?<digits>
+  [ 0-9 ]
+  [ 0-9 _ ] *
+)
+(?<suffix>
+  (?:
+    [ \p{XID_Start} -- eE]
+    \p{XID_Continue} *
+  ) ?
+)
+```
+|                   |                     |
+|:------------------|:--------------------|
+| <var>digits</var> | captured characters |
+| <var>suffix</var> | captured characters |
+
+
+##### Pretoken kind
+`IntegerDecimalLiteral`
 
 ##### Attributes
 
-If the `base1` capture group participates in the match:
 
-|                   |                                                             |
-|:------------------|:------------------------------------------------------------|
-| <var>base</var>   | the characters captured by the `base1` capture group        |
-| <var>digits</var> | the characters captured by the `based_digits` capture group |
-| <var>suffix</var> | captured characters                                         |
-
-If the `base2` capture group participates in the match:
-
-|                   |                                                           |
-|:------------------|:----------------------------------------------------------|
-| <var>base</var>   | the characters captured by the `base2` capture group      |
-| <var>digits</var> | the characters captured by the `hex_digits` capture group |
-| <var>suffix</var> | captured characters                                       |
-
-If the `decimal_digits` capture group participates in the match:
-
-|                   |                                                               |
-|:------------------|:--------------------------------------------------------------|
-| <var>base</var>   | **none**                                                      |
-| <var>digits</var> | the characters captured by the `decimal_digits` capture group |
-| <var>suffix</var> | captured characters                                           |
-
-
-> See also [Integer literal base-vs-suffix ambiguity][base-vs-suffix]
+> Note: it is important that this rule has lower priority than the other numeric literal rules.
+> See [Integer literal base-vs-suffix ambiguity][base-vs-suffix].
 
 
 #### Raw identifier { .rule }
