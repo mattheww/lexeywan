@@ -23,9 +23,9 @@ In each case, the escaped value is the character given in the corresponding entr
 | <b>\t</b>       | U+0009 <kbd>HT</kbd>   |
 | <b>\n</b>       | U+000A <kbd>LF</kbd>   |
 | <b>\r</b>       | U+000D <kbd>CR</kbd>   |
-| <b>\"</b>       | U+0022 QUOTATION MARK  |
-| <b>\'</b>       | U+0027 APOSTROPHE      |
-| <b>\\</b>       | U+005C REVERSE SOLIDUS |
+| <b>\\"</b>       | U+0022 QUOTATION MARK  |
+| <b>\\'</b>       | U+0027 APOSTROPHE      |
+| <b>\\\\</b>       | U+005C REVERSE SOLIDUS |
 
 > Note: the escaped value therefore has a [Unicode scalar value] which can be represented in a byte.
 
