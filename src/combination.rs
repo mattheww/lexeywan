@@ -90,11 +90,14 @@ pub enum CoarseTokenData {
         suffix: Charseq,
     },
     IntegerLiteral {
+        #[allow(unused)]
         base: NumericBase,
+        #[allow(unused)]
         digits: Charseq,
         suffix: Charseq,
     },
     FloatLiteral {
+        #[allow(unused)]
         body: Charseq,
         suffix: Charseq,
     },

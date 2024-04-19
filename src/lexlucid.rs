@@ -88,6 +88,7 @@ pub enum Reason {
     /// The strings describe the reason for rejection (or a model error), one string per line.
     ///
     /// The token lists represent what was lexed successfully first.
+    #[allow(unused)]
     Pretokenisation(Vec<String>, Vec<Pretoken>, Vec<FineToken>),
 
     /// Rejected during step 2 (reprocessing).
