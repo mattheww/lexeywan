@@ -29,6 +29,7 @@ In particular, all uses of alternation inside repetition have disjoint sets of a
 
 I believe all uses of repetition in the unconstrained patterns have unambiguous termination.
 That is, anything permitted to follow the repeatable section would not be permitted to start a new repetition.
+In these cases, the distinction between greedy and non-greedy matches doesn't matter.
 
 
 #### Naming sub-patterns

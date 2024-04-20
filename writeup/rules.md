@@ -624,7 +624,7 @@ Forbidden followers:
 )
 (?<suffix>
   (?:
-    [ \p{XID_Start} -- eE]
+    [ \p{XID_Start} -- aAbBcCdDeEfF]
     \p{XID_Continue} *
   ) ?
 )
