@@ -11,19 +11,6 @@ pub fn pretokeniser_regex(s: &str) -> Regex {
         .unwrap()
 }
 
-/// Attempts to match a `Regex` against a slice of characters.
-///
-/// The regex must be anchored at the start (ie, begin with `\A`).
-///
-/// Returns the count of characters matched (or None if there's no match).
-pub fn match_chars(re: &Regex, input: &[char]) -> Option<usize> {
-    let s: String = input.iter().collect();
-    re.find(&s).map(|mtch| {
-        assert!(mtch.start() == 0);
-        mtch.as_str().chars().count()
-    })
-}
-
 /// Matches a regular expression against a string, requiring a constraint to be satisfied.
 ///
 /// Finds the shortest maximal match (see writeup) of `re` in the haystack which satisfies the

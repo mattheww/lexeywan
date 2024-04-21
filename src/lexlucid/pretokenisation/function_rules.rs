@@ -4,11 +4,25 @@
 
 use regex::Regex;
 
-use super::regex_utils::match_chars;
 use super::{
     make_regex, PretokenData,
     RuleOutcome::{self, *},
 };
+
+/// Attempts to match a `Regex` against the beginning of a slice of characters.
+///
+/// Finds the longest match of `re` against the start of the haystack.
+///
+/// The regex must be anchored at the start (ie, begin with `\A`).
+///
+/// Returns the count of characters matched (or None if there's no match).
+pub fn match_chars(re: &Regex, input: &[char]) -> Option<usize> {
+    let s: String = input.iter().collect();
+    re.find(&s).map(|mtch| {
+        assert!(mtch.start() == 0);
+        mtch.as_str().chars().count()
+    })
+}
 
 /// Explicit rule for block comments.
 #[allow(unused)]
