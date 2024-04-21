@@ -1,5 +1,16 @@
 ## Open questions
 
+##### Table of contents
+
+[Terminology](#terminology)\
+[Pattern notation](#pattern-notation)\
+[Rule priority](#rule-priority)\
+[Token kinds and attributes](#token-kinds-and-attributes)\
+[Defining the block-comment constraint](#block-comment-constraint)\
+[Wording for string unescaping](#wording-for-string-unescaping)\
+[How to model shebang removal](#how-to-model-shebang-removal)\
+[String continuation escapes](#string-continuation-escapes)
+
 
 ### Terminology
 
