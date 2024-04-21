@@ -57,18 +57,31 @@ See [Defining the block-comment constraint][block-comment-constraint].
 
 ### Producing tokens with attributes
 
-The "output" of the lexing process described in this document is a stream of tokens which have attributes of their own, rather than simply representing slices of the input source.
+This model makes the lexing process responsible for a certain amount of 'interpretation' of the tokens,
+rather than simply describing how the input source is sliced up and assigning a 'kind' to each resulting token.
 
 The main motivation for this is to deal with stringlike literals:
 it means we don't need to separate the description of the result of "unescaping" strings from the description of which strings contain well-formed escapes.
 
 In particular, describing unescaping at lexing time makes it easy to describe the rule about rejecting NULs in C-strings, even if they were written using an escape.
 
-But in any case I hope that working with tokens which have attributes will be the best starting point for describing what the "clients" of these tokens (the grammar and the two macro implementations) do,
-and of course working with tokens with attributes is what actually happens in rustc.
+For numeric literals, the way the suffix is identified isn't always simple (see [Integer literal base-vs-suffix ambiguity][base-vs-suffix]);
+I think it's best to make the lexer responsible for doing it,
+so that the description of numeric literal expressions doesn't have to.
+
+For identifiers, many parts of the spec will need a notion of equivalence
+(both for handling raw identifiers and for dealing with NFC normalisation),
+and some restrictions depend on the normalised form (see [ASCII identifiers]).
+I think it's best for the lexer to handle this by defining the <var>represented identifier</var>.
+
+This document treats the lexer's "output" as a stream of tokens which have concrete attributes,
+but of course it would be equivalent (and I think more usual for a spec) to treat each attribute as an independent defined term,
+and write things like "the <dfn>represented character</dfn> of a character literal token is…".
 
 
 [rfc0879]: https://rust-lang.github.io/rfcs/0879-small-base-lexing.html
 [rfc3101]: https://rust-lang.github.io/rfcs/3101-reserved_prefixes.html
 
+[ASCII identifiers]: open_questions.md#ascii-identifiers
+[base-vs-suffix]: open_questions.md#base-vs-suffix
 [block-comment-constraint]: open_questions.md#block-comment-constraint
