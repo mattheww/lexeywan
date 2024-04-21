@@ -119,6 +119,9 @@ The list in the Reference is:
 - `no_mangle` attributed items
 - Item names in external blocks
 
+I believe this restriction is applied after NFC-normalisation,
+so it's best thought of as a restriction on the <var>represented identifier</var>.
+
 
 #### Represented bytes for C strings
 
