@@ -68,11 +68,9 @@ Fine-grained token kind produced:
   - <var>body</var> is empty
 
 
-The pretoken is rejected if (and only if):
-- the <var>style</var> determined above is **inner doc** or **outer doc**; and
-- the pretoken's <var>comment content</var> includes a <kbd>CR</kbd> character
+The pretoken is rejected if (and only if) the resulting <var>body</var> includes a <kbd>CR</kbd> character.
 
-> Note: the body of a non-doc comment is ignored
+> Note: the body of a non-doc comment is ignored by the rest of the compilation process
 
 
 #### `BlockComment` { .rcase }
@@ -102,13 +100,11 @@ Fine-grained token kind produced:
   - <var>body</var> is empty
 
 
-The pretoken is rejected if (and only if):
-- the <var>style</var> determined above is **inner doc** or **outer doc**; and
-- the pretoken's <var>comment content</var> includes a <kbd>CR</kbd> character
+The pretoken is rejected if (and only if) the resulting <var>body</var> includes a <kbd>CR</kbd> character.
 
 > Note: it follows that `/**/` and `/***/` are not doc-comments
 
-> Note: the body of a non-doc comment is ignored
+> Note: the body of a non-doc comment is ignored by the rest of the compilation process
 
 
 #### `Punctuation` { .rcase }
