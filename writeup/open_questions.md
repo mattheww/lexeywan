@@ -112,6 +112,13 @@ Should there be an attribute indicating whether an identifier is all ASCII?
 The Reference lists several places where identifiers have this restriction,
 and it seems natural for the lexer to be responsible for making this check.
 
+The list in the Reference is:
+- `extern crate` declarations
+- External crate names referenced in a path
+- Module names loaded from the filesystem without a `path` attribute
+- `no_mangle` attributed items
+- Item names in external blocks
+
 
 #### Represented bytes for C strings
 
