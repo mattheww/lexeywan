@@ -10,7 +10,9 @@ To *extract a pretoken from the input*:
 
 - If no rules succeed, lexical analysis fails.
 
-- Otherwise, the extracted pretoken's extent, kind, and attributes are determined by the successful rule which appears earliest in the list, as described below.
+- Otherwise, the extracted pretoken's extent, kind, and attributes are determined
+  (as described for each rule below)
+  by the successful rule which appears earliest in the list.
 
 - Remove the extracted pretoken's extent from the start of the input.
 
