@@ -165,7 +165,10 @@ This document currently uses imperative Rust code to define the [Block comment] 
 It would be nice to do better;
 the options might depend on what pattern notation is chosen.
 
-Perhaps the natural continuation of this writeup's approach would be to define a recursive mini-tokeniser to use inside the constraint,
+I don't think there's any very elegant way to describe the constraint in English
+(note that the constraint is asymmetrical; for example `/* /*/ /*/ */` is rejected).
+
+Perhaps the natural continuation of this writeup's approach would be to define a mini-tokeniser to use inside the constraint,
 but that would be a lot of words for a small part of the spec.
 
 Or perhaps this part could borrow some definitions from whatever formalisation the spec ends up using for Rust's grammar,
