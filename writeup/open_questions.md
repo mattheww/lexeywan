@@ -6,6 +6,32 @@
 Some of the terms used in this document are taken from pre-existing documentation or rustc's error output,
 but many of them are new (and so can freely be changed).
 
+Here's a partial list:
+
+| Term                       | Source                           |
+|:---------------------------|:---------------------------------|
+| pretoken                   | New                              |
+| reprocessing               | New                              |
+| fine-grained token         | New                              |
+| compound token             | New                              |
+| literal content            | Reference (recent)               |
+| simple escape              | Reference (recent)               |
+| escape sequence            | Reference                        |
+| escaped value              | Reference (recent)               |
+| string continuation escape | Reference (as `STRING_CONTINUE`) |
+| string representation      | Reference (recent)               |
+| represented byte           | New                              |
+| represented character      | Reference (recent)               |
+| represented bytes          | Reference (recent)               |
+| represented string         | Reference (recent)               |
+| represented identifier     | New                              |
+| style (of a comment)       | rustc internal                   |
+| body (of a comment)        | Reference                        |
+
+Terms listed as "Reference (recent)" are ones I introduced in PRs merged in January 2024,
+so it's not very likely that they've been picked up more widely.
+
+
 
 ### Pattern notation
 
