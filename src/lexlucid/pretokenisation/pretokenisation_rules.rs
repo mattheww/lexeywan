@@ -29,6 +29,7 @@ enum RuleName {
     LineComment,
     BlockComment,
     UnterminatedBlockComment,
+    ReservedGuardedString2024,
     Punctuation,
     SingleQuotedLiteral,
     LifetimeOrLabel,
@@ -104,6 +105,7 @@ const RULES_FOR_EDITION_2024: &[RuleName] = [
     RuleName::LineComment,
     RuleName::BlockComment,
     RuleName::UnterminatedBlockComment,
+    RuleName::ReservedGuardedString2024,
     RuleName::Punctuation,
     RuleName::SingleQuotedLiteral,
     RuleName::LifetimeOrLabel,
@@ -169,6 +171,13 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
         Rule::new_regex(
             |_| PretokenData::Reserved, r##"\A
                 / \*
+            "##)),
+
+       // Reserved guarded string (Rust 2024)
+       (RuleName::ReservedGuardedString2024,
+        Rule::new_regex(
+            |_| PretokenData::Reserved, r##"\A
+                \#+ "
             "##)),
 
        // Punctuation
