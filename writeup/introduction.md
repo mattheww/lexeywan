@@ -11,16 +11,20 @@ and a framework for comparing its output to `rustc`'s.
 
 ### Rust language version
 
-This document describes Rust version 1.77.
+This document describes Rust version 1.77, with the addition of
+[rfc3593] (reserving `#"..."#` string literals in the 2024 edition).
 
 That means it describes `c""` literals, but not
-[rfc3349] (*Mixed UTF-8 literals*) or
-[rfc3593] (reserving `#"..."#` string literals).
+[rfc3349] (*Mixed UTF-8 literals*)
 
 Other statements in this document are intended to be true as of April 2024.
 
 The comparable implementation is intended to be compiled against (and compared against)\
 `rustc 1.78.0-nightly (7d3702e47 2024-03-06)`
+
+(But for the 2024 edition support on this branch, [pr123951] is also needed.)
+
+[pr123951]: https://github.com/rust-lang/rust/pull/123951
 
 
 ### Editions
@@ -29,6 +33,9 @@ This document describes the editions supported by Rust 1.77:
 - 2015
 - 2018
 - 2021
+
+Plus some features from the in-development edition:
+- 2024
 
 There are no differences in lexing behaviour between the 2015 and 2018 editions.
 
