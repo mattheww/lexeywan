@@ -158,7 +158,7 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
         Edition::E2021 => rustc_span::edition::Edition::Edition2021,
     };
 
-    match std::panic::catch_unwind(|| {
+    match rustc_driver::catch_fatal_errors(|| {
         rustc_span::create_session_globals_then(rustc_edition, || {
             run_lexer(input, error_list.clone())
         })
@@ -174,8 +174,6 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
             }
         }
         Err(_) => {
-            // Lexing panicked
-            // I think there's no useful information in the panic.
             let mut messages = extract_errors(error_list);
             messages.push("reported fatal error (panicked)".into());
             Analysis::Rejects(Vec::new(), messages)
