@@ -147,6 +147,9 @@ pub enum RustcStringStyle {
 ///
 /// If the input is accepted, returns a list of tokens, in [`RustcToken`] form.
 /// Otherwise returns at least one error message.
+///
+/// If rustc panics (ie, it would report an ICE), the panic message is sent to
+/// standard error and this function returns CompilerError.
 pub fn analyse(input: &str, edition: Edition) -> Analysis {
     let error_list = Arc::new(Mutex::new(Vec::new()));
     fn extract_errors(error_list: ErrorAccumulator) -> Vec<String> {
@@ -158,27 +161,29 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
         Edition::E2021 => rustc_span::edition::Edition::Edition2021,
     };
 
-    match rustc_driver::catch_fatal_errors(|| {
-        rustc_span::create_session_globals_then(rustc_edition, || {
-            run_lexer(input, error_list.clone())
-        })
-    }) {
-        Ok(rustc_tokens) => {
-            let messages = extract_errors(error_list);
-            if messages.is_empty() {
-                // Lexing succeeded
-                Analysis::Accepts(rustc_tokens)
-            } else {
-                // Lexing reported a non-fatal error
-                Analysis::Rejects(rustc_tokens, messages)
+    std::panic::catch_unwind(|| {
+        match rustc_driver::catch_fatal_errors(|| {
+            rustc_span::create_session_globals_then(rustc_edition, || {
+                run_lexer(input, error_list.clone())
+            })
+        }) {
+            Ok(rustc_tokens) => {
+                let messages = extract_errors(error_list);
+                if messages.is_empty() {
+                    // Lexing succeeded
+                    Analysis::Accepts(rustc_tokens)
+                } else {
+                    // Lexing reported a non-fatal error
+                    Analysis::Rejects(rustc_tokens, messages)
+                }
+            }
+            Err(_) => {
+                let mut messages = extract_errors(error_list);
+                messages.push("reported fatal error (panicked)".into());
+                Analysis::Rejects(Vec::new(), messages)
             }
         }
-        Err(_) => {
-            let mut messages = extract_errors(error_list);
-            messages.push("reported fatal error (panicked)".into());
-            Analysis::Rejects(Vec::new(), messages)
-        }
-    }
+    }).unwrap_or(Analysis::CompilerError)
 }
 
 /// Result of running lexical analysis on a string.
@@ -192,6 +197,8 @@ pub enum Analysis {
     ///
     /// The strings are error messages. There's always at least one message.
     Rejects(Vec<RustcToken>, Vec<String>),
+    /// The input provoked an internal compiler error.
+    CompilerError,
 }
 
 /// Runs rustc's lexical analysis on the specified input.

@@ -29,6 +29,7 @@ pub fn regularised_from_rustc(input: &str, edition: Edition) -> Regularisation {
     match lex_via_rustc::analyse(input, edition) {
         Accepts(tokens) => Regularisation::Accepts(regularise_from_rustc(tokens)),
         Rejects(_, messages) => Regularisation::Rejects(messages),
+        CompilerError => Regularisation::ModelError(vec!["rustc compiler error".into()]),
     }
 }
 

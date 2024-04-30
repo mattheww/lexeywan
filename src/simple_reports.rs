@@ -182,6 +182,9 @@ fn show_detail(input: &str, edition: Edition) {
                 }
             }
         }
+        lex_via_rustc::Analysis::CompilerError => {
+            println!("rustc: internal compiler error");
+        }
     }
     let cleaned = cleaning::clean(input);
     match lexlucid::analyse(&cleaned, edition) {
