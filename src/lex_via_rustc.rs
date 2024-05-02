@@ -25,7 +25,7 @@ extern crate rustc_session;
 extern crate rustc_span;
 
 // This compiles with
-// rustc 1.78.0-nightly (7d3702e47 2024-03-06)
+// rustc nightly from approximately 2024-05-02
 
 use std::{
     mem,
@@ -163,7 +163,7 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
 
     std::panic::catch_unwind(|| {
         match rustc_driver::catch_fatal_errors(|| {
-            rustc_span::create_session_globals_then(rustc_edition, || {
+            rustc_span::create_session_globals_then(rustc_edition, None, || {
                 run_lexer(input, error_list.clone())
             })
         }) {
@@ -334,7 +334,7 @@ fn tokens_from_parser(mut parser: Parser, source_map: &SourceMap) -> Vec<RustcTo
             TokenKind::Comma => RustcTokenData::Punctuation,
             TokenKind::Semi => RustcTokenData::Punctuation,
             TokenKind::Colon => RustcTokenData::Punctuation,
-            TokenKind::ModSep => RustcTokenData::Punctuation,
+            TokenKind::PathSep => RustcTokenData::Punctuation,
             TokenKind::RArrow => RustcTokenData::Punctuation,
             TokenKind::LArrow => RustcTokenData::Punctuation,
             TokenKind::FatArrow => RustcTokenData::Punctuation,
