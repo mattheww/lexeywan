@@ -183,7 +183,8 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
                 Analysis::Rejects(Vec::new(), messages)
             }
         }
-    }).unwrap_or(Analysis::CompilerError)
+    })
+    .unwrap_or(Analysis::CompilerError)
 }
 
 /// Result of running lexical analysis on a string.
