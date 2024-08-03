@@ -11,13 +11,13 @@ and a framework for comparing its output to `rustc`'s.
 
 ### Rust language version
 
-This document describes Rust version 1.77.
+This document describes Rust version 1.80.
 
 That means it describes `c""` literals, but not
 [rfc3349] (*Mixed UTF-8 literals*) or
 [rfc3593] (reserving `#"..."#` string literals).
 
-Other statements in this document are intended to be true as of April 2024.
+Other statements in this document are intended to be true as of August 2024.
 
 The comparable implementation is intended to be compiled against (and compared against)\
 rustc nightly from approximately 2024-07-29
@@ -25,7 +25,7 @@ rustc nightly from approximately 2024-07-29
 
 ### Editions
 
-This document describes the editions supported by Rust 1.77:
+This document describes the editions supported by Rust 1.80:
 - 2015
 - 2018
 - 2021
