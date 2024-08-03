@@ -1,8 +1,9 @@
 //! Runs rustc's lexical analysis.
 //!
-//! This works by running the low-level and high-level lexers as far as making a `TokenTree`, then
-//! pulling tokens from it one by one in the same way as rustc's parser does. If rustc emits any
-//! error messages (or panics), we treat the input as rejected.
+//! This works by running the low-level and high-level lexers as far as making a `TokenStream`, then
+//! flattening the `TokenTree`s it contains back into a sequence of tokens in a similar way to
+//! rustc's parser.
+//! If rustc emits any error messages (or panics), we treat the input as rejected.
 //!
 //! Stringlike literal tokens are further run through ast::LitKind::from_token_lit(), to obtain the
 //! "unescaped" value.
@@ -11,9 +12,8 @@
 //! (BOM-removal and CRLF-conversion) happen. Later shebang removal happens too. See the
 //! [`cleaning`][`crate::cleaning`] module for how we make equivalent input for comparison.
 //!
-//! One weakness of this approach is that, because it constructs a token tree, input with imbalanced
-//! delimiters is rejected. (I don't see a `pub` interface giving access to the stream before
-//! building the `TokenTree`.)
+//! A limitation of this approach is that, because it constructs token trees, input with imbalanced
+//! delimiters is rejected.
 
 extern crate rustc_ast;
 extern crate rustc_data_structures;
@@ -25,17 +25,19 @@ extern crate rustc_session;
 extern crate rustc_span;
 
 // This compiles with
-// rustc nightly from approximately 2024-05-02
+// rustc nightly from approximately 2024-07-29
 
 use std::{
     mem,
     sync::{Arc, Mutex},
 };
 
-use rustc_ast::token::TokenKind;
+use rustc_ast::{
+    token::{Token, TokenKind},
+    tokenstream::{TokenStream, TokenTree},
+};
 use rustc_data_structures::sync::Lrc;
 use rustc_errors::{DiagCtxt, LazyFallbackBundle};
-use rustc_parse::parser::Parser;
 use rustc_span::{
     source_map::{FilePathMapping, SourceMap},
     FileName,
@@ -211,16 +213,16 @@ pub enum Analysis {
 ///  - if rustc would have reported a non-fatal error, at least one message has
 ///    been added to error_list
 ///    - in this case, the returned tokens are what would have been passed on to
-///      the parser (an empty list if tokentree construction failed).
+///      the parser (an empty list if token stream construction failed).
 fn run_lexer(input: &str, error_list: ErrorAccumulator) -> Vec<RustcToken> {
     let psess = make_parser_session(error_list.clone());
     let source_map = psess.source_map();
     let input = String::from(input);
     let filename = FileName::Custom("lex_via_rustc".into());
-    let lexed = match rustc_parse::maybe_new_parser_from_source_str(&psess, filename, input) {
-        Ok(parser) => tokens_from_parser(parser, source_map),
+    let lexed = match rustc_parse::source_str_to_stream(&psess, filename, input, None) {
+        Ok(token_stream) => TokenStreamProcessor::process(&token_stream, &source_map),
         Err(diags) => {
-            // Errors constructing the tokentree are reported here
+            // Errors constructing the token stream are reported here
             // (ie, unbalanced delimiters).
             assert!(!diags.is_empty());
             for diag in diags {
@@ -232,7 +234,7 @@ fn run_lexer(input: &str, error_list: ErrorAccumulator) -> Vec<RustcToken> {
     // The lexer doesn't report errors itself when it sees emoji in 'identifiers'. Instead it leaves
     // a note in the ParseSess to be examined later. So we have to make this extra check.
     if !&psess.bad_unicode_identifiers.borrow_mut().is_empty() {
-        psess.dcx.err("bad unicode identifier(s)");
+        psess.dcx().err("bad unicode identifier(s)");
     }
     lexed
 }
@@ -305,104 +307,146 @@ fn make_parser_session(error_list: ErrorAccumulator) -> rustc_session::parse::Pa
     rustc_session::parse::ParseSess::with_dcx(dcx, sm)
 }
 
-fn tokens_from_parser(mut parser: Parser, source_map: &SourceMap) -> Vec<RustcToken> {
-    let mut tokens = Vec::new();
-    while parser.token.kind != TokenKind::Eof {
-        let data = match parser.token.kind {
-            TokenKind::DocComment(comment_kind, style, symbol) => RustcTokenData::DocComment {
-                comment_kind: comment_kind.into(),
-                style: style.into(),
-                body: symbol.to_string(),
-            },
-            TokenKind::Eq => RustcTokenData::Punctuation,
-            TokenKind::Lt => RustcTokenData::Punctuation,
-            TokenKind::Le => RustcTokenData::Punctuation,
-            TokenKind::EqEq => RustcTokenData::Punctuation,
-            TokenKind::Ne => RustcTokenData::Punctuation,
-            TokenKind::Ge => RustcTokenData::Punctuation,
-            TokenKind::Gt => RustcTokenData::Punctuation,
-            TokenKind::AndAnd => RustcTokenData::Punctuation,
-            TokenKind::OrOr => RustcTokenData::Punctuation,
-            TokenKind::Not => RustcTokenData::Punctuation,
-            TokenKind::Tilde => RustcTokenData::Punctuation,
-            TokenKind::BinOp(_) => RustcTokenData::Punctuation,
-            TokenKind::BinOpEq(_) => RustcTokenData::Punctuation,
-            TokenKind::At => RustcTokenData::Punctuation,
-            TokenKind::Dot => RustcTokenData::Punctuation,
-            TokenKind::DotDot => RustcTokenData::Punctuation,
-            TokenKind::DotDotDot => RustcTokenData::Punctuation,
-            TokenKind::DotDotEq => RustcTokenData::Punctuation,
-            TokenKind::Comma => RustcTokenData::Punctuation,
-            TokenKind::Semi => RustcTokenData::Punctuation,
-            TokenKind::Colon => RustcTokenData::Punctuation,
-            TokenKind::PathSep => RustcTokenData::Punctuation,
-            TokenKind::RArrow => RustcTokenData::Punctuation,
-            TokenKind::LArrow => RustcTokenData::Punctuation,
-            TokenKind::FatArrow => RustcTokenData::Punctuation,
-            TokenKind::Pound => RustcTokenData::Punctuation,
-            TokenKind::Dollar => RustcTokenData::Punctuation,
-            TokenKind::Question => RustcTokenData::Punctuation,
-            TokenKind::SingleQuote => RustcTokenData::Punctuation,
-            TokenKind::OpenDelim(_) => RustcTokenData::Punctuation,
-            TokenKind::CloseDelim(_) => RustcTokenData::Punctuation,
-            TokenKind::Ident(symbol, style) => RustcTokenData::Ident {
-                style: style.into(),
-                identifier: symbol.to_string(),
-            },
-            TokenKind::Lifetime(symbol) => RustcTokenData::Lifetime {
-                symbol: symbol.to_string(),
-            },
-            TokenKind::Literal(rustc_ast::token::Lit {
-                kind: rustc_ast::token::LitKind::Integer,
-                suffix,
-                ..
-            }) => RustcTokenData::Lit {
-                literal_data: RustcLiteralData::Integer(
-                    suffix.map(|s| s.to_string()).unwrap_or_else(String::new),
-                ),
-            },
-            TokenKind::Literal(rustc_ast::token::Lit {
-                kind: rustc_ast::token::LitKind::Float,
-                suffix,
-                ..
-            }) => RustcTokenData::Lit {
-                literal_data: RustcLiteralData::Float(
-                    suffix.map(|s| s.to_string()).unwrap_or_else(String::new),
-                ),
-            },
-            TokenKind::Literal(lit) => {
-                match lit.suffix {
-                    // from_token_lit() is what performs unescaping, but it will panic if it sees a
-                    // suffix
-                    None => {
-                        let ast_lit = rustc_ast::ast::LitKind::from_token_lit(lit)
-                            .expect("from_token_lit failed");
-                        RustcTokenData::Lit {
-                            literal_data: literal_data_from_ast_litkind(ast_lit),
-                        }
-                    }
-                    Some(suffix) => RustcTokenData::Lit {
-                        literal_data: RustcLiteralData::ForbiddenSuffix(suffix.to_string()),
-                    },
-                }
-            }
-            // These shouldn't happen
-            TokenKind::Interpolated(_) => RustcTokenData::Other,
-            TokenKind::Eof => RustcTokenData::Other,
+/// Converts a rustc_ast `TokenStream` to a flat sequence of `RustcToken`s.
+struct TokenStreamProcessor<'a> {
+    source_map: &'a SourceMap,
+    output: Vec<RustcToken>,
+}
+
+impl<'a> TokenStreamProcessor<'a> {
+    fn process(token_stream: &TokenStream, source_map: &'a SourceMap) -> Vec<RustcToken> {
+        let mut flattener = Self {
+            source_map,
+            output: Vec::new(),
         };
-        tokens.push(RustcToken {
-            extent: source_map.span_to_snippet(parser.token.span).unwrap(),
-            spacing: parser.token_spacing.into(),
-            data,
-            summary: format!(
-                "{:} {:?}",
-                format_spacing(&parser.token_spacing),
-                parser.token.kind.clone()
-            ),
-        });
-        parser.bump();
+        flattener.add_tokens_from_stream(token_stream);
+        flattener.output
     }
-    tokens
+
+    fn add_tokens_from_stream(&mut self, token_stream: &TokenStream) {
+        for token_tree in token_stream.trees() {
+            self.add_tokens_from_tree(token_tree);
+        }
+    }
+
+    fn add_tokens_from_tree(&mut self, token_tree: &TokenTree) {
+        match token_tree {
+            &TokenTree::Token(ref token, spacing) => {
+                self.output
+                    .push(token_from_ast_token(token, spacing, self.source_map))
+            }
+            &TokenTree::Delimited(delim_span, delim_spacing, delimiter, ref token_stream) => {
+                self.output.push(token_from_ast_token(
+                    &Token::new(TokenKind::OpenDelim(delimiter), delim_span.open),
+                    delim_spacing.open,
+                    self.source_map,
+                ));
+                self.add_tokens_from_stream(token_stream);
+                self.output.push(token_from_ast_token(
+                    &Token::new(TokenKind::CloseDelim(delimiter), delim_span.close),
+                    delim_spacing.close,
+                    self.source_map,
+                ));
+            }
+        }
+    }
+}
+
+fn token_from_ast_token(
+    token: &Token,
+    spacing: rustc_ast::tokenstream::Spacing,
+    source_map: &SourceMap,
+) -> RustcToken {
+    let data = match token.kind {
+        TokenKind::DocComment(comment_kind, style, symbol) => RustcTokenData::DocComment {
+            comment_kind: comment_kind.into(),
+            style: style.into(),
+            body: symbol.to_string(),
+        },
+        TokenKind::Eq => RustcTokenData::Punctuation,
+        TokenKind::Lt => RustcTokenData::Punctuation,
+        TokenKind::Le => RustcTokenData::Punctuation,
+        TokenKind::EqEq => RustcTokenData::Punctuation,
+        TokenKind::Ne => RustcTokenData::Punctuation,
+        TokenKind::Ge => RustcTokenData::Punctuation,
+        TokenKind::Gt => RustcTokenData::Punctuation,
+        TokenKind::AndAnd => RustcTokenData::Punctuation,
+        TokenKind::OrOr => RustcTokenData::Punctuation,
+        TokenKind::Not => RustcTokenData::Punctuation,
+        TokenKind::Tilde => RustcTokenData::Punctuation,
+        TokenKind::BinOp(_) => RustcTokenData::Punctuation,
+        TokenKind::BinOpEq(_) => RustcTokenData::Punctuation,
+        TokenKind::At => RustcTokenData::Punctuation,
+        TokenKind::Dot => RustcTokenData::Punctuation,
+        TokenKind::DotDot => RustcTokenData::Punctuation,
+        TokenKind::DotDotDot => RustcTokenData::Punctuation,
+        TokenKind::DotDotEq => RustcTokenData::Punctuation,
+        TokenKind::Comma => RustcTokenData::Punctuation,
+        TokenKind::Semi => RustcTokenData::Punctuation,
+        TokenKind::Colon => RustcTokenData::Punctuation,
+        TokenKind::PathSep => RustcTokenData::Punctuation,
+        TokenKind::RArrow => RustcTokenData::Punctuation,
+        TokenKind::LArrow => RustcTokenData::Punctuation,
+        TokenKind::FatArrow => RustcTokenData::Punctuation,
+        TokenKind::Pound => RustcTokenData::Punctuation,
+        TokenKind::Dollar => RustcTokenData::Punctuation,
+        TokenKind::Question => RustcTokenData::Punctuation,
+        TokenKind::SingleQuote => RustcTokenData::Punctuation,
+        TokenKind::OpenDelim(_) => RustcTokenData::Punctuation,
+        TokenKind::CloseDelim(_) => RustcTokenData::Punctuation,
+        TokenKind::Ident(symbol, style) => RustcTokenData::Ident {
+            style: style.into(),
+            identifier: symbol.to_string(),
+        },
+        TokenKind::Lifetime(symbol) => RustcTokenData::Lifetime {
+            symbol: symbol.to_string(),
+        },
+        TokenKind::Literal(rustc_ast::token::Lit {
+            kind: rustc_ast::token::LitKind::Integer,
+            suffix,
+            ..
+        }) => RustcTokenData::Lit {
+            literal_data: RustcLiteralData::Integer(
+                suffix.map(|s| s.to_string()).unwrap_or_else(String::new),
+            ),
+        },
+        TokenKind::Literal(rustc_ast::token::Lit {
+            kind: rustc_ast::token::LitKind::Float,
+            suffix,
+            ..
+        }) => RustcTokenData::Lit {
+            literal_data: RustcLiteralData::Float(
+                suffix.map(|s| s.to_string()).unwrap_or_else(String::new),
+            ),
+        },
+        TokenKind::Literal(lit) => {
+            match lit.suffix {
+                // from_token_lit() is what performs unescaping, but it will panic if it sees a
+                // suffix
+                None => {
+                    let ast_lit = rustc_ast::ast::LitKind::from_token_lit(lit)
+                        .expect("from_token_lit failed");
+                    RustcTokenData::Lit {
+                        literal_data: literal_data_from_ast_litkind(ast_lit),
+                    }
+                }
+                Some(suffix) => RustcTokenData::Lit {
+                    literal_data: RustcLiteralData::ForbiddenSuffix(suffix.to_string()),
+                },
+            }
+        }
+        // These shouldn't happen
+        TokenKind::Interpolated(_) => RustcTokenData::Other,
+        TokenKind::NtIdent(_, _) => RustcTokenData::Other,
+        TokenKind::NtLifetime(_) => RustcTokenData::Other,
+        TokenKind::Eof => RustcTokenData::Other,
+    };
+    RustcToken {
+        extent: source_map.span_to_snippet(token.span).unwrap(),
+        spacing: spacing.into(),
+        data,
+        summary: format!("{:} {:?}", format_spacing(&spacing), token.kind.clone()),
+    }
 }
 
 fn literal_data_from_ast_litkind(ast_lit: rustc_ast::ast::LitKind) -> RustcLiteralData {
