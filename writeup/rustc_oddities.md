@@ -1,19 +1,5 @@
 ## Rustc oddities
 
-### emoji-in-unknown-prefix in Rust 2015/2018 { #emoji-in-unknown-prefix }
-
-Rust 2015 and 2018 accept a form like `🦁#`
-(as input to a function-like macro),
-treating it as an identifier `🦁` followed by punctuation `#`.
-
-This is surprising, because `🦁` would normally be rejected as an identifier.
-
-I assume this is just a bug (filed as [#123696]).
-
-This document doesn't attempt to characterise this behaviour,
-and the comparable implementation doesn't attempt to imitate it.
-
-
 ### NFC normalisation for lifetime/label { #nfc-lifetime }
 
 Identifiers are normalised to NFC,
@@ -36,5 +22,3 @@ reaction to being given a spec to review.
 [playground-ident]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=aad27eb75b2774f16fc6b0981b770d56
 
 [rfc2457]: https://rust-lang.github.io/rfcs/2457-non-ascii-idents.html
-
-[#123696]: https://github.com/rust-lang/rust/issues/123696

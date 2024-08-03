@@ -214,8 +214,8 @@ pub const LONGLIST: &[&str] = [
     "qr# ",
     "qr#x",
 
-    // This is accepted in Rust 2015, but I think that's a rustc bug.
-    // https://github.com/rust-lang/rust/issues/123696
+    // See https://github.com/rust-lang/rust/issues/123696
+    // (Fixed in rustc 1.79)
     "🦁#",
 
     //// Double-quote forms

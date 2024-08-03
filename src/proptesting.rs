@@ -4,7 +4,6 @@ use proptest::{
     strategy::{BoxedStrategy, Strategy},
     test_runner::{Config, TestCaseError, TestError, TestRunner},
 };
-use regex::Regex;
 
 use crate::Edition;
 use crate::{
@@ -16,13 +15,6 @@ pub use self::strategies::DEFAULT_STRATEGY;
 use self::strategies::SIMPLE_STRATEGIES;
 
 mod strategies;
-
-macro_rules! make_regex_with_default_flags {
-    ($re:literal $(,)?) => {{
-        static RE: ::std::sync::OnceLock<regex::Regex> = ::std::sync::OnceLock::new();
-        RE.get_or_init(|| Regex::new($re).unwrap())
-    }};
-}
 
 /// Implements the `proptest` cli subcommand.
 pub fn run_proptests(strategy_name: &str, count: u32, verbosity: Verbosity, edition: Edition) {
@@ -60,16 +52,7 @@ pub fn run_proptests(strategy_name: &str, count: u32, verbosity: Verbosity, edit
 ///
 /// Returns Unsupported for input that may trigger known problems.
 fn check_lexing(input: &str, edition: Edition) -> ComparisonStatus {
-    if edition == Edition::E2015 {
-        // In Rust 2015 and 2018, emoji in unknown prefixes aren't reported as an error.
-        // I think this is a rustc bug, so exclude such cases from testing.
-        // See https://github.com/rust-lang/rust/issues/123696
-        let re =
-            make_regex_with_default_flags!(r#"[\p{EMOJI}--!-~][\p{XID_Continue}\p{EMOJI}]*[#'"]"#);
-        if re.is_match(input) {
-            return ComparisonStatus::Unsupported("emoji-in-unknown-prefix".into());
-        }
-    }
+    // See the history of this function for how to use `Unsupported`
 
     let rustc = regularised_from_rustc(input, edition);
     let lexlucid = regularised_from_lexlucid(input, edition);

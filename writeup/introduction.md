@@ -42,8 +42,6 @@ This description aims to accept input exactly if `rustc`'s lexer would.
 Specifically, it aims to model what's accepted as input to a function-like macro
 (a procedural macro or a by-example macro using the `tt` fragment specifier).
 
-> See [emoji-in-unknown-prefix] for an exception
-
 It's not attempting to accurately model `rustc`'s "reasons" for rejecting input,
 or to provide enough information to reproduce error messages similar to `rustc`'s.
 
@@ -91,6 +89,4 @@ The source code for this document and the accompanying lexer implementation is a
 
 [rfc3349]: https://rust-lang.github.io/rfcs/3349-mixed-utf8-literals.html
 [rfc3593]: https://github.com/rust-lang/rfcs/pull/3593
-
-[emoji-in-unknown-prefix]: rustc_oddities.md#emoji-in-unknown-prefix
 
