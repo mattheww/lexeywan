@@ -29,6 +29,8 @@ enum RuleName {
     UnterminatedBlockComment,
     Punctuation,
     SingleQuotedLiteral,
+    RawLifetimeOrLabel2021,
+    ReservedLifetimeOrLabelPrefix2021,
     LifetimeOrLabel,
     DoublequotedNonrawLiteral2015,
     DoublequotedNonrawLiteral2021,
@@ -80,6 +82,8 @@ const RULES_FOR_EDITION_2021: &[RuleName] = [
     RuleName::UnterminatedBlockComment,
     RuleName::Punctuation,
     RuleName::SingleQuotedLiteral,
+    RuleName::RawLifetimeOrLabel2021,
+    RuleName::ReservedLifetimeOrLabelPrefix2021,
     RuleName::LifetimeOrLabel,
     RuleName::DoublequotedNonrawLiteral2021,
     RuleName::DoublequotedHashlessRawLiteral2021,
@@ -180,6 +184,29 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
                     \p{XID_Continue} *
                   ) ?
                 )
+            "##)),
+
+       // Lifetime or label
+       (RuleName::RawLifetimeOrLabel2021,
+        Rule::new_regex(
+            |cp| PretokenData::LifetimeOrLabel {
+                name: cp["name"].into(),
+            }, r##"\A
+                ' r \#
+                (?<name>
+                  [ \p{XID_Start} _ ]
+                  \p{XID_Continue} *
+                )
+            "##)),
+
+       // Reserved lifetime or label prefix
+       (RuleName::ReservedLifetimeOrLabelPrefix2021,
+        Rule::new_regex(
+            |_| PretokenData::Reserved, r##"\A
+                '
+                [ \p{XID_Start} _ ]
+                \p{XID_Continue} *
+                \#
             "##)),
 
        // Lifetime or label
