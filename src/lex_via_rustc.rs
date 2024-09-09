@@ -25,7 +25,7 @@ extern crate rustc_session;
 extern crate rustc_span;
 
 // This compiles with
-// rustc nightly from approximately 2024-07-29
+// rustc nightly from approximately 2024-09-09
 
 use std::{
     mem,
@@ -398,7 +398,7 @@ fn token_from_ast_token(
             style: style.into(),
             identifier: symbol.to_string(),
         },
-        TokenKind::Lifetime(symbol) => RustcTokenData::Lifetime {
+        TokenKind::Lifetime(symbol, _is_raw) => RustcTokenData::Lifetime {
             symbol: symbol.to_string(),
         },
         TokenKind::Literal(rustc_ast::token::Lit {
@@ -438,7 +438,7 @@ fn token_from_ast_token(
         // These shouldn't happen
         TokenKind::Interpolated(_) => RustcTokenData::Other,
         TokenKind::NtIdent(_, _) => RustcTokenData::Other,
-        TokenKind::NtLifetime(_) => RustcTokenData::Other,
+        TokenKind::NtLifetime(_, _) => RustcTokenData::Other,
         TokenKind::Eof => RustcTokenData::Other,
     };
     RustcToken {
