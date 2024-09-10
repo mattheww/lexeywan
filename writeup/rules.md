@@ -195,9 +195,9 @@ when `character_sequence` represents an iterator over the sequence of characters
 ##### Pattern
 ```
 '
-(?<%name>
- [ \p{XID_Start} _ ]
- \p{XID_Continue} *
+(?<name>
+  [ \p{XID_Start} _ ]
+  \p{XID_Continue} *
 )
 ```
 
