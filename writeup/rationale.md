@@ -2,7 +2,7 @@
 
 ### Pretokenising
 
-The main difference between the model described in this document and the way the Reference (as of Rust 1.80) describes lexing is the split into pretokenisation and reprocessing.
+The main difference between the model described in this document and the way the Reference (as of Rust 1.81) describes lexing is the split into pretokenisation and reprocessing.
 
 There are a number of forms which are errors at lexing time, even though in principle they could be analysed as multiple tokens.
 

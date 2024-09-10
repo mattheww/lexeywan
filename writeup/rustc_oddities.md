@@ -8,7 +8,7 @@ See [rfc2457].
 
 But this doesn't happen for lifetimes or labels, so `'Kelvin` and `'Kelvin` are different as lifetimes or labels.
 
-For example, [this][playground-lifetime] compiles without warning in Rust 1.80, while [this][playground-ident] doesn't.
+For example, [this][playground-lifetime] compiles without warning in Rust 1.81, while [this][playground-ident] doesn't.
 
 In this writeup, the <var>represented identifier</var> attribute of `Identifier` and `RawIdentifier` fine-grained tokens is in NFC,
 and the <var>name</var> attribute of `LifetimeOrLabel` and `RawLifetimeOrLabel` tokens isn't.

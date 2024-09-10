@@ -11,15 +11,16 @@ and a framework for comparing its output to `rustc`'s.
 
 ### Rust language version
 
-This document describes Rust version 1.80.
+This document describes Rust version 1.81, with the addition of
+[pr126452] (Raw syntax and reserved prefixes for lifetimes and labels),
+which is targeted for Rust 1.83.
 
 That means it describes `c""` literals, but not
 
 - [rfc3349] (*Mixed UTF-8 literals*)
 - [rfc3593] (reserving `#"..."#` string literals)
-- [issue126335] (Raw syntax for lifetimes and loop labels)
 
-Other statements in this document are intended to be true as of August 2024.
+Other statements in this document are intended to be true as of September 2024.
 
 The comparable implementation is intended to be compiled against (and compared against)\
 rustc nightly from approximately 2024-09-09
@@ -91,5 +92,5 @@ The source code for this document and the accompanying lexer implementation is a
 
 [rfc3349]: https://rust-lang.github.io/rfcs/3349-mixed-utf8-literals.html
 [rfc3593]: https://github.com/rust-lang/rfcs/pull/3593
-[issue126335]: https://github.com/rust-lang/rust/issues/126335
+[pr126452]: https://github.com/rust-lang/rust/pull/126452
 
