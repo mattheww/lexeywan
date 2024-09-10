@@ -213,7 +213,7 @@ Forbidden followers:
 |:----------------|:--------------------|
 | <var>name</var> | captured characters |
 
-> Note: the forbidden follower here makes sure that forms like `aaa'bbb` are not accepted.
+> Note: the forbidden follower here makes sure that forms like `'aaa'bbb` are not accepted.
 
 
 #### Double-quoted non-raw literal (Rust 2015 and 2018) { .rule }
