@@ -15,6 +15,7 @@ Each fine-grained token has a <dfn>kind</dfn>, and possibly also some attributes
 | `Identifier`           | <var>represented identifier</var>                     |
 | `RawIdentifier`        | <var>represented identifier</var>                     |
 | `LifetimeOrLabel`      | <var>name</var>                                       |
+| `RawLifetimeOrLabel`   | <var>name</var>                                       |
 | `CharacterLiteral`     | <var>represented character</var>, <var>suffix</var>   |
 | `ByteLiteral`          | <var>represented byte</var>, <var>suffix</var>        |
 | `StringLiteral`        | <var>represented string</var>, <var>suffix</var>      |

@@ -6,6 +6,8 @@
 [Unterminated block comment](#unterminated-block-comment)\
 [Punctuation](#punctuation)\
 [Single-quoted literal](#single-quoted-literal)\
+[Raw lifetime or label (Rust 2021)](#raw-lifetime-or-label-rust-2021)\
+[Reserved lifetime or label prefix (Rust 2021)](#reserved-lifetime-or-label-prefix-rust-2021)\
 [Lifetime or label](#lifetime-or-label)\
 [Double-quoted non-raw literal (Rust 2015 and 2018)](#double-quoted-non-raw-literal-rust-2015-and-2018)\
 [Double-quoted non-raw literal (Rust 2021)](#double-quoted-non-raw-literal-rust-2021)\
@@ -188,6 +190,43 @@ when `character_sequence` represents an iterator over the sequence of characters
 | <var>prefix</var>          | captured characters |
 | <var>literal content</var> | captured characters |
 | <var>suffix</var>          | captured characters |
+
+
+#### Raw lifetime or label (Rust 2021) { .rule }
+
+##### Pattern
+```
+' r \#
+(?<name>
+  [ \p{XID_Start} _ ]
+  \p{XID_Continue} *
+)
+```
+
+##### Pretoken kind
+`RawLifetimeOrLabel`
+
+##### Attributes
+|                 |                     |
+|:----------------|:--------------------|
+| <var>name</var> | captured characters |
+
+
+#### Reserved lifetime or label prefix (Rust 2021) { .rule }
+
+##### Pattern
+```
+'
+[ \p{XID_Start} _ ]
+\p{XID_Continue} *
+\#
+```
+
+##### Pretoken kind
+`Reserved`
+
+##### Attributes
+(none)
 
 
 #### Lifetime or label { .rule }

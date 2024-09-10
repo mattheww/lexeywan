@@ -8,6 +8,7 @@
 [`Identifier`](#identifier)\
 [`RawIdentifier`](#rawidentifier)\
 [`LifetimeOrLabel`](#lifetimeorlabel)\
+[`RawLifetimeOrLabel`](#rawlifetimeorlabel)\
 [`SingleQuoteLiteral`](#singlequoteliteral)\
 [`DoubleQuoteLiteral`](#doublequoteliteral)\
 [`RawDoubleQuoteLiteral`](#rawdoublequoteliteral)\
@@ -155,6 +156,20 @@ Fine-grained token kind produced:
 `LifetimeOrLabel`
 
 A `LifetimeOrLabel` pretoken is always accepted.
+
+##### Attributes
+<var>name</var>: copied
+
+> Note that the name is not NFC-normalised.
+> See [NFC normalisation for lifetime/label].
+
+
+#### `RawLifetimeOrLabel` { .rcase }
+
+Fine-grained token kind produced:
+`RawLifetimeOrLabel`
+
+A `RawLifetimeOrLabel` pretoken is always accepted.
 
 ##### Attributes
 <var>name</var>: copied
