@@ -57,6 +57,9 @@ pub enum CoarseTokenData {
     LifetimeOrLabel {
         name: Charseq,
     },
+    RawLifetimeOrLabel {
+        name: Charseq,
+    },
     ByteLiteral {
         represented_byte: u8,
         suffix: Charseq,
@@ -326,6 +329,9 @@ impl TryFrom<FineTokenData> for CoarseTokenData {
             }),
             FineTokenData::LifetimeOrLabel { name } => {
                 Ok(CoarseTokenData::LifetimeOrLabel { name })
+            }
+            FineTokenData::RawLifetimeOrLabel { name } => {
+                Ok(CoarseTokenData::RawLifetimeOrLabel { name })
             }
             FineTokenData::ByteLiteral {
                 represented_byte,

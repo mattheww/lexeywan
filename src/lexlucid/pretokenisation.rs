@@ -58,6 +58,9 @@ pub enum PretokenData {
     LifetimeOrLabel {
         name: Charseq,
     },
+    RawLifetimeOrLabel {
+        name: Charseq,
+    },
     SingleQuoteLiteral {
         prefix: Charseq,
         literal_content: Charseq,

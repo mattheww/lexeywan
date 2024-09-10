@@ -189,7 +189,7 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
        // Lifetime or label
        (RuleName::RawLifetimeOrLabel2021,
         Rule::new_regex(
-            |cp| PretokenData::LifetimeOrLabel {
+            |cp| PretokenData::RawLifetimeOrLabel {
                 name: cp["name"].into(),
             }, r##"\A
                 ' r \#

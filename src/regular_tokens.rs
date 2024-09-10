@@ -67,6 +67,7 @@ pub enum RegularTokenData {
     LifetimeOrLabel {
         /// This includes the leading '
         symbol: Charseq,
+        style: IdentifierStyle,
     },
     ByteLiteral {
         represented_byte: u8,
@@ -158,8 +159,12 @@ pub fn regularise_from_rustc(tokens: impl IntoIterator<Item = RustcToken>) -> Ve
                     represented_identifier: identifier.into(),
                     style: style.into(),
                 },
-                RustcTokenData::Lifetime { symbol: name } => RegularTokenData::LifetimeOrLabel {
+                RustcTokenData::Lifetime {
+                    style,
+                    symbol: name,
+                } => RegularTokenData::LifetimeOrLabel {
                     symbol: name.into(),
+                    style: style.into(),
                 },
                 RustcTokenData::Lit { literal_data } => regularise_rustc_literal(literal_data)
                     .expect("rustc token represented an error"),
@@ -296,6 +301,11 @@ fn from_coarse_token(token: CoarseToken) -> RegularTokenData {
         },
         CoarseTokenData::LifetimeOrLabel { name } => RegularTokenData::LifetimeOrLabel {
             symbol: once('\'').chain(name.iter().copied()).collect(),
+            style: IdentifierStyle::NonRaw,
+        },
+        CoarseTokenData::RawLifetimeOrLabel { name } => RegularTokenData::LifetimeOrLabel {
+            symbol: once('\'').chain(name.iter().copied()).collect(),
+            style: IdentifierStyle::Raw,
         },
         CoarseTokenData::CharacterLiteral {
             represented_character,
