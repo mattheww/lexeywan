@@ -456,7 +456,7 @@ The constraint is satisfied if (and only if) the character sequence captured by 
     \.
     [ 0-9 ]
     [ 0-9 _ ] *
-  )?
+  ) ?
   [eE]
   [+-] ?
   (?<exponent_digits>

@@ -400,7 +400,7 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
                     \.
                     [ 0-9 ]
                     [ 0-9 _ ] *
-                  )?
+                  ) ?
                   [eE]
                   [+-] ?
                   (?<exponent_digits>
