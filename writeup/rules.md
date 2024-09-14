@@ -712,11 +712,9 @@ r \#
 
 ##### Pattern
 ```
-(
-  [ \p{XID_Start} _ ]
-  \p{XID_Continue} *
-)
-( \# | " | ')
+[ \p{XID_Start} _ ]
+\p{XID_Continue} *
+( \# | " | ' )
 ```
 
 ##### Pretoken kind

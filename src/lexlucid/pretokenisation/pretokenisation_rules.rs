@@ -586,11 +586,9 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
        (RuleName::ReservedPrefixOrUnterminatedLiteral2021,
         Rule::new_regex(
             |_| PretokenData::Reserved, r##"\A
-                (
-                  [ \p{XID_Start} _ ]
-                  \p{XID_Continue} *
-                )
-                ( \# | " | ')
+                [ \p{XID_Start} _ ]
+                \p{XID_Continue} *
+                ( \# | " | ' )
             "##)),
 
        // Non-raw identifier
