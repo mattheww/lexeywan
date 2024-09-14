@@ -31,7 +31,7 @@ enum RuleName {
     SingleQuotedLiteral,
     RawLifetimeOrLabel2021,
     ReservedLifetimeOrLabelPrefix2021,
-    LifetimeOrLabel,
+    NonRawLifetimeOrLabel,
     DoublequotedNonrawLiteral2015,
     DoublequotedNonrawLiteral2021,
     DoublequotedHashlessRawLiteral2015,
@@ -58,7 +58,7 @@ const RULES_FOR_EDITION_2015: &[RuleName] = [
     RuleName::UnterminatedBlockComment,
     RuleName::Punctuation,
     RuleName::SingleQuotedLiteral,
-    RuleName::LifetimeOrLabel,
+    RuleName::NonRawLifetimeOrLabel,
     RuleName::DoublequotedNonrawLiteral2015,
     RuleName::DoublequotedHashlessRawLiteral2015,
     RuleName::DoublequotedHashedRawLiteral2015,
@@ -84,7 +84,7 @@ const RULES_FOR_EDITION_2021: &[RuleName] = [
     RuleName::SingleQuotedLiteral,
     RuleName::RawLifetimeOrLabel2021,
     RuleName::ReservedLifetimeOrLabelPrefix2021,
-    RuleName::LifetimeOrLabel,
+    RuleName::NonRawLifetimeOrLabel,
     RuleName::DoublequotedNonrawLiteral2021,
     RuleName::DoublequotedHashlessRawLiteral2021,
     RuleName::DoublequotedHashedRawLiteral2021,
@@ -210,7 +210,7 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
             "##)),
 
        // Lifetime or label
-       (RuleName::LifetimeOrLabel,
+       (RuleName::NonRawLifetimeOrLabel,
         Rule::new_regex_with_forbidden_follower(
             |cp| PretokenData::LifetimeOrLabel {
                 name: cp["name"].into(),

@@ -8,7 +8,7 @@
 [Single-quoted literal](#single-quoted-literal)\
 [Raw lifetime or label (Rust 2021)](#raw-lifetime-or-label-rust-2021)\
 [Reserved lifetime or label prefix (Rust 2021)](#reserved-lifetime-or-label-prefix-rust-2021)\
-[Lifetime or label](#lifetime-or-label)\
+[Non-raw lifetime or label](#non-raw-lifetime-or-label)\
 [Double-quoted non-raw literal (Rust 2015 and 2018)](#double-quoted-non-raw-literal-rust-2015-and-2018)\
 [Double-quoted non-raw literal (Rust 2021)](#double-quoted-non-raw-literal-rust-2021)\
 [Double-quoted hashless raw literal (Rust 2015 and 2018)](#double-quoted-hashless-raw-literal-rust-2015-and-2018)\
@@ -229,7 +229,7 @@ when `character_sequence` represents an iterator over the sequence of characters
 (none)
 
 
-#### Lifetime or label { .rule }
+#### Non-raw lifetime or label { .rule }
 
 ##### Pattern
 ```
