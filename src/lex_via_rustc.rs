@@ -162,6 +162,7 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
     let rustc_edition = match edition {
         Edition::E2015 => rustc_span::edition::Edition::Edition2015,
         Edition::E2021 => rustc_span::edition::Edition::Edition2021,
+        Edition::E2024 => rustc_span::edition::Edition::Edition2024,
     };
 
     std::panic::catch_unwind(|| {

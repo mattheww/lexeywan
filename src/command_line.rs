@@ -8,7 +8,7 @@ use crate::testcases;
 use crate::Edition;
 
 const USAGE: &str = "\
-Usage: lexeywan [--edition=2015|2021] [<subcommand>] [...options]
+Usage: lexeywan [--edition=2015|2021|2024] [<subcommand>] [...options]
 
 Subcommands:
  *compare  [--short] [--failures-only] [--details=always|*failures|never]
@@ -51,6 +51,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
     {
         Some("2015") => Edition::E2015,
         Some("2021") => Edition::E2021,
+        Some("2024") => Edition::E2024,
         None => Edition::E2021,
         _ => {
             return Err(pico_args::Error::ArgumentParsingFailed {

@@ -19,6 +19,8 @@ enum Edition {
     E2015,
     /// Rust 2021
     E2021,
+    /// Rust 2024
+    E2024,
 }
 
 fn main() -> impl std::process::Termination {

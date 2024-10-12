@@ -15,9 +15,11 @@ use super::{PretokenData, Rule};
 pub fn list_rules(edition: Edition) -> &'static Vec<&'static Rule> {
     static EDITION_2015_RULES: OnceLock<Vec<&'static Rule>> = OnceLock::new();
     static EDITION_2021_RULES: OnceLock<Vec<&'static Rule>> = OnceLock::new();
+    static EDITION_2024_RULES: OnceLock<Vec<&'static Rule>> = OnceLock::new();
     match edition {
         Edition::E2015 => EDITION_2015_RULES.get_or_init(|| make_rules(RULES_FOR_EDITION_2015)),
         Edition::E2021 => EDITION_2021_RULES.get_or_init(|| make_rules(RULES_FOR_EDITION_2021)),
+        Edition::E2024 => EDITION_2024_RULES.get_or_init(|| make_rules(RULES_FOR_EDITION_2024)),
     }
 }
 
@@ -76,6 +78,32 @@ const RULES_FOR_EDITION_2015: &[RuleName] = [
 .as_slice();
 
 const RULES_FOR_EDITION_2021: &[RuleName] = [
+    RuleName::Whitespace,
+    RuleName::LineComment,
+    RuleName::BlockComment,
+    RuleName::UnterminatedBlockComment,
+    RuleName::Punctuation,
+    RuleName::SingleQuotedLiteral,
+    RuleName::RawLifetimeOrLabel2021,
+    RuleName::ReservedLifetimeOrLabelPrefix2021,
+    RuleName::NonRawLifetimeOrLabel,
+    RuleName::DoublequotedNonrawLiteral2021,
+    RuleName::DoublequotedHashlessRawLiteral2021,
+    RuleName::DoublequotedHashedRawLiteral2021,
+    RuleName::FloatLiteralWithExponent,
+    RuleName::FloatLiteralWithoutExponent,
+    RuleName::FloatLiteralWithFinalDot,
+    RuleName::IntegerBinaryLiteral,
+    RuleName::IntegerOctalLiteral,
+    RuleName::IntegerHexadecimalLiteral,
+    RuleName::IntegerDecimalLiteral,
+    RuleName::RawIdentifier,
+    RuleName::ReservedPrefixOrUnterminatedLiteral2021,
+    RuleName::NonrawIdentifier,
+]
+.as_slice();
+
+const RULES_FOR_EDITION_2024: &[RuleName] = [
     RuleName::Whitespace,
     RuleName::LineComment,
     RuleName::BlockComment,
