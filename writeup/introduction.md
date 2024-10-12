@@ -11,16 +11,13 @@ and a framework for comparing its output to `rustc`'s.
 
 ### Rust language version
 
-This document describes Rust version 1.81, with the addition of
-[pr126452] (Raw syntax and reserved prefixes for lifetimes and labels),
-which is targeted for Rust 1.83.
+This document describes Rust version 1.83 (as it is expected to be, as of 2024-10-12).
 
-That means it describes `c""` literals, but not
+That means it describes raw lifetimes/labels and the additional reservations in the 2024 edition, but not
 
 - [rfc3349] (*Mixed UTF-8 literals*)
-- [rfc3593] (reserving `#"..."#` string literals)
 
-Other statements in this document are intended to be true as of September 2024.
+Other statements in this document are intended to be true as of October 2024.
 
 The comparable implementation is intended to be compiled against (and compared against)\
 `rustc 1.83.0-nightly (1bc403daa 2024-10-11)`
@@ -28,10 +25,13 @@ The comparable implementation is intended to be compiled against (and compared a
 
 ### Editions
 
-This document describes the editions supported by Rust 1.80:
+This document describes the editions supported by Rust 1.83:
 - 2015
 - 2018
 - 2021
+
+and the expected changes for the in-development edition:
+- 2024
 
 There are no differences in lexing behaviour between the 2015 and 2018 editions.
 
