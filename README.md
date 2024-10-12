@@ -24,6 +24,10 @@ cargo run -- --help
 
 Note the provided `rust-toolchain.toml` will cause this to install the required nightly version of `rustc`.
 
+At present three tests should fail:
+two where the comparable implementation's approximation to rustc's shebang removal isn't good enough,
+and one because rustc declines to lex input with unbalanced delimiters.
+
 
 ## Building the description
 
