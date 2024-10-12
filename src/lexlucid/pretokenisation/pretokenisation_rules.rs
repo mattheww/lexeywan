@@ -29,6 +29,7 @@ enum RuleName {
     LineComment,
     BlockComment,
     UnterminatedBlockComment,
+    ReservedHashForms2024,
     Punctuation,
     SingleQuotedLiteral,
     RawLifetimeOrLabel2021,
@@ -108,6 +109,7 @@ const RULES_FOR_EDITION_2024: &[RuleName] = [
     RuleName::LineComment,
     RuleName::BlockComment,
     RuleName::UnterminatedBlockComment,
+    RuleName::ReservedHashForms2024,
     RuleName::Punctuation,
     RuleName::SingleQuotedLiteral,
     RuleName::RawLifetimeOrLabel2021,
@@ -175,6 +177,14 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
         Rule::new_regex(
             |_| PretokenData::Reserved, r##"\A
                 / \*
+            "##)),
+
+       // Reserved hashes (Rust 2024)
+       (RuleName::ReservedHashForms2024,
+        Rule::new_regex(
+            |_| PretokenData::Reserved, r##"\A
+                \#
+                ( \# | " )
             "##)),
 
        // Punctuation

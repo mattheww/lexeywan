@@ -4,6 +4,7 @@
 [Line comment](#line-comment)\
 [Block comment](#block-comment)\
 [Unterminated block comment](#unterminated-block-comment)\
+[Reserved hash forms (Rust 2024)](#reserved-hash-forms-rust-2024)\
 [Punctuation](#punctuation)\
 [Single-quoted literal](#single-quoted-literal)\
 [Raw lifetime or label (Rust 2021)](#raw-lifetime-or-label-rust-2021)\
@@ -130,6 +131,21 @@ when `character_sequence` represents an iterator over the sequence of characters
 ##### Pattern
 ```
 / \*
+```
+
+##### Pretoken kind
+`Reserved`
+
+##### Attributes
+(none)
+
+
+#### Reserved hash forms (Rust 2024) { .rule }
+
+##### Pattern
+```
+\#
+( \# | " )
 ```
 
 ##### Pretoken kind
