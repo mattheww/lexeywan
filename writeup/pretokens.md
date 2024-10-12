@@ -14,6 +14,7 @@ Each pretoken has a *kind*, and possibly also some attributes, as described in t
 | `Identifier`                | <var>identifier</var>                                                               |
 | `RawIdentifier`             | <var>identifier</var>                                                               |
 | `LifetimeOrLabel`           | <var>name</var>                                                                     |
+| `RawLifetimeOrLabel`        | <var>name</var>                                                                     |
 | `SingleQuoteLiteral`        | <var>prefix</var>, <var>literal content</var>, <var>suffix</var>                    |
 | `DoubleQuoteLiteral`        | <var>prefix</var>, <var>literal content</var>, <var>suffix</var>                    |
 | `RawDoubleQuoteLiteral`     | <var>prefix</var>, <var>literal content</var>, <var>suffix</var>                    |

@@ -14,6 +14,7 @@ pub const SIMPLE_STRATEGIES: &[(&str, &str)] = [
     ("line-comment",           r#"[/! a\n]{1,10}"#),
     ("punctuation",            r#"[-!#$%&*+,./:;<=>?@^_|~ ]{1,8}"#),
     ("identifier",             "[_#ra£áΩ🦀\x07\u{FFFF}. ]{1,12}"),
+    ("lifetime",               "['#ra£🦀]{1,8}"),
     ("string-literal",         r#"[\\\n#'"rbcx _]{1,12}"#),
     ("unicode-escape",         r#""\\u\{.{0,8}[} ]""#),
     ("hashed-raw",             r#"(r|br|cr)#[\\\n#"rx _]{1,10}"#),
@@ -47,6 +48,7 @@ pub(crate) fn mix() -> BoxedStrategy<String> {
         r#"[/! a\n]{1,5}"#,                               // line-comment
         r#"[-!#$%&*+,./:;<=>?@^_|~ ]{1,5}"#,              // punctuation
         "[_#ra£áΩ🦀\x07\u{FFFF}. ]{1,3}",                 // identifier
+        "['#ra]{1,3}",                                    // lifetime
         r#"[\\\n"'#rbcx ]{1,8}"#,                         // string-literal
         r#"[01][-+._012389abcdefghoxABCDEYZHOX]{1,8}"#,   // numeric-literal
         "\0",                                             // just a NUL

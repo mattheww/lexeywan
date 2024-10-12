@@ -29,7 +29,9 @@ enum RuleName {
     UnterminatedBlockComment,
     Punctuation,
     SingleQuotedLiteral,
-    LifetimeOrLabel,
+    RawLifetimeOrLabel2021,
+    ReservedLifetimeOrLabelPrefix2021,
+    NonRawLifetimeOrLabel,
     DoublequotedNonrawLiteral2015,
     DoublequotedNonrawLiteral2021,
     DoublequotedHashlessRawLiteral2015,
@@ -56,7 +58,7 @@ const RULES_FOR_EDITION_2015: &[RuleName] = [
     RuleName::UnterminatedBlockComment,
     RuleName::Punctuation,
     RuleName::SingleQuotedLiteral,
-    RuleName::LifetimeOrLabel,
+    RuleName::NonRawLifetimeOrLabel,
     RuleName::DoublequotedNonrawLiteral2015,
     RuleName::DoublequotedHashlessRawLiteral2015,
     RuleName::DoublequotedHashedRawLiteral2015,
@@ -80,7 +82,9 @@ const RULES_FOR_EDITION_2021: &[RuleName] = [
     RuleName::UnterminatedBlockComment,
     RuleName::Punctuation,
     RuleName::SingleQuotedLiteral,
-    RuleName::LifetimeOrLabel,
+    RuleName::RawLifetimeOrLabel2021,
+    RuleName::ReservedLifetimeOrLabelPrefix2021,
+    RuleName::NonRawLifetimeOrLabel,
     RuleName::DoublequotedNonrawLiteral2021,
     RuleName::DoublequotedHashlessRawLiteral2021,
     RuleName::DoublequotedHashedRawLiteral2021,
@@ -183,7 +187,30 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
             "##)),
 
        // Lifetime or label
-       (RuleName::LifetimeOrLabel,
+       (RuleName::RawLifetimeOrLabel2021,
+        Rule::new_regex(
+            |cp| PretokenData::RawLifetimeOrLabel {
+                name: cp["name"].into(),
+            }, r##"\A
+                ' r \#
+                (?<name>
+                  [ \p{XID_Start} _ ]
+                  \p{XID_Continue} *
+                )
+            "##)),
+
+       // Reserved lifetime or label prefix
+       (RuleName::ReservedLifetimeOrLabelPrefix2021,
+        Rule::new_regex(
+            |_| PretokenData::Reserved, r##"\A
+                '
+                [ \p{XID_Start} _ ]
+                \p{XID_Continue} *
+                \#
+            "##)),
+
+       // Lifetime or label
+       (RuleName::NonRawLifetimeOrLabel,
         Rule::new_regex_with_forbidden_follower(
             |cp| PretokenData::LifetimeOrLabel {
                 name: cp["name"].into(),

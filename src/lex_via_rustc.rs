@@ -78,6 +78,7 @@ pub enum RustcTokenData {
         identifier: String,
     },
     Lifetime {
+        style: RustcIdentIsRaw,
         /// This includes the leading '
         symbol: String,
     },
@@ -133,7 +134,7 @@ pub enum RustcDocCommentStyle {
     Outer,
 }
 
-/// Whether an identifier was written in raw form.
+/// Whether an identifier or lifetime/label was written in raw form.
 pub enum RustcIdentIsRaw {
     No,
     Yes,
@@ -398,7 +399,8 @@ fn token_from_ast_token(
             style: style.into(),
             identifier: symbol.to_string(),
         },
-        TokenKind::Lifetime(symbol, _is_raw) => RustcTokenData::Lifetime {
+        TokenKind::Lifetime(symbol, style) => RustcTokenData::Lifetime {
+            style: style.into(),
             symbol: symbol.to_string(),
         },
         TokenKind::Literal(rustc_ast::token::Lit {

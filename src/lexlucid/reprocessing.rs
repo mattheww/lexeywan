@@ -53,6 +53,9 @@ pub enum FineTokenData {
     LifetimeOrLabel {
         name: Charseq,
     },
+    RawLifetimeOrLabel {
+        name: Charseq,
+    },
     CharacterLiteral {
         represented_character: char,
         suffix: Charseq,
@@ -157,6 +160,9 @@ pub fn reprocess(pretoken: &Pretoken) -> Result<FineToken, Error> {
         PretokenData::RawIdentifier { identifier } => lex_raw_identifier(identifier)?,
         PretokenData::LifetimeOrLabel { name } => {
             FineTokenData::LifetimeOrLabel { name: name.clone() }
+        }
+        PretokenData::RawLifetimeOrLabel { name } => {
+            FineTokenData::RawLifetimeOrLabel { name: name.clone() }
         }
         PretokenData::SingleQuoteLiteral {
             prefix,
