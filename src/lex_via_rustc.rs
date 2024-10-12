@@ -25,7 +25,7 @@ extern crate rustc_session;
 extern crate rustc_span;
 
 // This compiles with
-// rustc nightly from approximately 2024-09-09
+// rustc 1.83.0-nightly (1bc403daa 2024-10-11)
 
 use std::{
     mem,
@@ -261,7 +261,7 @@ impl ErrorEmitter {
 }
 
 impl rustc_errors::translation::Translate for ErrorEmitter {
-    fn fluent_bundle(&self) -> Option<&Lrc<rustc_errors::FluentBundle>> {
+    fn fluent_bundle(&self) -> Option<&rustc_errors::FluentBundle> {
         None
     }
 
@@ -271,7 +271,7 @@ impl rustc_errors::translation::Translate for ErrorEmitter {
 }
 
 impl rustc_errors::emitter::Emitter for ErrorEmitter {
-    fn source_map(&self) -> Option<&Lrc<SourceMap>> {
+    fn source_map(&self) -> Option<&SourceMap> {
         None
     }
 

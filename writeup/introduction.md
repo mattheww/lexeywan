@@ -23,7 +23,7 @@ That means it describes `c""` literals, but not
 Other statements in this document are intended to be true as of September 2024.
 
 The comparable implementation is intended to be compiled against (and compared against)\
-rustc nightly from approximately 2024-09-09
+`rustc 1.83.0-nightly (1bc403daa 2024-10-11)`
 
 
 ### Editions
