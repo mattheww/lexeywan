@@ -219,6 +219,10 @@ when `character_sequence` represents an iterator over the sequence of characters
 )
 ```
 
+Forbidden followers:
+
+- The character <b>'</b>
+
 ##### Pretoken kind
 `RawLifetimeOrLabel`
 

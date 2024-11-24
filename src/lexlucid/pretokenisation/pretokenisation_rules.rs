@@ -224,9 +224,9 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
                 )
             "##)),
 
-       // Lifetime or label
+       // Raw lifetime or label
        (RuleName::RawLifetimeOrLabel2021,
-        Rule::new_regex(
+        Rule::new_regex_with_forbidden_follower(
             |cp| PretokenData::RawLifetimeOrLabel {
                 name: cp["name"].into(),
             }, r##"\A
@@ -235,7 +235,8 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
                   [ \p{XID_Start} _ ]
                   \p{XID_Continue} *
                 )
-            "##)),
+            "##,
+            |c| c == '\'')),
 
        // Reserved lifetime or label prefix
        (RuleName::ReservedLifetimeOrLabelPrefix2021,
