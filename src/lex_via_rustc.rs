@@ -25,7 +25,7 @@ extern crate rustc_session;
 extern crate rustc_span;
 
 // This compiles with
-// rustc 1.83.0-nightly (1bc403daa 2024-10-11)
+// rustc 1.85.0-nightly (28fc2ba71 2024-11-24)
 
 use std::{
     mem,
