@@ -168,6 +168,7 @@ pub const LONGLIST: &[&str] = [
     "東京",
     "for",
     "€",
+    "$crate",
     "r#",
     "r# ",
     "r#x",
