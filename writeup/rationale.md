@@ -31,6 +31,7 @@ rather than trying to write non-overlapping lexer rules as the Reference does.
 The model described in this document uses one-character lookahead (beyond the token which will be matched) in the prelexing step, in two cases:
 
 - the lifetime-or-label rule, to prevent `'ab'c'` being analysed as `'ab` followed by `'c`
+  (and similarly for the raw-lifetime-or-label rule)
 - the rule for float literals ending in `.`, to make sure that `1.a` is analysed as `1` `.` `a` rather than `1.` `a`
 
 I think some kind of lookahead is unavoidable in these cases.

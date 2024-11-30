@@ -161,9 +161,7 @@ pub fn reprocess(pretoken: &Pretoken) -> Result<FineToken, Error> {
         PretokenData::LifetimeOrLabel { name } => {
             FineTokenData::LifetimeOrLabel { name: name.clone() }
         }
-        PretokenData::RawLifetimeOrLabel { name } => {
-            FineTokenData::RawLifetimeOrLabel { name: name.clone() }
-        }
+        PretokenData::RawLifetimeOrLabel { name } => lex_raw_lifetime_or_label(name)?,
         PretokenData::SingleQuoteLiteral {
             prefix,
             literal_content,
@@ -278,6 +276,15 @@ fn lex_raw_identifier(identifier: &Charseq) -> Result<FineTokenData, Error> {
     Ok(FineTokenData::RawIdentifier {
         represented_identifier,
     })
+}
+
+/// Validates and interprets a `r#...` raw identifier.
+fn lex_raw_lifetime_or_label(name: &Charseq) -> Result<FineTokenData, Error> {
+    let s = name.to_string();
+    if s == "_" || s == "crate" || s == "self" || s == "super" || s == "Self" {
+        return Err(rejected("forbidden raw lifetime or label"));
+    }
+    Ok(FineTokenData::RawLifetimeOrLabel { name: name.clone() })
 }
 
 /// Validates and interprets a single-quoted (character or byte) literal.

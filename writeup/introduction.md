@@ -11,16 +11,18 @@ and a framework for comparing its output to `rustc`'s.
 
 ### Rust language version
 
-This document describes Rust version 1.83 (as it is expected to be, as of 2024-10-12).
+This document describes Rust version 1.83.
 
 That means it describes raw lifetimes/labels and the additional reservations in the 2024 edition, but not
 
 - [rfc3349] (*Mixed UTF-8 literals*)
 
-Other statements in this document are intended to be true as of October 2024.
+See [Raw lifetimes in Rust 2015] for an exception.
+
+Other statements in this document are intended to be true as of November 2024.
 
 The comparable implementation is intended to be compiled against (and compared against)\
-`rustc 1.83.0-nightly (1bc403daa 2024-10-11)`
+`rustc 1.85.0-nightly (28fc2ba71 2024-11-24)`
 
 
 ### Editions
@@ -93,4 +95,6 @@ The source code for this document and the accompanying lexer implementation is a
 [rfc3349]: https://rust-lang.github.io/rfcs/3349-mixed-utf8-literals.html
 [rfc3593]: https://github.com/rust-lang/rfcs/pull/3593
 [pr126452]: https://github.com/rust-lang/rust/pull/126452
+
+[Raw lifetimes in Rust 2015]: rustc_oddities.md#raw-lifetimes-2015
 

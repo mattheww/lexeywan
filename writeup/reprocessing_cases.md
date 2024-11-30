@@ -169,7 +169,14 @@ A `LifetimeOrLabel` pretoken is always accepted.
 Fine-grained token kind produced:
 `RawLifetimeOrLabel`
 
-A `RawLifetimeOrLabel` pretoken is always accepted.
+The pretoken is rejected if (and only if) the <var>name</var> is one of the following sequences of characters:
+
+- <b>_</b>
+- <b>crate</b>
+- <b>self</b>
+- <b>super</b>
+- <b>Self</b>
+
 
 ##### Attributes
 <var>name</var>: copied
