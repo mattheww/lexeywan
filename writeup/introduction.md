@@ -17,6 +17,8 @@ That means it describes raw lifetimes/labels and the additional reservations in 
 
 - [rfc3349] (*Mixed UTF-8 literals*)
 
+See [Raw lifetimes in Rust 2015] for an exception.
+
 Other statements in this document are intended to be true as of November 2024.
 
 The comparable implementation is intended to be compiled against (and compared against)\
@@ -93,4 +95,6 @@ The source code for this document and the accompanying lexer implementation is a
 [rfc3349]: https://rust-lang.github.io/rfcs/3349-mixed-utf8-literals.html
 [rfc3593]: https://github.com/rust-lang/rfcs/pull/3593
 [pr126452]: https://github.com/rust-lang/rust/pull/126452
+
+[Raw lifetimes in Rust 2015]: rustc_oddities.md#raw-lifetimes-2015
 
