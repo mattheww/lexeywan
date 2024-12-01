@@ -197,6 +197,11 @@ pub const LONGLIST: &[&str] = [
     "Kelvin Kelvin",
     "Ⅹ Ⅰ Ⅽ",
 
+    // Example of a new character in Unicode 16.0
+    "\u{105C9}",
+    // Decomposed form of U+105C9
+    "\u{105D2}\u{0307}",
+
     //// Reserved prefixes
 
     "k#a",
