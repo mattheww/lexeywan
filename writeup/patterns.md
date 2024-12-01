@@ -44,18 +44,23 @@ refers to the set of characters which have the `Pattern_White_Space` Unicode pro
 | U+2028 | (line separator)        |
 | U+2029 | (paragraph separator)   |
 
+> Note: This set doesn't change in updated Unicode versions.
+
 
 ```
 \p{XID_Start}
 ```
 
-refers to the set of characters which have the `XID_Start` Unicode property.
+refers to the set of characters which have the `XID_Start` Unicode property
+(as of Unicode 16.0.0).
+
 
 ```
 \p{XID_Continue}
 ```
 
-refers to the set of characters which have the `XID_Continue` Unicode property.
+refers to the set of characters which have the `XID_Continue` Unicode property
+(as of Unicode 16.0.0).
 
 
 > The Reference adds the following when discussing identifiers:

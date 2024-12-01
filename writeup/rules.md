@@ -801,10 +801,10 @@ r \#
 |:----------------------|:--------------------|
 | <var>identifier</var> | captured characters |
 
-> Note: this is following the specification in [Unicode Standard Annex #31][UAX31] for Unicode version 15.0, with the addition of permitting underscore as the first character.
+> Note: this is following the specification in [Unicode Standard Annex #31][UAX31] for Unicode version 16.0, with the addition of permitting underscore as the first character.
 
 
 
 [base-vs-suffix]: open_questions.md#base-vs-suffix
 [block-comment-constraint]: open_questions.md#block-comment-constraint
-[UAX31]: https://www.unicode.org/reports/tr31/tr31-37.html
+[UAX31]: https://www.unicode.org/reports/tr31/tr31-41.html
