@@ -21,6 +21,19 @@ const MAX_INPUT_LENGTH: usize = 0x100_0000;
 ///
 /// Panics if the input is longer than 2^24 bytes (this is a sanity check, not part of the model).
 pub fn analyse(input: &str, edition: Edition) -> Analysis {
+    // Check that the Unicode version claimed by our dependencies matches what we document.
+    // The most important one is regex, but that doesn't have a UNICODE_VERSION constant.
+    assert_eq!(
+        unicode_xid::UNICODE_VERSION,
+        (16, 0, 0),
+        "Unicode version for unicode-xid"
+    );
+    assert_eq!(
+        unicode_normalization::UNICODE_VERSION,
+        (16, 0, 0),
+        "Unicode version for unicode-normalization"
+    );
+
     if input.len() > MAX_INPUT_LENGTH {
         panic!("input too long");
     }
