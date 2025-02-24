@@ -25,7 +25,7 @@ extern crate rustc_session;
 extern crate rustc_span;
 
 // This compiles with
-// rustc 1.85.0-nightly (28fc2ba71 2024-11-24)
+// rustc 1.87.0-nightly (f8a913b13 2025-02-23)
 
 use std::{
     mem,
@@ -36,8 +36,7 @@ use rustc_ast::{
     token::{Token, TokenKind},
     tokenstream::{TokenStream, TokenTree},
 };
-use rustc_data_structures::sync::Lrc;
-use rustc_errors::{DiagCtxt, LazyFallbackBundle};
+use rustc_errors::{registry::Registry, DiagCtxt, LazyFallbackBundle};
 use rustc_span::{
     source_map::{FilePathMapping, SourceMap},
     FileName,
@@ -276,7 +275,7 @@ impl rustc_errors::emitter::Emitter for ErrorEmitter {
         None
     }
 
-    fn emit_diagnostic(&mut self, diag: rustc_errors::DiagInner) {
+    fn emit_diagnostic(&mut self, diag: rustc_errors::DiagInner, _: &Registry) {
         use rustc_error_messages::DiagMessage;
         if !diag.is_error() {
             return;
@@ -303,7 +302,7 @@ impl rustc_errors::emitter::Emitter for ErrorEmitter {
 fn make_parser_session(error_list: ErrorAccumulator) -> rustc_session::parse::ParseSess {
     let emitter = ErrorEmitter::new(error_list);
     #[allow(clippy::arc_with_non_send_sync)]
-    let sm = Lrc::new(SourceMap::new(FilePathMapping::empty()));
+    let sm = Arc::new(SourceMap::new(FilePathMapping::empty()));
     let emitter = Box::new(emitter);
     let dcx = DiagCtxt::new(emitter).disable_warnings();
     rustc_session::parse::ParseSess::with_dcx(dcx, sm)
@@ -326,7 +325,7 @@ impl<'a> TokenStreamProcessor<'a> {
     }
 
     fn add_tokens_from_stream(&mut self, token_stream: &TokenStream) {
-        for token_tree in token_stream.trees() {
+        for token_tree in token_stream.iter() {
             self.add_tokens_from_tree(token_tree);
         }
     }

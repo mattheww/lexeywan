@@ -22,7 +22,7 @@ See [Raw lifetimes in Rust 2015] for an exception.
 Other statements in this document are intended to be true as of November 2024.
 
 The comparable implementation is intended to be compiled against (and compared against)\
-`rustc 1.85.0-nightly (28fc2ba71 2024-11-24)`
+`rustc 1.87.0-nightly (f8a913b13 2025-02-23)`
 
 
 ### Editions
