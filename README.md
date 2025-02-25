@@ -1,6 +1,6 @@
 This repository includes:
 
-* a detailed description of the proposed Rust 1.83 lexer (in `writeup`)
+* a detailed description of the Rust 1.85 lexer (in `writeup`)
 * a Rust reimplementation of the lexer based on that description (in `src`)
 * a manual list of testcases
 * a harness for running `rustc`'s lexer in-process (via `rustc_private`)

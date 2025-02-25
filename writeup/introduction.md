@@ -11,13 +11,13 @@ and a framework for comparing its output to `rustc`'s.
 
 ### Rust language version
 
-This document describes Rust version 1.83.
+This document describes Rust version 1.85.
 
 That means it describes raw lifetimes/labels and the additional reservations in the 2024 edition, but not
 
 - [rfc3349] (*Mixed UTF-8 literals*)
 
-Other statements in this document are intended to be true as of November 2024.
+Other statements in this document are intended to be true as of February 2025.
 
 The comparable implementation is intended to be compiled against (and compared against)\
 `rustc 1.87.0-nightly (f8a913b13 2025-02-23)`
@@ -25,12 +25,10 @@ The comparable implementation is intended to be compiled against (and compared a
 
 ### Editions
 
-This document describes the editions supported by Rust 1.83:
+This document describes the editions supported by Rust 1.85:
 - 2015
 - 2018
 - 2021
-
-and the expected changes for the in-development edition:
 - 2024
 
 There are no differences in lexing behaviour between the 2015 and 2018 editions.
