@@ -8,7 +8,7 @@ use crate::testcases;
 use crate::Edition;
 
 const USAGE: &str = "\
-Usage: lexeywan [--edition=2015|2021|2024] [<subcommand>] [...options]
+Usage: lexeywan [--edition=2015|2021|*2024] [<subcommand>] [...options]
 
 Subcommands:
  *compare  [--short] [--failures-only] [--details=always|*failures|never]
