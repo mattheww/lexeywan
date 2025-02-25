@@ -10,8 +10,7 @@ rustc_private=true
 pico-args = { version = "0.5.0", features = ["eq-separator"] }
 # This version uses Unicode 16.0 for its character database
 regex = "=1.11.1"
-# These are the exact versions used by
-# rustc 1.85.0-nightly (28fc2ba71 2024-11-24)
+# lexlucid::analyse() checks that these supply the required Unicode version
 unicode-normalization = "=0.1.24"
 unicode-xid = "=0.2.6"
 
