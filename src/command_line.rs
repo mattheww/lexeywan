@@ -52,7 +52,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         Some("2015") => Edition::E2015,
         Some("2021") => Edition::E2021,
         Some("2024") => Edition::E2024,
-        None => Edition::E2021,
+        None => Edition::E2024,
         _ => {
             return Err(pico_args::Error::ArgumentParsingFailed {
                 cause: "unknown edition".into(),
