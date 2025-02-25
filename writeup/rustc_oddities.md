@@ -20,20 +20,9 @@ reaction to being given a spec to review.
 Filed as rustc [#126759].
 
 
-### Raw lifetimes in Rust 2015 { #raw-lifetimes-2015 }
-
-Rustc 1.83 has a bug which causes it to reject forms like `'r#x'y` in the 2015 edition.
-This description doesn't attempt to model that bug.
-
-Filed as rustc [#133479] and fixed in [#133482].
-
-
 [playground-lifetime]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=31fc06e4d678e1a38d8d39f521e8a11c
 [playground-ident]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=aad27eb75b2774f16fc6b0981b770d56
 
 [rfc2457]: https://rust-lang.github.io/rfcs/2457-non-ascii-idents.html
 
 [#126759]: https://github.com/rust-lang/rust/issues/126759
-
-[#133479]: https://github.com/rust-lang/rust/issues/133479
-[#133482]: https://github.com/rust-lang/rust/issues/133482
