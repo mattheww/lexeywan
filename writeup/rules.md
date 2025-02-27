@@ -7,15 +7,15 @@
 [Reserved hash forms (Rust 2024)](#reserved-hash-forms-rust-2024)\
 [Punctuation](#punctuation)\
 [Single-quoted literal](#single-quoted-literal)\
-[Raw lifetime or label (Rust 2021)](#raw-lifetime-or-label-rust-2021)\
-[Reserved lifetime or label prefix (Rust 2021)](#reserved-lifetime-or-label-prefix-rust-2021)\
+[Raw lifetime or label (Rust 2021 and 2024)](#raw-lifetime-or-label-rust-2021-and-2024)\
+[Reserved lifetime or label prefix (Rust 2021 and 2024)](#reserved-lifetime-or-label-prefix-rust-2021-and-2024)\
 [Non-raw lifetime or label](#non-raw-lifetime-or-label)\
 [Double-quoted non-raw literal (Rust 2015 and 2018)](#double-quoted-non-raw-literal-rust-2015-and-2018)\
-[Double-quoted non-raw literal (Rust 2021)](#double-quoted-non-raw-literal-rust-2021)\
+[Double-quoted non-raw literal (Rust 2021 and 2024)](#double-quoted-non-raw-literal-rust-2021-and-2024)\
 [Double-quoted hashless raw literal (Rust 2015 and 2018)](#double-quoted-hashless-raw-literal-rust-2015-and-2018)\
-[Double-quoted hashless raw literal (Rust 2021)](#double-quoted-hashless-raw-literal-rust-2021)\
+[Double-quoted hashless raw literal (Rust 2021 and 2024)](#double-quoted-hashless-raw-literal-rust-2021-and-2024)\
 [Double-quoted hashed raw literal (Rust 2015 and 2018)](#double-quoted-hashed-raw-literal-rust-2015-and-2018)\
-[Double-quoted hashed raw literal (Rust 2021)](#double-quoted-hashed-raw-literal-rust-2021)\
+[Double-quoted hashed raw literal (Rust 2021 and 2024)](#double-quoted-hashed-raw-literal-rust-2021-and-2024)\
 [Float literal with exponent](#float-literal-with-exponent)\
 [Float literal without exponent](#float-literal-without-exponent)\
 [Float literal with final dot](#float-literal-with-final-dot)\
@@ -25,7 +25,7 @@
 [Integer decimal literal](#integer-decimal-literal)\
 [Raw identifier](#raw-identifier)\
 [Unterminated literal (Rust 2015 and 2018)](#unterminated-literal-rust-2015-and-2018)\
-[Reserved prefix or unterminated literal (Rust 2021)](#reserved-prefix-or-unterminated-literal-rust-2021)\
+[Reserved prefix or unterminated literal (Rust 2021 and 2024)](#reserved-prefix-or-unterminated-literal-rust-2021-and-2024)\
 [Non-raw identifier](#non-raw-identifier)
 
 
@@ -208,7 +208,7 @@ when `character_sequence` represents an iterator over the sequence of characters
 | <var>suffix</var>          | captured characters |
 
 
-#### Raw lifetime or label (Rust 2021) { .rule }
+#### Raw lifetime or label (Rust 2021 and 2024) { .rule }
 
 ##### Pattern
 ```
@@ -232,7 +232,7 @@ Forbidden followers:
 | <var>name</var> | captured characters |
 
 
-#### Reserved lifetime or label prefix (Rust 2021) { .rule }
+#### Reserved lifetime or label prefix (Rust 2021 and 2024) { .rule }
 
 ##### Pattern
 ```
@@ -310,7 +310,7 @@ Forbidden followers:
 | <var>suffix</var>          | captured characters |
 
 
-#### Double-quoted non-raw literal (Rust 2021) { .rule }
+#### Double-quoted non-raw literal (Rust 2021 and 2024) { .rule }
 
 ##### Pattern
 ```
@@ -344,7 +344,7 @@ Forbidden followers:
 | <var>literal content</var> | captured characters |
 | <var>suffix</var>          | captured characters |
 
-> Note: the difference between the 2015/2018 and 2021 patterns is that the 2021 pattern allows `c` as a prefix.
+> Note: the difference between the 2015/2018 and 2021/2024 patterns is that the 2021/2024 pattern allows `c` as a prefix.
 
 
 #### Double-quoted hashless raw literal (Rust 2015 and 2018) { .rule }
@@ -378,7 +378,7 @@ Forbidden followers:
 | <var>suffix</var>          | captured characters |
 
 
-#### Double-quoted hashless raw literal (Rust 2021) { .rule }
+#### Double-quoted hashless raw literal (Rust 2021 and 2024) { .rule }
 
 ##### Pattern
 ```
@@ -408,7 +408,7 @@ Forbidden followers:
 | <var>literal content</var> | captured characters |
 | <var>suffix</var>          | captured characters |
 
-> Note: the difference between the 2015/2018 and 2021 patterns is that the 2021 pattern allows `cr` as a prefix.
+> Note: the difference between the 2015/2018 and and 2021/2024 patterns is that the 2021/2024 pattern allows `cr` as a prefix.
 
 > Note: we can't treat the hashless rule as a special case of the hashed one because the "shortest maximal match" rule doesn't work without hashes (consider `r"x""`).
 
@@ -454,7 +454,7 @@ The constraint is satisfied if (and only if) the character sequence captured by 
 | <var>suffix</var>          | captured characters |
 
 
-#### Double-quoted hashed raw literal (Rust 2021) { .rule }
+#### Double-quoted hashed raw literal (Rust 2021 and 2024) { .rule }
 
 ##### Pattern
 ```
@@ -494,7 +494,7 @@ The constraint is satisfied if (and only if) the character sequence captured by 
 | <var>literal content</var> | captured characters |
 | <var>suffix</var>          | captured characters |
 
-> Note: the difference between the 2015/2018 and 2021 patterns is that the 2021 pattern allows `cr` as a prefix.
+> Note: the difference between the 2015/2018 and 2021/2024 patterns is that the 2021/2024 pattern allows `cr` as a prefix.
 
 
 #### Float literal with exponent { .rule }
@@ -767,7 +767,7 @@ r \#
 (none)
 
 
-#### Reserved prefix or unterminated literal (Rust 2021) { .rule }
+#### Reserved prefix or unterminated literal (Rust 2021 and 2024) { .rule }
 
 ##### Pattern
 ```
