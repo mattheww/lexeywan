@@ -7,7 +7,7 @@
 pub fn escape_for_display(input: &str) -> String {
     let mut s = String::new();
     for c in input.chars() {
-        if c.is_ascii_graphic() || c == ' ' {
+        if c.is_ascii_graphic() || c == ' ' || c == '·' {
             s.push(c)
         } else if (c as u32) < 256 {
             s.push_str(&format!("‹{:02X}›", c as u32));
