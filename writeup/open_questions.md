@@ -86,8 +86,7 @@ used to determine which rule is chosen in positions where more than one rule mat
 I believe that in almost all cases it would be equivalent to say that the rule which matches the longest extent is chosen
 (in particular, if multiple rules match then one has a longer extent than any of the others).
 
-See [Integer literal base-vs-suffix ambiguity][base-vs-suffix] below for the exception,
-where explicit priority is needed to disambiguate equal-length matches.
+See [Integer literal base-vs-suffix ambiguity][base-vs-suffix] below for the exception.
 
 This document uses the order in which the rules are presented as the priority,
 which has the downside of forcing an unnatural presentation order
@@ -96,9 +95,10 @@ which has the downside of forcing an unnatural presentation order
 Perhaps it would be better to say that longest-extent is the primary way to disambiguate,
 and add a secondary principle to cover the exceptional cases.
 
-The comparable implementation reports (as "model error") any cases where the priority principle doesn't agree with the longest-extent principle,
-or where there wasn't a unique longest match
-(other than the Integer literal base-vs-suffix ambiguity).
+The comparable implementation reports (as "model error") any cases
+(other than the Integer literal base-vs-suffix ambiguity)
+where the priority principle doesn't agree with the longest-extent principle,
+or where there wasn't a unique longest match.
 
 
 #### Integer literal base-vs-suffix ambiguity { #base-vs-suffix }
@@ -113,12 +113,23 @@ both cases have the same kind.
 But if we want to make the lexer responsible for identifying which part of the input is the suffix,
 we need to make sure it gets the right answer (ie, the one with no suffix).
 
-Similarly `0b1e2` needs to be rejected, not accepted as a decimal integer literal `0` with suffix `b1e2`.
-In this case we can't avoid dealing with the distinction in the lexer.
+Further, there are cases where we need to reject input which matches the rule for a decimal integer literal `0` with a suffix,
+for example `0b1e2`, `0b0123` (see [rfc0879]), or `0x·`.
+
+(Note that <b>·</b> has the `XID_Continue` property but not `XID_Start`.)
+
+In these cases we can't avoid dealing with the base-vs-suffix ambiguity in the lexer.
 
 This model uses a separate rule for integer decimal literals,
 with lower priority than all other numeric literals,
 to make sure we get these results.
+
+Note that in the `0x·` example the extent matched by the lower priority rule is longer than the extent matched by the chosen rule.
+
+If relying on priorities like this seems undesirable,
+I think it would be possible to rework the rules to avoid it.
+It might work to allow the difficult cases to pretokenise as decimal integer literals,
+and have reprocessing reject decimal literal pretokens which begin with a base indicator.
 
 
 ### Token kinds and attributes
@@ -232,6 +243,8 @@ Should the spec say anything?
 [C-string literals]: reprocessing_cases.md#c-string-literal
 
 [string-continuation]: escape_processing.md#string-continuation-escapes
+
+[rfc0879]: https://github.com/rust-lang/rfcs/pull/0879
 
 [#70528]: https://github.com/rust-lang/rust/issues/70528
 [#71487]: https://github.com/rust-lang/rust/pull/71487

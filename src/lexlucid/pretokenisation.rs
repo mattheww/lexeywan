@@ -234,8 +234,8 @@ fn resolve(matches: Vec<Pretoken>) -> LexOutcome {
 /// known exceptions.
 ///
 /// At present the only exception is that an additional rule for a decimal integer literal may
-/// succeed when the chosen rule is for a non-decimal float or integer literal (eg for `0x3` or
-/// `0b1e2`).
+/// succeed when the chosen rule is for a non-decimal float or integer literal (eg for `0x3`,
+/// `0b1e2`, or `0x·`).
 ///
 /// 'best' is the pretoken from the highest-priority successful rule.
 /// 'violators' are the pretokens from successful rules which are at least as long as 'best'.
@@ -264,7 +264,6 @@ fn is_exception_to_longest_match_principle(best: &Pretoken, violators: &Vec<Pret
     if is_nondecimal_numeric_literal(&best)
         && violators.len() == 1
         && is_decimal_integer_literal(&violators[0])
-        && violators[0].char_length() == best.char_length()
     {
         return true;
     }
