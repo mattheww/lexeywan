@@ -943,6 +943,21 @@ pub const LONGLIST: &[&str] = [
     "0z3.4",
 
 
+    // Colour- and UUID-like forms, that macros might use
+
+    "#aabbcc",
+    "#aabb11",
+    "#112233",
+    "#1122aa",
+    "#112e33",
+    "#112e3a",
+    "#11223e",
+    "#1122ea",
+    "7ad85a2c-f2d0-11fd-afd0-b3104db0cb68",
+    "7ad85a2c-f2d0-11ed-afd0-b3104db0cb68",
+    "7ad85a2c-f2d0-111e-afd0-b3104db0cb68",
+
+
     //// Combinations
 
     "/* my source file */ fn main() { println!(\"zebra\"); }\n",
