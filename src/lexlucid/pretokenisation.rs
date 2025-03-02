@@ -235,13 +235,30 @@ fn resolve(matches: Vec<Pretoken>) -> LexOutcome {
 /// the same result as choosing the rule which matched the longest sequence of characters, with only
 /// known exceptions.
 ///
-/// At present the only exception is that an additional rule for a decimal integer literal may
-/// succeed when the chosen rule is for a non-decimal float or integer literal (eg for `0x3`,
-/// `0b1e2`, or `0x·`).
+/// At present the exceptions are:
+///
+/// - an additional rule for a decimal integer literal may succeed when the chosen rule is for a
+///   non-decimal float or integer literal (eg for `0x3`, `0b1e2`, or `0x·`).
+///
+/// - float literal with exponent is chosen over any other numeric literal
+///   (eg for `1e2`)
 ///
 /// 'best' is the pretoken from the highest-priority successful rule.
 /// 'violators' are the pretokens from successful rules which are at least as long as 'best'.
 fn is_exception_to_longest_match_principle(best: &Pretoken, violators: &Vec<Pretoken>) -> bool {
+    fn is_numeric_literal(pretoken: &Pretoken) -> bool {
+        matches!(
+            pretoken,
+            Pretoken {
+                data: PretokenData::IntegerBinaryLiteral { .. }
+                    | PretokenData::IntegerOctalLiteral { .. }
+                    | PretokenData::IntegerHexadecimalLiteral { .. }
+                    | PretokenData::IntegerDecimalLiteral { .. }
+                    | PretokenData::FloatLiteral { .. },
+                ..
+            }
+        )
+    }
     fn is_decimal_integer_literal(pretoken: &Pretoken) -> bool {
         matches!(
             pretoken,
@@ -263,10 +280,25 @@ fn is_exception_to_longest_match_principle(best: &Pretoken, violators: &Vec<Pret
             }
         )
     }
+    fn is_float_literal_with_exponent(pretoken: &Pretoken) -> bool {
+        matches!(
+            pretoken,
+            Pretoken {
+                data: PretokenData::FloatLiteral {
+                    exponent_digits: Some(_),
+                    ..
+                },
+                ..
+            }
+        )
+    }
     if is_nondecimal_numeric_literal(&best)
         && violators.len() == 1
         && is_decimal_integer_literal(&violators[0])
     {
+        return true;
+    }
+    if is_float_literal_with_exponent(&best) && violators.iter().all(is_numeric_literal) {
         return true;
     }
     false
