@@ -586,7 +586,7 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
                 )
             "##)),
 
-       // Integer hexadecimel literal
+       // Integer hexadecimal literal
        (RuleName::IntegerHexadecimalLiteral,
         Rule::new_regex(
             |cp| {
