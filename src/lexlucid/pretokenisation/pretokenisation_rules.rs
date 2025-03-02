@@ -41,7 +41,8 @@ enum RuleName {
     DoublequotedHashlessRawLiteral2021,
     DoublequotedHashedRawLiteral2015,
     DoublequotedHashedRawLiteral2021,
-    FloatLiteralWithExponent,
+    FloatLiteralWithSignedExponent,
+    FloatLiteralWithSignlessExponent,
     FloatLiteralWithoutExponent,
     FloatLiteralWithFinalDot,
     IntegerBinaryLiteral,
@@ -65,7 +66,8 @@ const RULES_FOR_EDITION_2015: &[RuleName] = [
     RuleName::DoublequotedNonrawLiteral2015,
     RuleName::DoublequotedHashlessRawLiteral2015,
     RuleName::DoublequotedHashedRawLiteral2015,
-    RuleName::FloatLiteralWithExponent,
+    RuleName::FloatLiteralWithSignedExponent,
+    RuleName::FloatLiteralWithSignlessExponent,
     RuleName::FloatLiteralWithoutExponent,
     RuleName::FloatLiteralWithFinalDot,
     RuleName::IntegerBinaryLiteral,
@@ -91,7 +93,8 @@ const RULES_FOR_EDITION_2021: &[RuleName] = [
     RuleName::DoublequotedNonrawLiteral2021,
     RuleName::DoublequotedHashlessRawLiteral2021,
     RuleName::DoublequotedHashedRawLiteral2021,
-    RuleName::FloatLiteralWithExponent,
+    RuleName::FloatLiteralWithSignedExponent,
+    RuleName::FloatLiteralWithSignlessExponent,
     RuleName::FloatLiteralWithoutExponent,
     RuleName::FloatLiteralWithFinalDot,
     RuleName::IntegerBinaryLiteral,
@@ -118,7 +121,8 @@ const RULES_FOR_EDITION_2024: &[RuleName] = [
     RuleName::DoublequotedNonrawLiteral2021,
     RuleName::DoublequotedHashlessRawLiteral2021,
     RuleName::DoublequotedHashedRawLiteral2021,
-    RuleName::FloatLiteralWithExponent,
+    RuleName::FloatLiteralWithSignedExponent,
+    RuleName::FloatLiteralWithSignlessExponent,
     RuleName::FloatLiteralWithoutExponent,
     RuleName::FloatLiteralWithFinalDot,
     RuleName::IntegerBinaryLiteral,
@@ -441,8 +445,8 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
             \z"##)),
 
 
-       // Float literal with exponent
-       (RuleName::FloatLiteralWithExponent,
+       // Float literal with signed exponent
+       (RuleName::FloatLiteralWithSignedExponent,
         Rule::new_regex(
             |cp| {
                 PretokenData::FloatLiteral {
@@ -468,8 +472,49 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
                     [ 0-9 _ ] *
                   ) ?
                   [eE]
-                  [+-] ?
+                  [+-]
                   (?<exponent_digits>
+                    [ 0-9 _ ] *
+                  )
+                )
+                (?<suffix>
+                  (?:
+                    [ \p{XID_Start} ]
+                    \p{XID_Continue} *
+                  ) ?
+                )
+            "##)),
+
+       // Float literal with exponent
+       (RuleName::FloatLiteralWithSignlessExponent,
+        Rule::new_regex(
+            |cp| {
+                PretokenData::FloatLiteral {
+                    has_base: cp.name("based").is_some(),
+                    body: cp["body"].into(),
+                    exponent_digits: Some(cp["exponent_digits"].into()),
+                    suffix: cp["suffix"].into(),
+                }
+            }, r##"\A
+                (?<body>
+                  (?:
+                    (?<based>
+                      (?: 0b | 0o )
+                      [ 0-9 _ ] *
+                    )
+                  |
+                    [ 0-9 ]
+                    [ 0-9 _ ] *
+                  )
+                  (?:
+                    \.
+                    [ 0-9 ]
+                    [ 0-9 _ ] *
+                  ) ?
+                  [eE]
+                  (?<exponent_digits>
+                    _ *
+                    [ 0-9 ]
                     [ 0-9 _ ] *
                   )
                 )
@@ -511,7 +556,7 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
                 )
                 (?<suffix>
                   (?:
-                    [ \p{XID_Start} -- eE]
+                    \p{XID_Start}
                     \p{XID_Continue} *
                   ) ?
                 )
@@ -559,7 +604,7 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
                 )
                 (?<suffix>
                   (?:
-                    [ \p{XID_Start} -- eE]
+                    \p{XID_Start}
                     \p{XID_Continue} *
                   ) ?
                 )
@@ -580,7 +625,7 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
                 )
                 (?<suffix>
                   (?:
-                    [ \p{XID_Start} -- eE]
+                    \p{XID_Start}
                     \p{XID_Continue} *
                   ) ?
                 )
@@ -622,7 +667,7 @@ fn make_named_rules() -> BTreeMap<RuleName, Rule> {
                 )
                 (?<suffix>
                   (?:
-                    [ \p{XID_Start} -- eE]
+                    \p{XID_Start}
                     \p{XID_Continue} *
                   ) ?
                 )
