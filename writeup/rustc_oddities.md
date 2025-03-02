@@ -20,9 +20,26 @@ reaction to being given a spec to review.
 Filed as rustc [#126759].
 
 
+### Restriction on e-suffixes
+
+With the implementation of [pr131656] as of 2025-03-02,
+support for numeric literal suffixes beginning with <b>e</b> or <b>E</b> is incomplete,
+and rejects some (very obscure) cases.
+
+A numeric literal token is rejected if:
+ - it doesn't have an exponent; and
+ - it has a suffix of the following form:
+   - begins with <b>e</b> or <b>E</b>
+   - immediately followed by one or more <b>_</b> characters
+   - immediately followed by a character which has the `XID_Continue` property but not `XID_Start`.
+
+For example, `123e_·` is rejected.
+
+
 [playground-lifetime]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=31fc06e4d678e1a38d8d39f521e8a11c
 [playground-ident]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=aad27eb75b2774f16fc6b0981b770d56
 
 [rfc2457]: https://rust-lang.github.io/rfcs/2457-non-ascii-idents.html
 
 [#126759]: https://github.com/rust-lang/rust/issues/126759
+[pr131656]: https://github.com/rust-lang/rust/pull/131656
