@@ -92,5 +92,4 @@ The source code for this document and the accompanying lexer implementation is a
 
 [rfc3349]: https://rust-lang.github.io/rfcs/3349-mixed-utf8-literals.html
 [rfc3593]: https://github.com/rust-lang/rfcs/pull/3593
-[pr126452]: https://github.com/rust-lang/rust/pull/126452
 
