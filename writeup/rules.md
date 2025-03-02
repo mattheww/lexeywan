@@ -16,7 +16,8 @@
 [Double-quoted hashless raw literal (Rust 2021 and 2024)](#double-quoted-hashless-raw-literal-rust-2021-and-2024)\
 [Double-quoted hashed raw literal (Rust 2015 and 2018)](#double-quoted-hashed-raw-literal-rust-2015-and-2018)\
 [Double-quoted hashed raw literal (Rust 2021 and 2024)](#double-quoted-hashed-raw-literal-rust-2021-and-2024)\
-[Float literal with exponent](#float-literal-with-exponent)\
+[Float literal with signed exponent](#float-literal-with-signed-exponent)\
+[Float literal with signless exponent](#float-literal-with-signless-exponent)\
 [Float literal without exponent](#float-literal-without-exponent)\
 [Float literal with final dot](#float-literal-with-final-dot)\
 [Integer binary literal](#integer-binary-literal)\
@@ -497,7 +498,7 @@ The constraint is satisfied if (and only if) the character sequence captured by 
 > Note: the difference between the 2015/2018 and 2021/2024 patterns is that the 2021/2024 pattern allows `cr` as a prefix.
 
 
-#### Float literal with exponent { .rule }
+#### Float literal with signed exponent { .rule }
 
 ##### Pattern
 ```
@@ -517,8 +518,55 @@ The constraint is satisfied if (and only if) the character sequence captured by 
     [ 0-9 _ ] *
   ) ?
   [eE]
-  [+-] ?
+  [+-]
   (?<exponent_digits>
+    [ 0-9 _ ] *
+  )
+)
+(?<suffix>
+  (?:
+    [ \p{XID_Start} ]
+    \p{XID_Continue} *
+  ) ?
+)
+```
+
+##### Pretoken kind
+`FloatLiteral`
+
+##### Attributes
+
+|                            |                                                                                         |
+|:---------------------------|:----------------------------------------------------------------------------------------|
+| <var>has base</var>        | **true** if the `based` capture group participates in the match,<br>**false** otherwise |
+| <var>body</var>            | captured characters                                                                     |
+| <var>exponent digits</var> | captured characters                                                                     |
+| <var>suffix</var>          | captured characters                                                                     |
+
+
+#### Float literal with signless exponent { .rule }
+
+##### Pattern
+```
+(?<body>
+  (?:
+    (?<based>
+      (?: 0b | 0o )
+      [ 0-9 _ ] *
+    )
+  |
+    [ 0-9 ]
+    [ 0-9 _ ] *
+  )
+  (?:
+    \.
+    [ 0-9 ]
+    [ 0-9 _ ] *
+  ) ?
+  [eE]
+  (?<exponent_digits>
+    _ *
+    [ 0-9 ]
     [ 0-9 _ ] *
   )
 )
@@ -566,7 +614,7 @@ The constraint is satisfied if (and only if) the character sequence captured by 
 )
 (?<suffix>
   (?:
-    [ \p{XID_Start} -- eE]
+    \p{XID_Start}
     \p{XID_Continue} *
   ) ?
 )
@@ -631,7 +679,7 @@ Forbidden followers:
 )
 (?<suffix>
   (?:
-    [ \p{XID_Start} -- eE]
+    \p{XID_Start}
     \p{XID_Continue} *
   ) ?
 )
@@ -657,7 +705,7 @@ Forbidden followers:
 )
 (?<suffix>
   (?:
-    [ \p{XID_Start} -- eE]
+    \p{XID_Start}
     \p{XID_Continue} *
   ) ?
 )
@@ -709,7 +757,7 @@ Forbidden followers:
 )
 (?<suffix>
   (?:
-    [ \p{XID_Start} -- eE]
+    \p{XID_Start}
     \p{XID_Continue} *
   ) ?
 )
