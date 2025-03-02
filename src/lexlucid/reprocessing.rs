@@ -361,11 +361,34 @@ fn lex_raw_double_quote_literal(
     }
 }
 
+/// Reject some numeric literal suffixes beginning with 'e' or 'E'
+/// These are forms that rustc currently rejects, though ideally it wouldn't
+/// See https://github.com/rust-lang/rust/pull/131656
+fn check_numeric_literal_suffix(suffix: &Charseq) -> Result<(), Error> {
+    let mut chars = suffix.iter().copied();
+    if let Some('e' | 'E') = chars.next() {
+        if let Some('_') = chars.next() {
+            let mut chars = chars.skip_while(|&c| c == '_');
+            if let Some(c) = chars.next() {
+                if unicode_xid::UnicodeXID::is_xid_continue(c)
+                    && !unicode_xid::UnicodeXID::is_xid_start(c)
+                {
+                    return Err(rejected(
+                        "unsupported suffix (continue-only after underscore)",
+                    ));
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
 /// Validates and interprets a decimal integer literal.
 fn lex_integer_decimal_literal(digits: &Charseq, suffix: &Charseq) -> Result<FineTokenData, Error> {
     if digits.iter().all(|c| *c == '_') {
         return Err(rejected("no digits"));
     }
+    check_numeric_literal_suffix(suffix)?;
     Ok(FineTokenData::IntegerLiteral {
         base: NumericBase::Decimal,
         digits: digits.clone(),
@@ -381,6 +404,7 @@ fn lex_integer_hexadecimal_literal(
     if digits.iter().all(|c| *c == '_') {
         return Err(rejected("no digits"));
     }
+    check_numeric_literal_suffix(suffix)?;
     Ok(FineTokenData::IntegerLiteral {
         base: NumericBase::Hexadecimal,
         digits: digits.clone(),
@@ -396,6 +420,7 @@ fn lex_integer_octal_literal(digits: &Charseq, suffix: &Charseq) -> Result<FineT
     if !digits.iter().all(|c| *c == '_' || (*c >= '0' && *c < '8')) {
         return Err(rejected("invalid digit"));
     }
+    check_numeric_literal_suffix(suffix)?;
     Ok(FineTokenData::IntegerLiteral {
         base: NumericBase::Octal,
         digits: digits.clone(),
@@ -411,6 +436,7 @@ fn lex_integer_binary_literal(digits: &Charseq, suffix: &Charseq) -> Result<Fine
     if !digits.iter().all(|c| *c == '_' || (*c >= '0' && *c < '2')) {
         return Err(rejected("invalid digit"));
     }
+    check_numeric_literal_suffix(suffix)?;
     Ok(FineTokenData::IntegerLiteral {
         base: NumericBase::Binary,
         digits: digits.clone(),
@@ -432,8 +458,9 @@ fn lex_float_literal(
         if digits.iter().all(|c| *c == '_') {
             return Err(rejected("no digits in exponent"));
         }
+    } else {
+        check_numeric_literal_suffix(suffix)?;
     }
-
     Ok(FineTokenData::FloatLiteral {
         body: body.clone(),
         suffix: suffix.clone(),
