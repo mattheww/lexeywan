@@ -86,7 +86,9 @@ used to determine which rule is chosen in positions where more than one rule mat
 I believe that in almost all cases it would be equivalent to say that the rule which matches the longest extent is chosen
 (in particular, if multiple rules match then one has a longer extent than any of the others).
 
-See [Integer literal base-vs-suffix ambiguity][base-vs-suffix] below for the exception.
+See [Integer literal base-vs-suffix ambiguity][base-vs-suffix]
+and [Exponent-vs-suffix ambiguity][exponent-vs-suffix]
+below for the exceptions.
 
 This document uses the order in which the rules are presented as the priority,
 which has the downside of forcing an unnatural presentation order
@@ -96,7 +98,7 @@ Perhaps it would be better to say that longest-extent is the primary way to disa
 and add a secondary principle to cover the exceptional cases.
 
 The comparable implementation reports (as "model error") any cases
-(other than the Integer literal base-vs-suffix ambiguity)
+(other than the exceptions described below)
 where the priority principle doesn't agree with the longest-extent principle,
 or where there wasn't a unique longest match.
 
@@ -130,6 +132,21 @@ If relying on priorities like this seems undesirable,
 I think it would be possible to rework the rules to avoid it.
 It might work to allow the difficult cases to pretokenise as decimal integer literals,
 and have reprocessing reject decimal literal pretokens which begin with a base indicator.
+
+
+#### Exponent-vs-suffix ambiguity { #exponent-vs-suffix }
+
+Now that numeric literal suffixes can begin with <b>e</b> or <b>E</b>,
+many cases of float literals with an exponent could also be interpreted as integer or float literals with a suffix,
+for example `123e4` or `123.4e5`.
+
+This model gives the rules for float literals with an exponent higher priority than any other rules for numeric literals,
+to make sure we get the desired result.
+
+Note that there are again examples where the extent matched by the lower priority rule is longer than the extent matched by the chosen rule.
+For example `1e2·` could be interpreted as an integer decimal literal with suffix `e2·`,
+but instead we find the float literal `1e2`
+and then reject the remainder of the input.
 
 
 ### Token kinds and attributes
@@ -234,6 +251,7 @@ Should the spec say anything?
 
 
 [base-vs-suffix]: #base-vs-suffix
+[exponent-vs-suffix]: #exponent-vs-suffix
 
 [Block comment]: rules.md#block-comment
 [Raw identifier]: rules.md#raw-identifier
