@@ -16,16 +16,14 @@ It is an error if the file is not valid UTF-8.
 
 If the first character in the sequence is `U+FEFF` (BYTE ORDER MARK), it is removed.
 
-## CRLF normalization
+## CRLF normalisation
 
 Each pair of characters `U+000D` <kbd>CR</kbd> immediately followed by `U+000A` <kbd>LF</kbd> is replaced by a single `U+000A` <kbd>LF</kbd>.
 
 Other occurrences of the character `U+000D` <kbd>CR</kbd> are left in place (they are treated as whitespace).
 
-> Note: this document's description of tokenisation doesn't assume that the sequence <kbd>CR</kbd><kbd>LF</kbd> never appears in its input;
-> that makes it more general than necessary, but should do no harm.
->
-> In particular, in places where the Reference says that tokens may not contain "lone CR", this description just says that any <kbd>CR</kbd> is rejected.
+> Note: it's still possible for the sequence <kbd>CR</kbd><kbd>LF</kbd> to be passed on to the tokeniser:
+> that will happen if the source file contained the sequence <kbd>CR</kbd><kbd>CR</kbd><kbd>LF</kbd>.
 
 
 ## Shebang removal
