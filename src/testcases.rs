@@ -984,8 +984,14 @@ pub const LONGLIST: &[&str] = [
     "one\r\ntwo\rthree",
     " \"one\r\ntwo\r\nthree\" ",
     " \"one\r\ntwo\rthree\" ",
+    " r\"one\r\ntwo\r\nthree\" ",
+    " r\"one\r\ntwo\rthree\" ",
+    " b\"one\r\ntwo\r\nthree\" ",
+    " b\"one\r\ntwo\rthree\" ",
     " //!one\r\ntwo\r\nthree ",
     " //!one\r\ntwo\rthree\" ",
+    " \"one\r\r\ntwo\" ",
+    " r\"one\r\r\ntwo\" ",
 
 
     //// Shebang
