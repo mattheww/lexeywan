@@ -1,4 +1,4 @@
-//! Converts lexlucid ["fine-grained"][FineToken] tokens into ["coarse"][CoarseToken] tokens.
+//! Converts ["fine-grained"][FineToken] tokens into ["coarse"][CoarseToken] tokens.
 //!
 //! These combine some adjacent punctuation marks into single tokens, in the same way as by-example
 //! macros with the `tt` fragment specifier.
@@ -7,7 +7,7 @@
 //! information instead.
 
 use crate::char_sequences::{concat_charseqs, Charseq};
-use crate::lexlucid::{self, CommentStyle, FineToken, FineTokenData};
+use crate::fine_tokens::{self, CommentStyle, FineToken, FineTokenData};
 
 /// A "Coarse-grained" token.
 ///
@@ -405,13 +405,13 @@ impl TryFrom<FineTokenData> for CoarseTokenData {
     }
 }
 
-impl From<lexlucid::NumericBase> for NumericBase {
-    fn from(base: lexlucid::NumericBase) -> Self {
+impl From<fine_tokens::NumericBase> for NumericBase {
+    fn from(base: fine_tokens::NumericBase) -> Self {
         match base {
-            lexlucid::NumericBase::Binary => NumericBase::Binary,
-            lexlucid::NumericBase::Octal => NumericBase::Octal,
-            lexlucid::NumericBase::Decimal => NumericBase::Decimal,
-            lexlucid::NumericBase::Hexadecimal => NumericBase::Hexadecimal,
+            fine_tokens::NumericBase::Binary => NumericBase::Binary,
+            fine_tokens::NumericBase::Octal => NumericBase::Octal,
+            fine_tokens::NumericBase::Decimal => NumericBase::Decimal,
+            fine_tokens::NumericBase::Hexadecimal => NumericBase::Hexadecimal,
         }
     }
 }

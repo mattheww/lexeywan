@@ -1,5 +1,6 @@
 //! Reimplementation of rustc's lexical analysis.
 
+use crate::fine_tokens::FineToken;
 use crate::utils::escape_for_display;
 use crate::Edition;
 
@@ -7,7 +8,6 @@ mod pretokenisation;
 mod reprocessing;
 
 pub use pretokenisation::Pretoken;
-pub use reprocessing::{CommentStyle, FineToken, FineTokenData, NumericBase};
 
 const MAX_INPUT_LENGTH: usize = 0x100_0000;
 

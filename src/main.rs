@@ -5,6 +5,7 @@ mod cleaning;
 mod combination;
 mod command_line;
 mod comparison;
+mod fine_tokens;
 mod lex_via_rustc;
 mod lexlucid;
 mod proptesting;

@@ -10,6 +10,7 @@ use crate::combination;
 use crate::comparison::{
     compare, regularised_from_lexlucid, regularised_from_rustc, Comparison, Regularisation,
 };
+use crate::fine_tokens::FineToken;
 use crate::lex_via_rustc;
 use crate::lexlucid;
 use crate::utils::escape_for_display;
@@ -64,7 +65,7 @@ pub enum DetailsMode {
 fn format_pretoken(pretoken: &lexlucid::Pretoken) -> String {
     format!("{:?}, {:?}", pretoken.data, pretoken.extent)
 }
-fn format_token(token: &lexlucid::FineToken) -> String {
+fn format_token(token: &FineToken) -> String {
     format!("{:?}, {:?}", token.data, token.extent)
 }
 fn format_coarse_token(ctoken: &combination::CoarseToken) -> String {
