@@ -2,6 +2,7 @@
 
 use crate::cleaning;
 use crate::combination;
+use crate::lex_via_peg;
 use crate::lex_via_rustc;
 use crate::lexlucid;
 use crate::regular_tokens::{regularise_from_coarse, regularise_from_rustc, RegularToken};
@@ -38,6 +39,20 @@ pub fn regularised_from_lexlucid(input: &str, edition: Edition) -> Regularisatio
     use lexlucid::Analysis::*;
     let cleaned = cleaning::clean(input);
     match lexlucid::analyse(&cleaned, edition) {
+        Accepts(_, fine_tokens) => {
+            Regularisation::Accepts(regularise_from_coarse(combination::coarsen(fine_tokens)))
+        }
+        Rejects(reason) => Regularisation::Rejects(reason.into_description()),
+        ModelError(reason) => Regularisation::ModelError(reason.into_description()),
+    }
+}
+
+#[allow(unused)]
+/// Run lex_via_peg's lexical analysis and return the regularised result.
+pub fn regularised_from_peg(input: &str, edition: Edition) -> Regularisation {
+    use lex_via_peg::Analysis::*;
+    let cleaned = cleaning::clean(input);
+    match lex_via_peg::analyse(&cleaned, edition) {
         Accepts(_, fine_tokens) => {
             Regularisation::Accepts(regularise_from_coarse(combination::coarsen(fine_tokens)))
         }
