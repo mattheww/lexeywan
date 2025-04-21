@@ -1,7 +1,7 @@
 This repository includes:
 
 * a detailed description of the Rust 1.86 lexer (in `writeup`)
-* a Rust reimplementation of the lexer based on that description (in `src`)
+* a Rust reimplementation of the lexer based on that description (in `src/lex_via_peg`)
 * a manual list of testcases
 * a harness for running `rustc`'s lexer in-process (via `rustc_private`)
 * strategies for comparing the implementation with `rustc`'s using [`proptest`]
