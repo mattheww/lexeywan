@@ -31,11 +31,11 @@ the output is the sequence of fine-grained tokens produced by the repetitions of
 > Note: Each fine-grained token corresponds to one pretoken, representing exactly the same characters from the input;
 > reprocessing doesn't involve any combination or splitting.
 
-> Note: it doesn't make any difference whether we treat this as one pass with interleaved pretoken-extraction and reprocessing, or as two passes.
+> Note: It doesn't make any difference whether we treat this as one pass with interleaved pretoken-extraction and reprocessing, or as two passes.
 > The comparable implementation uses a single interleaved pass, which means when it reports an error it describes the earliest part of the input which caused trouble.
 
 
-[Pretokenising]: pretokenising.md
+[Pretokenising]: pretokenising.md#extracting-pretokens
 [Reprocessing]: reprocessing.md
 [pretokens]: pretokens.md
 [fine-grained tokens]: fine_grained_tokens.md

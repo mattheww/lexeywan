@@ -3,10 +3,10 @@
 ##### Table of contents
 
 [Terminology](#terminology)\
-[Pattern notation](#pattern-notation)\
-[Rule priority](#rule-priority)\
+[Presenting reprocessing as a separate pass](#reprocessing-as-a-pass)\
+[Raw string literals](#raw-string-literals)\
 [Token kinds and attributes](#token-kinds-and-attributes)\
-[Defining the block-comment constraint](#block-comment-constraint)\
+[How to indicate captured text](#how-to-indicate-captured-text)\
 [Wording for string unescaping](#wording-for-string-unescaping)\
 [How to model shebang removal](#how-to-model-shebang-removal)\
 [String continuation escapes](#string-continuation-escapes)
@@ -39,97 +39,34 @@ Here's a partial list:
 | style (of a comment)       | rustc internal                   |
 | body (of a comment)        | Reference                        |
 
-Terms listed as "Reference (recent)" are ones I introduced in PRs merged in January 2024,
-so it's not very likely that they've been picked up more widely.
+Terms listed as "Reference (recent)" are ones I introduced in PRs merged in January 2024.
 
 
 
-### Pattern notation
+### Presenting reprocessing as a separate pass { #reprocessing-as-a-pass }
 
-This document is relying on the [`regex` crate] for its pattern notation.
+This writeup presents pretokenisation and reprocessing in separate sections,
+with separate but similar definitions for a "Pretoken" and a "Fine-grained token".
 
-This is convenient for checking that the writeup is the same as the comparable implementation,
-but it's presumably not suitable for the spec.
+That's largely because I wanted the option to have further processing between those two stages which might split or join tokens,
+as some [earlier models][CAD97 spec] have done.
 
-The usual thing for specs seems to be to define their own notation from scratch.
+But in this version of the model that flexibility isn't used:
+one pretoken always corresponds to one fine-grained token
+(unless the input is rejected).
 
+So it might be possible to drop the distinction between those two types altogether.
 
-#### Requirements for patterns
-
-I've tried to keep the patterns used here as simple as possible.
-
-There's no use of non-greedy matches.
-
-I think all the uses of alternation are obviously unambiguous.
-
-In particular, all uses of alternation inside repetition have disjoint sets of accepted first characters.
-
-I believe all uses of repetition in the unconstrained patterns have unambiguous termination.
-That is, anything permitted to follow the repeatable section would not be permitted to start a new repetition.
-In these cases, the distinction between greedy and non-greedy matches doesn't matter.
+In any case I don't think it's necessary to describe reprocessing as a second pass:
+the conditions for rejecting each type of pretoken,
+and the definitions of the things which are currently attributes of fine-grained tokens,
+could be described in the same place as the description of how the pretoken is produced.
 
 
-#### Naming sub-patterns
+### Raw string literals
 
-The patterns used in this document are inconveniently repetitive,
-particularly for the edition-specific rule variants and for numeric literals.
-
-Of course the usual thing is to have a way to define reusable named sub-patterns.
-So I think addressing this should be treated as part of choosing a pattern notation.
-
-
-### Rule priority
-
-At present this document gives the pretokenisation rules explicit priorities,
-used to determine which rule is chosen in positions where more than one rule matches.
-
-I believe that in almost all cases it would be equivalent to say that the rule which matches the longest extent is chosen
-(in particular, if multiple rules match then one has a longer extent than any of the others).
-
-See [Integer literal base-vs-suffix ambiguity][base-vs-suffix] below for the exception.
-
-This document uses the order in which the rules are presented as the priority,
-which has the downside of forcing an unnatural presentation order
-(for example, [Raw identifier] and [Non-raw identifier] are separated).
-
-Perhaps it would be better to say that longest-extent is the primary way to disambiguate,
-and add a secondary principle to cover the exceptional cases.
-
-The comparable implementation reports (as "model error") any cases
-(other than the Integer literal base-vs-suffix ambiguity)
-where the priority principle doesn't agree with the longest-extent principle,
-or where there wasn't a unique longest match.
-
-
-#### Integer literal base-vs-suffix ambiguity { #base-vs-suffix }
-
-The Reference's lexer rules for input such as `0x3` allow two interpretations, matching the same extent:
-- as a hexadecimal integer literal: `0x3` with no suffix
-- as a decimal integer literal: `0` with a suffix of `x3`
-
-If the output of the lexer is simply a token with a kind and an extent, this isn't a problem:
-both cases have the same kind.
-
-But if we want to make the lexer responsible for identifying which part of the input is the suffix,
-we need to make sure it gets the right answer (ie, the one with no suffix).
-
-Further, there are cases where we need to reject input which matches the rule for a decimal integer literal `0` with a suffix,
-for example `0b1e2`, `0b0123` (see [rfc0879]), or `0x·`.
-
-(Note that <b>·</b> has the `XID_Continue` property but not `XID_Start`.)
-
-In these cases we can't avoid dealing with the base-vs-suffix ambiguity in the lexer.
-
-This model uses a separate rule for integer decimal literals,
-with lower priority than all other numeric literals,
-to make sure we get these results.
-
-Note that in the `0x·` example the extent matched by the lower priority rule is longer than the extent matched by the chosen rule.
-
-If relying on priorities like this seems undesirable,
-I think it would be possible to rework the rules to avoid it.
-It might work to allow the difficult cases to pretokenise as decimal integer literals,
-and have reprocessing reject decimal literal pretokens which begin with a base indicator.
+How should raw string literals be documented?
+See [Grammar for raw string literals](raw_strings.md) for some options.
 
 
 ### Token kinds and attributes
@@ -145,7 +82,7 @@ I think this distinction will be needed in some cases,
 but perhaps it would be better represented using an attributes on unified kinds
 (like `rustc_ast::StrStyle` and `rustc_ast::token::IdentIsRaw`).
 
-As an example of where it might be wanted: proc-macros `Display` for raw identifers includes the `r#` prefix for raw identifiers, but I think simply using the source extent isn't correct because the `Display` output is NFC-normalised.
+As an example of where it might be wanted: proc-macros `Display` for raw identifiers includes the `r#` prefix for raw identifiers, but I think simply using the source extent isn't correct because the `Display` output is NFC-normalised.
 
 
 #### Hash count
@@ -178,23 +115,20 @@ At present this document says that the sequence of "represented bytes" for C str
 That's following the way the Reference currently uses the term "represented bytes",
 but `rustc` includes the NUL in its equivalent piece of data.
 
+Should this writeup change to match rustc?
 
-### Defining the block-comment constraint { #block-comment-constraint }
 
-This document currently uses imperative Rust code to define the [Block comment] constraint
-(ie, to say that `/*` and `*/` must be properly nested inside a candidate comment).
+### How to indicate captured text
 
-It would be nice to do better;
-the options might depend on what pattern notation is chosen.
+Some of the nonterminals in the grammar exist only to identify text to be "captured",
+for example `LINE_COMMENT_CONTENT` here:
 
-I don't think there's any very elegant way to describe the constraint in English
-(note that the constraint is asymmetrical; for example `/* /*/ /*/ */` is rejected).
+```
+{{#include pretokenise_anchored.pest:line_comment}}
+```
 
-Perhaps the natural continuation of this writeup's approach would be to define a mini-tokeniser to use inside the constraint,
-but that would be a lot of words for a small part of the spec.
-
-Or perhaps this part could borrow some definitions from whatever formalisation the spec ends up using for Rust's grammar,
-and use the traditional sort of context-free-grammar approach.
+Would it be better to extend the notation to allow annotating part of an expression without separating out a nonterminal?
+Pest's ["Tags" extension][pest-tags] would allow doing this, but it's not a standard feature of PEGs.
 
 
 ### Wording for string unescaping
@@ -234,18 +168,10 @@ and points to [#1042][Ref#1042] for more information.
 [#136600] asks whether this is intentional.
 
 
-[base-vs-suffix]: #base-vs-suffix
-
-[Block comment]: rules.md#block-comment
-[Raw identifier]: rules.md#raw-identifier
-[Non-raw identifier]: rules.md#non-raw-identifier
-
 [String literals]: reprocessing_cases.md#string-literal
 [C-string literals]: reprocessing_cases.md#c-string-literal
 
 [string-continuation]: escape_processing.md#string-continuation-escapes
-
-[rfc0879]: https://github.com/rust-lang/rfcs/pull/0879
 
 [#70528]: https://github.com/rust-lang/rust/issues/70528
 [#71487]: https://github.com/rust-lang/rust/pull/71487
@@ -254,5 +180,6 @@ and points to [#1042][Ref#1042] for more information.
 [Ref#1042]: https://github.com/rust-lang/reference/pull/1042
 [ref-string-continuation]: https://doc.rust-lang.org/nightly/reference/expressions/literal-expr.html#string-continuation-escapes
 
-[`regex` crate]: https://docs.rs/regex/1.10.4/regex/
+[CAD97 spec]: https://github.com/CAD97/rust-lexical-spec
 
+[pest-tags]: https://pest.rs/book/grammars/syntax.html#tags

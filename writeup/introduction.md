@@ -7,6 +7,10 @@ It's accompanied by a reimplementation of the lexer in Rust based on that descri
 (called the "comparable implementation" below),
 and a framework for comparing its output to `rustc`'s.
 
+One component of the description is a [Parsing Expression Grammar](complete_pretoken_grammar.md);
+the comparable implementation uses the [Pest] library to generate the corresponding parser.
+
+
 ## Scope
 
 ### Rust language version
@@ -88,6 +92,8 @@ This document and the accompanying lexer implementation are released under the t
 
 The source code for this document and the accompanying lexer implementation is available at <https://github.com/mattheww/lexeywan>
 
+
+[pest]: https://pest.rs/
 
 [rfc3349]: https://rust-lang.github.io/rfcs/3349-mixed-utf8-literals.html
 [rfc3593]: https://github.com/rust-lang/rfcs/pull/3593

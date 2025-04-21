@@ -27,7 +27,7 @@ In each case, the escaped value is the character given in the corresponding entr
 | <b>\\'</b>      | U+0027 APOSTROPHE      |
 | <b>\\\\</b>     | U+005C REVERSE SOLIDUS |
 
-> Note: the escaped value therefore has a [Unicode scalar value] which can be represented in a byte.
+> Note: The escaped value therefore has a [Unicode scalar value] which can be represented in a byte.
 
 
 #### 8-bit escapes
@@ -37,7 +37,7 @@ The escape sequence consists of <b>\x</b> followed by two hexadecimal digits.
 The escaped value is the character whose [Unicode scalar value] is the result of interpreting the final two characters in the escape sequence as a hexadecimal integer,
 as if by [`u8::from_str_radix`] with radix 16.
 
-> Note: the escaped value therefore has a [Unicode scalar value] which can be represented in a byte.
+> Note: The escaped value therefore has a [Unicode scalar value] which can be represented in a byte.
 
 
 #### 7-bit escapes

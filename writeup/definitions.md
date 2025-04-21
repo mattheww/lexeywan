@@ -26,12 +26,6 @@ When this document refers to a <dfn>sequence</dfn> of items, it means a finite, 
 "character sequence" and "sequence of characters" are different ways of saying the same thing.
 
 
-### Prefix of a sequence
-
-When this document talks about a <dfn>prefix of a sequence</dfn>, it means "prefix" in the way that `abc` is a prefix of `abcde`.
-The prefix may be empty, or the entire sequence.
-
-
 ### NFC normalisation
 
 References to <dfn>NFC-normalised</dfn> strings are talking about Unicode's Normalization Form C, defined in [Unicode Standard Annex #15][UAX15].

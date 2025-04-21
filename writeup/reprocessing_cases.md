@@ -9,13 +9,10 @@
 [`RawIdentifier`](#rawidentifier)\
 [`LifetimeOrLabel`](#lifetimeorlabel)\
 [`RawLifetimeOrLabel`](#rawlifetimeorlabel)\
-[`SingleQuoteLiteral`](#singlequoteliteral)\
-[`DoubleQuoteLiteral`](#doublequoteliteral)\
-[`RawDoubleQuoteLiteral`](#rawdoublequoteliteral)\
-[`IntegerDecimalLiteral`](#integerdecimalliteral)\
-[`IntegerHexadecimalLiteral`](#integerhexadecimalliteral)\
-[`IntegerOctalLiteral`](#integeroctalliteral)\
-[`IntegerBinaryLiteral`](#integerbinaryliteral)\
+[`SingleQuotedLiteral`](#singlequotedliteral)\
+[`DoubleQuotedLiteral`](#doublequotedliteral)\
+[`RawDoubleQuotedLiteral`](#rawdoublequotedliteral)\
+[`IntegerLiteral`](#integerliteral)\
 [`FloatLiteral`](#floatliteral)
 
 
@@ -71,7 +68,7 @@ Fine-grained token kind produced:
 
 The pretoken is rejected if (and only if) the resulting <var>body</var> includes a <kbd>CR</kbd> character.
 
-> Note: the body of a non-doc comment is ignored by the rest of the compilation process
+> Note: The body of a non-doc comment is ignored by the rest of the compilation process
 
 
 #### `BlockComment` { .rcase }
@@ -103,9 +100,9 @@ Fine-grained token kind produced:
 
 The pretoken is rejected if (and only if) the resulting <var>body</var> includes a <kbd>CR</kbd> character.
 
-> Note: it follows that `/**/` and `/***/` are not doc-comments
+> Note: It follows that `/**/` and `/***/` are not doc-comments
 
-> Note: the body of a non-doc comment is ignored by the rest of the compilation process
+> Note: The body of a non-doc comment is ignored by the rest of the compilation process
 
 
 #### `Punctuation` { .rcase }
@@ -185,7 +182,7 @@ The pretoken is rejected if (and only if) the <var>name</var> is one of the foll
 > See [NFC normalisation for lifetime/label].
 
 
-#### `SingleQuoteLiteral` { .rcase }
+#### `SingleQuotedLiteral` { .rcase }
 
 The pretokeniser guarantees the pretoken's <var>prefix</var> attribute is one of the following:
 - empty, in which case it is reprocessed as described under [Character literal](#character-literal)
@@ -216,7 +213,7 @@ the pretoken is rejected.
 
 - Otherwise the <var>represented character</var> is the single character that makes up the <var>literal content</var>.
 
-<var>suffix</var>: copied
+<var>suffix</var>: the pretoken's <var>suffix</var>, or empty if that is **none**
 
 > Note: The protokeniser guarantees the pretoken's <var>literal content</var> is either a single character,
 > or a character sequence beginning with <b>\\</b>.
@@ -250,14 +247,14 @@ the pretoken is rejected.
 
 The <var>represented byte</var> is the represented character's [Unicode scalar value].
 
-<var>suffix</var>: copied
+<var>suffix</var>: the pretoken's <var>suffix</var>, or empty if that is **none**
 
 
 > Note: The protokeniser guarantees the pretoken's <var>literal content</var> is either a single character,
 > or a character sequence beginning with <b>\\</b>.
 
 
-#### `DoubleQuoteLiteral` { .rcase }
+#### `DoubleQuotedLiteral` { .rcase }
 
 The pretokeniser guarantees the pretoken's <var>prefix</var> attribute is one of the following:
 - empty, in which case it is reprocessed as described under [String literal](#string-literal)
@@ -290,7 +287,7 @@ the pretoken is rejected.
 If a <kbd>CR</kbd> character appears in the <var>literal content</var> and is not part of a string continuation escape,
 the pretoken is rejected.
 
-<var>suffix</var>: copied
+<var>suffix</var>: the pretoken's <var>suffix</var>, or empty if that is **none**
 
 > See [Wording for string unescaping]
 
@@ -321,7 +318,7 @@ the pretoken is rejected.
 
 The <var>represented bytes</var> are the sequence of [Unicode scalar values] of the characters in the represented string.
 
-<var>suffix</var>: copied
+<var>suffix</var>: the pretoken's <var>suffix</var>, or empty if that is **none**
 
 > See [Wording for string unescaping]
 
@@ -351,12 +348,12 @@ the pretoken is rejected.
 
 If any of the resulting <var>represented bytes</var> have value 0, the pretoken is rejected.
 
-<var>suffix</var>: copied
+<var>suffix</var>: the pretoken's <var>suffix</var>, or empty if that is **none**
 
 > See [Wording for string unescaping]
 
 
-#### `RawDoubleQuoteLiteral` { .rcase }
+#### `RawDoubleQuotedLiteral` { .rcase }
 
 
 The pretokeniser guarantees the pretoken's <var>prefix</var> attribute is one of the following:
@@ -379,7 +376,7 @@ The pretoken is rejected if (and only if) a <kbd>CR</kbd> character appears in t
 
 <var>represented string</var>: the pretoken's <var>literal content</var>
 
-<var>suffix</var>: copied
+<var>suffix</var>: the pretoken's <var>suffix</var>, or empty if that is **none**
 
 
 ##### Raw byte-string literal { .subcase }
@@ -397,7 +394,7 @@ the pretoken is rejected.
 
 <var>represented bytes</var>: the sequence of [Unicode scalar values] of the characters in the pretoken's <var>literal content</var>
 
-<var>suffix</var>: copied
+<var>suffix</var>: the pretoken's <var>suffix</var>, or empty if that is **none**
 
 
 ##### Raw C-string literal { .subcase }
@@ -413,48 +410,12 @@ the pretoken is rejected.
 
 <var>represented bytes</var>: the UTF-8 encoding of the pretoken's <var>literal content</var>
 
-<var>suffix</var>: copied
+<var>suffix</var>: the pretoken's <var>suffix</var>, or empty if that is **none**
 
 If any of the resulting <var>represented bytes</var> have value 0, the pretoken is rejected.
 
 
-#### `IntegerDecimalLiteral` { .rcase }
-
-Fine-grained token kind produced:
-`IntegerLiteral`
-
-The pretoken is rejected if (and only if) its <var>digits</var> attribute consists entirely of <b>_</b> characters.
-
-##### Attributes
-
-<var>base</var>: **decimal**
-
-<var>digits</var>: copied
-
-<var>suffix</var>: copied
-
-> Note: in particular, an `IntegerDecimalLiteral` whose <var>digits</var> is empty is rejected.
-
-
-#### `IntegerHexadecimalLiteral` { .rcase }
-
-Fine-grained token kind produced:
-`IntegerLiteral`
-
-The pretoken is rejected if (and only if) its <var>digits</var> attribute consists entirely of <b>_</b> characters.
-
-##### Attributes
-
-<var>base</var>: **hexadecimal**
-
-<var>digits</var>: copied
-
-<var>suffix</var>: copied
-
-> Note: in particular, an `IntegerHexadecimalLiteral` whose <var>digits</var> is empty is rejected.
-
-
-#### `IntegerOctalLiteral` { .rcase }
+#### `IntegerLiteral` { .rcase }
 
 Fine-grained token kind produced:
 `IntegerLiteral`
@@ -462,38 +423,20 @@ Fine-grained token kind produced:
 The pretoken is rejected if (and only if):
 
 - its <var>digits</var> attribute consists entirely of <b>_</b> characters; or
-- its <var>digits</var> attribute contains any character other than <b>0</b>, <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b>, <b>5</b>, <b>6</b>, <b>7</b>, or <b>_</b>.
+- its <var>base</var> attribute is **binary**, and
+  its <var>digits</var> attribute contains any character other than <b>0</b>, <b>1</b>, or <b>_</b>; or
+- its <var>base</var> attribute is **octal**, and
+  its <var>digits</var> attribute contains any character other than <b>0</b>, <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b>, <b>5</b>, <b>6</b>, <b>7</b>, or <b>_</b>.
 
 ##### Attributes
 
-<var>base</var>: **octal**
+<var>base</var>: copied
 
 <var>digits</var>: copied
 
-<var>suffix</var>: copied
+<var>suffix</var>: the pretoken's <var>suffix</var>, or empty if that is **none**
 
-> Note: in particular, an `IntegerOctalLiteral` whose <var>digits</var> is empty is rejected.
-
-
-#### `IntegerBinaryLiteral` { .rcase }
-
-Fine-grained token kind produced:
-`IntegerLiteral`
-
-The pretoken is rejected if (and only if):
-
-- its <var>digits</var> attribute consists entirely of <b>_</b> characters; or
-- its <var>digits</var> attribute contains any character other than <b>0</b>, <b>1</b>, or <b>_</b>.
-
-##### Attributes
-
-<var>base</var>: **binary**
-
-<var>digits</var>: copied
-
-<var>suffix</var>: copied
-
-> Note: in particular, an `IntegerBinaryLiteral` whose <var>digits</var> is empty is rejected.
+> Note: In particular, an `IntegerLiteral` whose <var>digits</var> is empty is rejected.
 
 
 #### `FloatLiteral` { .rcase }
@@ -501,17 +444,11 @@ The pretoken is rejected if (and only if):
 Fine-grained token kind produced:
 `FloatLiteral`
 
-The pretoken is rejected if (and only if)
- - its <var>has base</var> attribute is **true**; or
- - its <var>exponent digits</var> attribute is a character sequence which consists entirely of <b>_</b> characters.
-
 ##### Attributes
 
 <var>body</var>: copied
 
-<var>suffix</var>: copied
-
-> Note: in particular, a `FloatLiteral` whose <var>exponent digits</var> is empty is rejected.
+<var>suffix</var>: the pretoken's <var>suffix</var>, or empty if that is **none**
 
 
 [fine-grained token]: fine_grained_tokens.md

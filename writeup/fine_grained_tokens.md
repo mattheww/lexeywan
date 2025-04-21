@@ -1,4 +1,4 @@
-### Fine-grained tokens
+## Fine-grained tokens
 
 Reprocessing produces <dfn>fine-grained tokens</dfn>.
 
@@ -45,7 +45,7 @@ These attributes have the following types:
 | <var>suffix</var>                 | sequence of characters                                 |
 
 
-#### Notes:
+### Notes:
 
 At this stage:
 

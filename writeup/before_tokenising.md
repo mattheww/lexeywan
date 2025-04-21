@@ -22,7 +22,7 @@ Each pair of characters `U+000D` <kbd>CR</kbd> immediately followed by `U+000A` 
 
 Other occurrences of the character `U+000D` <kbd>CR</kbd> are left in place (they are treated as whitespace).
 
-> Note: it's still possible for the sequence <kbd>CR</kbd><kbd>LF</kbd> to be passed on to the tokeniser:
+> Note: It's still possible for the sequence <kbd>CR</kbd><kbd>LF</kbd> to be passed on to the tokeniser:
 > that will happen if the source file contained the sequence <kbd>CR</kbd><kbd>CR</kbd><kbd>LF</kbd>.
 
 

@@ -20,9 +20,26 @@ reaction to being given a spec to review.
 Filed as rustc [#126759].
 
 
+### Nested block comments
+
+The Reference says "Nested block comments are supported".
+
+Rustc implements this by counting occurrences of `/*` and `*/`, matching greedily.
+That means it rejects forms like `/* xyz /*/`.
+
+This writeup includes a `!"/*"` subexpression in the `BLOCK_COMMENT_CONTENT` definition to match rustc's behaviour.
+
+The grammar production in the Reference seems to be written to assume that these forms should be accepted
+(but I think it's garbled anyway: it accepts `/* /* */`).
+
+I haven't seen any discussion of whether this rustc behaviour is considered desirable.
+
+
 [playground-lifetime]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=31fc06e4d678e1a38d8d39f521e8a11c
 [playground-ident]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=aad27eb75b2774f16fc6b0981b770d56
 
 [rfc2457]: https://rust-lang.github.io/rfcs/2457-non-ascii-idents.html
 
 [#126759]: https://github.com/rust-lang/rust/issues/126759
+
+
