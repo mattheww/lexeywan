@@ -8,11 +8,11 @@
 use crate::cleaning;
 use crate::combination;
 use crate::comparison::{
-    compare, regularised_from_lexlucid, regularised_from_rustc, Comparison, Regularisation,
+    compare, regularised_from_peg, regularised_from_rustc, Comparison, Regularisation,
 };
 use crate::fine_tokens::FineToken;
+use crate::lex_via_peg;
 use crate::lex_via_rustc;
-use crate::lexlucid;
 use crate::utils::escape_for_display;
 use crate::Edition;
 
@@ -62,7 +62,7 @@ pub enum DetailsMode {
     Always,
 }
 
-fn format_pretoken(pretoken: &lexlucid::Pretoken) -> String {
+fn format_pretoken(pretoken: &lex_via_peg::Pretoken) -> String {
     format!("{:?}, {:?}", pretoken.data, pretoken.extent)
 }
 fn format_token(token: &FineToken) -> String {
@@ -81,7 +81,7 @@ fn single_model_symbol(reg: &Regularisation) -> char {
     }
 }
 
-/// Compares 'regularised' tokens from rustc and lexlucid.
+/// Compares 'regularised' tokens from rustc and lex_via_peg.
 ///
 /// Shows whether the tokenisations match.
 /// May also show detail, depending on `details_mode`.
@@ -94,8 +94,8 @@ fn show_comparison(
     show_failures_only: bool,
 ) -> Comparison {
     let rustc = regularised_from_rustc(input, edition);
-    let lexlucid = regularised_from_lexlucid(input, edition);
-    let comparison = compare(&rustc, &lexlucid);
+    let lex_via_peg = regularised_from_peg(input, edition);
+    let comparison = compare(&rustc, &lex_via_peg);
 
     let passes = matches!(comparison, Comparison::Agree);
     if passes && show_failures_only {
@@ -112,7 +112,7 @@ fn show_comparison(
             Comparison::ModelErrors => '💣',
         },
         single_model_symbol(&rustc),
-        single_model_symbol(&lexlucid),
+        single_model_symbol(&lex_via_peg),
         escape_for_display(input)
     );
 
@@ -137,21 +137,21 @@ fn show_comparison(
                 }
             }
         };
-        match lexlucid {
+        match lex_via_peg {
             Regularisation::Accepts(tokens) => {
-                println!("  lexlucid: accepted");
+                println!("  lex_via_peg: accepted");
                 for token in tokens {
                     println!("    {:?}", token);
                 }
             }
             Regularisation::Rejects(messages) => {
-                println!("  lexlucid: rejected");
+                println!("  lex_via_peg: rejected");
                 for msg in messages {
                     println!("    {msg}");
                 }
             }
             Regularisation::ModelError(messages) => {
-                println!("  lexlucid: reported a bug in its model");
+                println!("  lex_via_peg: reported a bug in its model");
                 for msg in messages {
                     println!("    {msg}");
                 }
@@ -161,7 +161,7 @@ fn show_comparison(
     comparison
 }
 
-/// Lexes with both rustc and lexlucid, and prints the results.
+/// Lexes with both rustc and lex_via_peg, and prints the results.
 fn show_detail(input: &str, edition: Edition) {
     println!("Lexing «{}»", escape_for_display(input));
     match lex_via_rustc::analyse(input, edition) {
@@ -188,9 +188,9 @@ fn show_detail(input: &str, edition: Edition) {
         }
     }
     let cleaned = cleaning::clean(input);
-    match lexlucid::analyse(&cleaned, edition) {
-        lexlucid::Analysis::Accepts(pretokens, tokens) => {
-            println!("lexlucid: accepted");
+    match lex_via_peg::analyse(&cleaned, edition) {
+        lex_via_peg::Analysis::Accepts(pretokens, tokens) => {
+            println!("lex_via_peg: accepted");
             println!("  -- pretokens --");
             for pretoken in pretokens {
                 println!("  {}", format_pretoken(&pretoken));
@@ -200,8 +200,12 @@ fn show_detail(input: &str, edition: Edition) {
                 println!("  {}", format_token(&token));
             }
         }
-        lexlucid::Analysis::Rejects(lexlucid::Reason::Pretokenisation(messages, pretokens, _)) => {
-            println!("lexlucid: rejected in step 1 (pretokenisation)");
+        lex_via_peg::Analysis::Rejects(lex_via_peg::Reason::Pretokenisation(
+            messages,
+            pretokens,
+            _,
+        )) => {
+            println!("lex_via_peg: rejected in step 1 (pretokenisation)");
             for message in messages {
                 println!("  error: {message}");
             }
@@ -210,13 +214,13 @@ fn show_detail(input: &str, edition: Edition) {
                 println!("  {}", format_pretoken(&pretoken));
             }
         }
-        lexlucid::Analysis::Rejects(lexlucid::Reason::Reprocessing(
+        lex_via_peg::Analysis::Rejects(lex_via_peg::Reason::Reprocessing(
             message,
             rejected,
             pretokens,
             tokens,
         )) => {
-            println!("lexlucid: rejected in step 2 (reprocessing)");
+            println!("lex_via_peg: rejected in step 2 (reprocessing)");
             println!("  error: {message}");
             println!("  -- rejected pretoken: --");
             println!("  {}", format_pretoken(&rejected));
@@ -229,8 +233,8 @@ fn show_detail(input: &str, edition: Edition) {
                 println!("  {}", format_token(&token));
             }
         }
-        lexlucid::Analysis::ModelError(reason) => {
-            println!("lexlucid: reported a bug in its model");
+        lex_via_peg::Analysis::ModelError(reason) => {
+            println!("lex_via_peg: reported a bug in its model");
             for s in reason.into_description() {
                 println!("  error: {}", s);
             }
@@ -241,9 +245,9 @@ fn show_detail(input: &str, edition: Edition) {
 fn show_coarse(input: &str, edition: Edition) {
     println!("Lexing «{}»", escape_for_display(input));
     let cleaned = cleaning::clean(input);
-    match lexlucid::analyse(&cleaned, edition) {
-        lexlucid::Analysis::Accepts(_, tokens) => {
-            println!("lexlucid: accepted");
+    match lex_via_peg::analyse(&cleaned, edition) {
+        lex_via_peg::Analysis::Accepts(_, tokens) => {
+            println!("lex_via_peg: accepted");
             println!("  -- fine-grained --");
             for token in tokens.iter() {
                 println!("  {}", format_token(token));
@@ -254,14 +258,14 @@ fn show_coarse(input: &str, edition: Edition) {
                 println!("  {} {:?}", format_coarse_token(&ctoken), &ctoken.spacing);
             }
         }
-        lexlucid::Analysis::Rejects(reason) => {
-            println!("lexlucid: rejected");
+        lex_via_peg::Analysis::Rejects(reason) => {
+            println!("lex_via_peg: rejected");
             for message in reason.into_description() {
                 println!("  {message}");
             }
         }
-        lexlucid::Analysis::ModelError(reason) => {
-            println!("lexlucid: reported a bug in its model:");
+        lex_via_peg::Analysis::ModelError(reason) => {
+            println!("lex_via_peg: reported a bug in its model:");
             for s in reason.into_description() {
                 println!("  error: {}", s);
             }

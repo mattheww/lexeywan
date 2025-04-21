@@ -1,4 +1,4 @@
-//! Converts rustc and lexlucid tokenisations to a common form for comparison.
+//! Converts rustc and lex_via_peg tokenisations to a common form for comparison.
 //!
 //! These ['regularised' tokens][`RegularToken`] use coarse-grained punctuation.
 //!

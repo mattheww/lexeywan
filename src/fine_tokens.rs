@@ -6,7 +6,7 @@ use crate::char_sequences::Charseq;
 
 /// A "Fine-grained" token.
 ///
-/// This is the form of token used in lexlucid's output.
+/// This is the form of token used in lex_via_peg's output.
 ///
 /// It's fine-grained in the sense that each punctuation token contains only a single character. A
 /// [`LifetimeOrLabel`][`FineTokenData::LifetimeOrLabel`] token contains both the leading `'` and
