@@ -1,0 +1,285 @@
+// ANCHOR: pretokens
+PRETOKEN_2015 = {
+    Whitespace |
+    Line_comment |
+    Block_comment |
+    Unterminated_block_comment |
+    Single_quoted_literal |
+    Double_quoted_literal_2015 |
+    Raw_double_quoted_literal_2015 |
+    Unterminated_literal_2015 |
+    Float_literal |
+    Reserved_float |
+    Integer_literal |
+    Lifetime_or_label |
+    Raw_identifier |
+    Reserved_prefix_2015 |
+    Identifier |
+    Punctuation
+}
+
+PRETOKEN_2021 = {
+    Whitespace |
+    Line_comment |
+    Block_comment |
+    Unterminated_block_comment |
+    Single_quoted_literal |
+    Double_quoted_literal_2021 |
+    Raw_double_quoted_literal_2021 |
+    Reserved_literal_2021 |
+    Float_literal |
+    Reserved_float |
+    Integer_literal |
+    Raw_lifetime_or_label_2021 |
+    Reserved_lifetime_or_label_prefix_2021 |
+    Lifetime_or_label |
+    Raw_identifier |
+    Reserved_prefix_2021 |
+    Identifier |
+    Punctuation
+}
+
+PRETOKEN_2024 = {
+    Whitespace |
+    Line_comment |
+    Block_comment |
+    Unterminated_block_comment |
+    Single_quoted_literal |
+    Double_quoted_literal_2021 |
+    Raw_double_quoted_literal_2021 |
+    Reserved_literal_2021 |
+    Reserved_guard_2024 |
+    Float_literal |
+    Reserved_float |
+    Integer_literal |
+    Raw_lifetime_or_label_2021 |
+    Reserved_lifetime_or_label_prefix_2021 |
+    Lifetime_or_label |
+    Raw_identifier |
+    Reserved_prefix_2021 |
+    Identifier |
+    Punctuation
+}
+// ANCHOR_END: pretokens
+
+
+// ANCHOR: ident
+IDENT = { IDENT_START ~ XID_CONTINUE * }
+IDENT_START = { XID_START | "_" }
+// ANCHOR_END: ident
+// ANCHOR: suffix
+SUFFIX = { IDENT }
+// ANCHOR_END: suffix
+
+
+// ANCHOR: whitespace
+Whitespace = { PATTERN_WHITE_SPACE + }
+// ANCHOR_END: whitespace
+
+// ANCHOR: line_comment
+Line_comment = { "//" ~ LINE_COMMENT_CONTENT }
+LINE_COMMENT_CONTENT = { ( !"\n" ~ ANY )* }
+// ANCHOR_END: line_comment
+
+// ANCHOR: block_comment
+Block_comment = { "/*" ~ BLOCK_COMMENT_CONTENT ~ "*/" }
+BLOCK_COMMENT_CONTENT = { ( Block_comment | !"*/" ~ !"/*" ~ ANY ) * }
+// ANCHOR_END: block_comment
+
+// ANCHOR: unterminated_block_comment
+Unterminated_block_comment = { "/*" }
+// ANCHOR_END: unterminated_block_comment
+
+
+// ANCHOR: single_quoted_literals
+Single_quoted_literal = {
+    SQ_PREFIX ~
+    "'" ~ SQ_CONTENT ~ "'" ~
+    SUFFIX ?
+}
+
+SQ_PREFIX = { "b" ? }
+
+SQ_CONTENT = {
+    "\\" ~ ANY ~ ( !"'" ~ ANY ) * |
+    !"'" ~ ANY
+}
+// ANCHOR_END: single_quoted_literals
+
+
+// ANCHOR: double_quoted_literals
+Double_quoted_literal_2015 = { DQ_PREFIX_2015 ~ DQ_REMAINDER }
+Double_quoted_literal_2021 = { DQ_PREFIX_2021 ~ DQ_REMAINDER }
+
+DQ_PREFIX_2015 = { "b" ? }
+DQ_PREFIX_2021 = { ( "b" | "c" ) ? }
+
+DQ_REMAINDER = {
+    "\"" ~ DQ_CONTENT ~ "\"" ~
+    SUFFIX ?
+}
+DQ_CONTENT = {
+    (
+        "\\" ~ ANY |
+        !"\"" ~ ANY
+    ) *
+}
+
+// ANCHOR_END: double_quoted_literals
+
+// ANCHOR: raw_double_quoted_literals_top
+Raw_double_quoted_literal_2015 = { RAW_DQ_PREFIX_2015 ~ RAW_DQ_REMAINDER }
+Raw_double_quoted_literal_2021 = { RAW_DQ_PREFIX_2021 ~ RAW_DQ_REMAINDER }
+
+RAW_DQ_PREFIX_2015 = { "r" | "br" }
+RAW_DQ_PREFIX_2021 = { "r" | "br" | "cr" }
+// ANCHOR_END: raw_double_quoted_literals_top
+
+// ANCHOR: raw_double_quoted_literals_stack
+RAW_DQ_REMAINDER = {
+    PUSH(HASHES) ~
+    "\"" ~ RAW_DQ_CONTENT ~ "\"" ~
+    POP ~
+    SUFFIX ?
+}
+RAW_DQ_CONTENT = {
+    ( !("\"" ~ PEEK) ~ ANY ) *
+}
+HASHES = { "#" {0, 255} }
+// ANCHOR_END: raw_double_quoted_literals_stack
+
+// ANCHOR: unterminated_literal
+Unterminated_literal_2015 = { "r\"" | "br\"" | "b'" }
+Reserved_literal_2021 = { IDENT ~ ( "\"" | "'" ) }
+// ANCHOR_END: unterminated_literal
+
+// ANCHOR: reserved_guard
+Reserved_guard_2024 = { "##" | "#\"" }
+// ANCHOR_END: reserved_guard
+
+// ANCHOR: numeric_common
+DECIMAL_DIGITS = { ('0'..'9' | "_") * }
+HEXADECIMAL_DIGITS = { ('0'..'9' | 'a' .. 'f' | 'A' .. 'F' | "_") * }
+LOW_BASE_PRETOKEN_DIGITS = { DECIMAL_DIGITS }
+DECIMAL_PART = { '0'..'9' ~ DECIMAL_DIGITS }
+// ANCHOR_END: numeric_common
+
+
+// ANCHOR: float_literal
+Float_literal = {
+    FLOAT_BODY_WITH_EXPONENT ~ SUFFIX ? |
+    FLOAT_BODY_WITHOUT_EXPONENT ~ !("e"|"E") ~ SUFFIX ? |
+    FLOAT_BODY_WITH_FINAL_DOT ~ !"." ~ !IDENT_START
+}
+
+FLOAT_BODY_WITH_EXPONENT = {
+    DECIMAL_PART ~ ("." ~ DECIMAL_PART ) ? ~
+    ("e"|"E") ~ ("+"|"-") ? ~ EXPONENT_DIGITS
+}
+EXPONENT_DIGITS = { "_" * ~ '0'..'9' ~ DECIMAL_DIGITS }
+
+FLOAT_BODY_WITHOUT_EXPONENT = {
+    DECIMAL_PART ~ "." ~ DECIMAL_PART
+}
+
+FLOAT_BODY_WITH_FINAL_DOT = {
+    DECIMAL_PART ~ "."
+}
+// ANCHOR_END: float_literal
+
+// ANCHOR: reserved_float
+Reserved_float = {
+    RESERVED_FLOAT_EMPTY_EXPONENT | RESERVED_FLOAT_BASED
+}
+RESERVED_FLOAT_EMPTY_EXPONENT = {
+    DECIMAL_PART ~ ("." ~ DECIMAL_PART ) ? ~
+    ("e"|"E") ~ ("+"|"-") ?
+}
+RESERVED_FLOAT_BASED = {
+    (
+        ("0b" | "0o") ~ LOW_BASE_PRETOKEN_DIGITS |
+        "0x" ~ HEXADECIMAL_DIGITS
+    )  ~  (
+        ("e"|"E") |
+        "." ~ !"." ~ !IDENT_START
+    )
+}
+// ANCHOR_END: reserved_float
+
+
+// ANCHOR: integer_literals
+Integer_literal = {
+    ( INTEGER_BINARY_LITERAL |
+      INTEGER_OCTAL_LITERAL |
+      INTEGER_HEXADECIMAL_LITERAL |
+      INTEGER_DECIMAL_LITERAL ) ~
+    SUFFIX_NO_E ?
+}
+
+INTEGER_BINARY_LITERAL = { "0b" ~ LOW_BASE_PRETOKEN_DIGITS }
+INTEGER_OCTAL_LITERAL = { "0o" ~ LOW_BASE_PRETOKEN_DIGITS }
+INTEGER_HEXADECIMAL_LITERAL = { "0x" ~ HEXADECIMAL_DIGITS }
+INTEGER_DECIMAL_LITERAL = { DECIMAL_PART }
+
+SUFFIX_NO_E = { !("e"|"E") ~ SUFFIX }
+// ANCHOR_END: integer_literals
+
+
+// ANCHOR: raw_lifetime_or_label_2021
+Raw_lifetime_or_label_2021 = { "'r#" ~ IDENT ~ !"'" }
+// ANCHOR_END: raw_lifetime_or_label_2021
+
+// ANCHOR: reserved_lifetime_or_label_prefix_2021
+Reserved_lifetime_or_label_prefix_2021 = { "'" ~ IDENT ~ "#" }
+// ANCHOR_END: reserved_lifetime_or_label_prefix_2021
+
+// ANCHOR: lifetime_or_label
+Lifetime_or_label = { "'" ~ IDENT ~ !"'" }
+// ANCHOR_END: lifetime_or_label
+
+// ANCHOR: raw_identifier
+Raw_identifier = { "r#" ~ IDENT }
+// ANCHOR_END: raw_identifier
+
+// ANCHOR: reserved_prefix
+Reserved_prefix_2015 = { "r#" | "br#" }
+Reserved_prefix_2021 = { IDENT ~ "#" }
+// ANCHOR_END: reserved_prefix
+
+// ANCHOR: identifier
+Identifier = { IDENT }
+// ANCHOR_END: identifier
+
+
+// ANCHOR: punctuation
+Punctuation = {
+    ";" |
+    "," |
+    "." |
+    "(" |
+    ")" |
+    "{" |
+    "}" |
+    "[" |
+    "]" |
+    "@" |
+    "#" |
+    "~" |
+    "?" |
+    ":" |
+    "$" |
+    "=" |
+    "!" |
+    "<" |
+    ">" |
+    "-" |
+    "&" |
+    "|" |
+    "+" |
+    "*" |
+    "/" |
+    "^" |
+    "%"
+}
+// ANCHOR_END: punctuation
+

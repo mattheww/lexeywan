@@ -6,6 +6,8 @@ mod combination;
 mod command_line;
 mod comparison;
 mod fine_tokens;
+#[allow(unused)]
+mod lex_via_peg;
 mod lex_via_rustc;
 mod lexlucid;
 mod proptesting;
