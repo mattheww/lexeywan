@@ -134,6 +134,7 @@ pub enum StringStyle {
     Raw,
 }
 
+#[allow(unused)]
 /// Converts a sequence of `RustcToken`s into a sequence of `RegularToken`s.
 ///
 /// May panic if any of the tokens represent an error condition (this won't happen if the tokens

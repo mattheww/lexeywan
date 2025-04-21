@@ -7,7 +7,7 @@ use proptest::{
 
 use crate::Edition;
 use crate::{
-    comparison::{compare, regularised_from_lexlucid, regularised_from_rustc, Comparison},
+    comparison::{compare, regularised_from_peg, regularised_from_rustc, Comparison},
     utils::escape_for_display,
 };
 
@@ -46,7 +46,7 @@ pub fn run_proptests(strategy_name: &str, count: u32, verbosity: Verbosity, edit
     }
 }
 
-/// Checks whether the lexlucid and rustc models agree for the specified input.
+/// Checks whether the lex_via_peg and rustc models agree for the specified input.
 ///
 /// This is the "test" function given to proptest.
 ///
@@ -55,10 +55,10 @@ fn check_lexing(input: &str, edition: Edition) -> ComparisonStatus {
     // See the history of this function for how to use `Unsupported`
 
     let rustc = regularised_from_rustc(input, edition);
-    let lexlucid = regularised_from_lexlucid(input, edition);
-    match compare(&rustc, &lexlucid) {
+    let lex_via_peg = regularised_from_peg(input, edition);
+    match compare(&rustc, &lex_via_peg) {
         Comparison::Agree => ComparisonStatus::Pass,
-        Comparison::Differ => ComparisonStatus::Fail("rustc and lexlucid disagree".into()),
+        Comparison::Differ => ComparisonStatus::Fail("rustc and lex_via_peg disagree".into()),
         Comparison::ModelErrors => ComparisonStatus::Fail("model error".into()),
     }
 }

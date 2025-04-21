@@ -34,6 +34,7 @@ pub fn regularised_from_rustc(input: &str, edition: Edition) -> Regularisation {
     }
 }
 
+#[allow(unused)]
 /// Run lexlucid's lexical analysis and return the regularised result.
 pub fn regularised_from_lexlucid(input: &str, edition: Edition) -> Regularisation {
     use lexlucid::Analysis::*;
@@ -47,7 +48,6 @@ pub fn regularised_from_lexlucid(input: &str, edition: Edition) -> Regularisatio
     }
 }
 
-#[allow(unused)]
 /// Run lex_via_peg's lexical analysis and return the regularised result.
 pub fn regularised_from_peg(input: &str, edition: Edition) -> Regularisation {
     use lex_via_peg::Analysis::*;
