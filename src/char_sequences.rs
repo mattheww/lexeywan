@@ -12,7 +12,7 @@ use unicode_normalization::UnicodeNormalization;
 ///  - `charseq[idx]`
 ///  - `charseq[idx..]`
 ///  - `charseq[idx1..idx2]`
-#[derive(PartialEq, Eq, Clone)]
+#[derive(PartialEq, Eq, Clone, Default)]
 pub struct Charseq(Vec<char>);
 
 impl Charseq {
