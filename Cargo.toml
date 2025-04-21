@@ -7,6 +7,9 @@ edition = "2021"
 rustc_private=true
 
 [dependencies]
+# This version uses Unicode 16.0 for its character database
+pest = "2.8.0"
+pest_derive = "2.8.0"
 pico-args = { version = "0.5.0", features = ["eq-separator"] }
 # This version uses Unicode 16.0 for its character database
 regex = "=1.11.1"
