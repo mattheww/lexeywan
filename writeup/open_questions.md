@@ -230,7 +230,8 @@ may change in future.
 
 The Reference has a [note][ref-string-continuation] about this,
 and points to [#1042][Ref#1042] for more information.
-Should the spec say anything?
+
+[#136600] asks whether this is intentional.
 
 
 [base-vs-suffix]: #base-vs-suffix
@@ -248,6 +249,7 @@ Should the spec say anything?
 
 [#70528]: https://github.com/rust-lang/rust/issues/70528
 [#71487]: https://github.com/rust-lang/rust/pull/71487
+[#136600]: https://github.com/rust-lang/rust/issues/136600
 
 [Ref#1042]: https://github.com/rust-lang/reference/pull/1042
 [ref-string-continuation]: https://doc.rust-lang.org/nightly/reference/expressions/literal-expr.html#string-continuation-escapes
