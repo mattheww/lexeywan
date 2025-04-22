@@ -27,6 +27,7 @@ It's also available on a [single page](complete_pretoken_grammar.md).
 
 The pretoken nonterminals are presented in an order consistent with their appearance in the edition nonterminals.
 That means they appear in priority order (highest priority first).
+There is one exception, for floating-point literals and their related reserved forms (see [Float literal]).
 
 
 ### Extracting pretokens
@@ -51,6 +52,7 @@ Each pretoken nonterminal produces a single kind of pretoken.
 In most cases a given kind of pretoken is produced only by a single pretoken nonterminal.
 The exceptions are:
 - Several pretoken nonterminals produce `Reserved` pretokens.
+- There are two pretoken nonterminals producing `FloatLiteral` pretokens.
 - In some cases there are variant pretoken nonterminals for different editions.
 
 Each pretoken nonterminal (or group of edition variants) has a subsection on the following pages,
@@ -79,3 +81,5 @@ it's a bug in this specification.
 In other cases the attributes table entry defines the attribute value explicitly,
 depending on the characters consumed by the pretoken nonterminal or on which subexpression of the pretoken nonterminal matched.
 
+
+[Float literal]: numeric_literal_pretokens.md#float-literal

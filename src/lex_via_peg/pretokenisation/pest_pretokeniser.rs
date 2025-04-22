@@ -173,7 +173,7 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
         }
         Rule::Unterminated_literal_2015 | Rule::Reserved_literal_2021 => Ok(PretokenData::Reserved),
         Rule::Reserved_guard_2024 => Ok(PretokenData::Reserved),
-        Rule::Float_literal => {
+        Rule::Float_literal_1 | Rule::Float_literal_2 => {
             let mut body = None;
             let mut suffix = None;
             for sub in pair.into_inner().flatten() {
@@ -192,7 +192,9 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
                 suffix: suffix.map(Into::into),
             })
         }
-        Rule::Reserved_float => Ok(PretokenData::Reserved),
+        Rule::Reserved_float_empty_exponent | Rule::Reserved_float_based => {
+            Ok(PretokenData::Reserved)
+        }
         Rule::Integer_literal => {
             let mut base = None;
             let mut digits = None;

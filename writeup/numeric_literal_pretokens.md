@@ -27,6 +27,9 @@ The following nonterminals are common to the definitions below:
 > Note: The `! "."` subexpression makes sure that forms like `1..2` aren't treated as starting with a float.
 > The `! IDENT_START` subexpression makes sure that forms like `1.some_method()` aren't treated as starting with a float.
 
+> Note: The `Reserved_float_empty_exponent` pretoken nonterminal is placed between `Float_literal_1` and `Float_literal_2` in priority order
+> (which is why there are two pretoken nonterminals producing `FloatLiteral`).
+
 
 #### Reserved float { .rule }
 
@@ -41,6 +44,8 @@ The following nonterminals are common to the definitions below:
 ##### Attributes
 (none)
 
+> Note: The `Reserved_float_empty_exponent` pretoken nonterminal is placed between `Float_literal_1` and `Float_literal_2` in priority order.
+> This ordering makes sure that forms like `123.4e+` are reserved, rather than being accepted by `FLOAT_BODY_WITHOUT_EXPONENT`).
 
 #### Integer literal { .rule }
 

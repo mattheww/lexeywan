@@ -8,8 +8,10 @@ PRETOKEN_2015 = {
     Double_quoted_literal_2015 |
     Raw_double_quoted_literal_2015 |
     Unterminated_literal_2015 |
-    Float_literal |
-    Reserved_float |
+    Float_literal_1 |
+    Reserved_float_empty_exponent |
+    Float_literal_2 |
+    Reserved_float_based |
     Integer_literal |
     Lifetime_or_label |
     Raw_identifier |
@@ -27,8 +29,10 @@ PRETOKEN_2021 = {
     Double_quoted_literal_2021 |
     Raw_double_quoted_literal_2021 |
     Reserved_literal_2021 |
-    Float_literal |
-    Reserved_float |
+    Float_literal_1 |
+    Reserved_float_empty_exponent |
+    Float_literal_2 |
+    Reserved_float_based |
     Integer_literal |
     Raw_lifetime_or_label_2021 |
     Reserved_lifetime_or_label_prefix_2021 |
@@ -49,8 +53,10 @@ PRETOKEN_2024 = {
     Raw_double_quoted_literal_2021 |
     Reserved_literal_2021 |
     Reserved_guard_2024 |
-    Float_literal |
-    Reserved_float |
+    Float_literal_1 |
+    Reserved_float_empty_exponent |
+    Float_literal_2 |
+    Reserved_float_based |
     Integer_literal |
     Raw_lifetime_or_label_2021 |
     Reserved_lifetime_or_label_prefix_2021 |
@@ -166,9 +172,11 @@ DECIMAL_PART = { '0'..'9' ~ DECIMAL_DIGITS }
 
 
 // ANCHOR: float_literal
-Float_literal = {
-    FLOAT_BODY_WITH_EXPONENT ~ SUFFIX ? |
-    FLOAT_BODY_WITHOUT_EXPONENT ~ !("e"|"E") ~ SUFFIX ? |
+Float_literal_1 = {
+    FLOAT_BODY_WITH_EXPONENT ~ SUFFIX ?
+}
+Float_literal_2 = {
+    FLOAT_BODY_WITHOUT_EXPONENT ~ SUFFIX ? |
     FLOAT_BODY_WITH_FINAL_DOT ~ !"." ~ !IDENT_START
 }
 
@@ -188,24 +196,20 @@ FLOAT_BODY_WITH_FINAL_DOT = {
 // ANCHOR_END: float_literal
 
 // ANCHOR: reserved_float
-Reserved_float = {
-    RESERVED_FLOAT_EMPTY_EXPONENT | RESERVED_FLOAT_BASED
-}
-RESERVED_FLOAT_EMPTY_EXPONENT = {
+Reserved_float_empty_exponent = {
     DECIMAL_PART ~ ("." ~ DECIMAL_PART ) ? ~
-    ("e"|"E") ~ ("+"|"-") ?
+    ("e"|"E") ~ ("+"|"-")
 }
-RESERVED_FLOAT_BASED = {
+Reserved_float_based = {
     (
         ("0b" | "0o") ~ LOW_BASE_PRETOKEN_DIGITS |
         "0x" ~ HEXADECIMAL_DIGITS
     )  ~  (
-        ("e"|"E") |
+        ("e"|"E") ~ ("+"|"-" | EXPONENT_DIGITS) |
         "." ~ !"." ~ !IDENT_START
     )
 }
 // ANCHOR_END: reserved_float
-
 
 // ANCHOR: integer_literals
 Integer_literal = {
@@ -213,15 +217,13 @@ Integer_literal = {
       INTEGER_OCTAL_LITERAL |
       INTEGER_HEXADECIMAL_LITERAL |
       INTEGER_DECIMAL_LITERAL ) ~
-    SUFFIX_NO_E ?
+    SUFFIX ?
 }
 
 INTEGER_BINARY_LITERAL = { "0b" ~ LOW_BASE_PRETOKEN_DIGITS }
 INTEGER_OCTAL_LITERAL = { "0o" ~ LOW_BASE_PRETOKEN_DIGITS }
 INTEGER_HEXADECIMAL_LITERAL = { "0x" ~ HEXADECIMAL_DIGITS }
 INTEGER_DECIMAL_LITERAL = { DECIMAL_PART }
-
-SUFFIX_NO_E = { !("e"|"E") ~ SUFFIX }
 // ANCHOR_END: integer_literals
 
 
