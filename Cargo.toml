@@ -11,11 +11,9 @@ rustc_private=true
 pest = "2.8.0"
 pest_derive = "2.8.0"
 pico-args = { version = "0.5.0", features = ["eq-separator"] }
-# This version uses Unicode 16.0 for its character database
 regex = "=1.11.1"
-# lexlucid::analyse() checks that these supply the required Unicode version
+# lex_via_peg::analyse() checks that this supplies the required Unicode version
 unicode-normalization = "=0.1.24"
-unicode-xid = "=0.2.6"
 
 [dependencies.proptest]
 version = "1.4.0"
