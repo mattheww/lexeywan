@@ -11,7 +11,7 @@ This repository includes:
 
 See also the [rendered description][1].
 
-[1]: https://mjw.woodcraft.me.uk/2024-lexeywan/
+[1]: https://mjw.woodcraft.me.uk/2025-lexeywan/
 
 
 ## Running the tests
