@@ -11,14 +11,16 @@ const USAGE: &str = "\
 Usage: lexeywan [--edition=2015|2021|*2024] [<subcommand>] [...options]
 
 Subcommands:
- *compare  [--short] [--failures-only] [--details=always|*failures|never]
-  inspect  [--short]
-  coarse   [--short]
+ *compare  [suite-opts] [--failures-only] [--details=always|*failures|never]
+  inspect  [suite-opts]
+  coarse   [suite-opts]
   proptest [--count] [--strategy=<name>] [--print-failures|--print-all]
 
 * -- default
 
---short: run the SHORTLIST rather than the LONGLIST
+suite-opts (specify at most one):
+  --short: run the SHORTLIST rather than the LONGLIST
+  --xfail: run the tests which are expected to to fail
 
 ";
 
@@ -63,6 +65,8 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
     fn requested_inputs(args: &mut pico_args::Arguments) -> &'static [&'static str] {
         if args.contains("--short") {
             testcases::SHORTLIST
+        } else if args.contains("--xfail") {
+            testcases::XFAIL
         } else {
             testcases::LONGLIST
         }

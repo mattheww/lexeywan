@@ -1004,16 +1004,21 @@ pub const LONGLIST: &[&str] = [
     "#![attr]\nfn",
     "#! [attr]\nfn",
     "#!\n[attr]\nfn",
-    // Unhandled cases of shebang (comment-in-attribute)
-    "#! /* oops */ [attr]\nfn",
-    "#! // oops\n[attr]\nfn",
 
     //// Delimiters
 
-    // NB at present we can't see rustc lexing input with unbalanced delimiters
     "x ( [ { ((y)) } ] ) z",
-    "unbalanced ( parens",
 
 ]
 .as_slice();
 
+/// These tests fail
+pub const XFAIL: &[&str] = [
+    // Unhandled cases of shebang (comment-in-attribute)
+    "#! /* oops */ [attr]\nfn",
+    "#! // oops\n[attr]\nfn",
+
+    // At present we can't see rustc lexing input with unbalanced delimiters
+    "unbalanced ( parens",
+]
+.as_slice();
