@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+cd $(dirname $0)/..
+scripts/install_grammars_to_writeup
+mdbook build

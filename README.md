@@ -28,7 +28,7 @@ Note the provided `rust-toolchain.toml` will cause this to install the required 
 ## Building the description
 
 ```
-mdbook build
+scripts/build_writeup
 ```
 
 The output will appear in `book/`
