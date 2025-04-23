@@ -4,7 +4,6 @@ use crate::cleaning;
 use crate::combination;
 use crate::lex_via_peg;
 use crate::lex_via_rustc;
-use crate::lexlucid;
 use crate::regular_tokens::{regularise_from_coarse, regularise_from_rustc, RegularToken};
 use crate::Edition;
 
@@ -31,20 +30,6 @@ pub fn regularised_from_rustc(input: &str, edition: Edition) -> Regularisation {
         Accepts(tokens) => Regularisation::Accepts(regularise_from_rustc(tokens)),
         Rejects(_, messages) => Regularisation::Rejects(messages),
         CompilerError => Regularisation::ModelError(vec!["rustc compiler error".into()]),
-    }
-}
-
-#[allow(unused)]
-/// Run lexlucid's lexical analysis and return the regularised result.
-pub fn regularised_from_lexlucid(input: &str, edition: Edition) -> Regularisation {
-    use lexlucid::Analysis::*;
-    let cleaned = cleaning::clean(input);
-    match lexlucid::analyse(&cleaned, edition) {
-        Accepts(_, fine_tokens) => {
-            Regularisation::Accepts(regularise_from_coarse(combination::coarsen(fine_tokens)))
-        }
-        Rejects(reason) => Regularisation::Rejects(reason.into_description()),
-        ModelError(reason) => Regularisation::ModelError(reason.into_description()),
     }
 }
 

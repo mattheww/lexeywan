@@ -8,8 +8,6 @@ mod comparison;
 mod fine_tokens;
 mod lex_via_peg;
 mod lex_via_rustc;
-#[allow(unused)]
-mod lexlucid;
 mod proptesting;
 mod regular_tokens;
 mod simple_reports;
