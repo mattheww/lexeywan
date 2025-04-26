@@ -192,9 +192,10 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
                 suffix: suffix.map(Into::into),
             })
         }
-        Rule::Reserved_float_empty_exponent | Rule::Reserved_float_based => {
-            Ok(PretokenData::Reserved)
-        }
+        Rule::Reserved_float_empty_exponent
+        | Rule::Reserved_float_based
+        | Rule::Reserved_float_e_suffix_restriction
+        | Rule::Reserved_integer_e_suffix_restriction => Ok(PretokenData::Reserved),
         Rule::Integer_literal => {
             let mut base = None;
             let mut digits = None;

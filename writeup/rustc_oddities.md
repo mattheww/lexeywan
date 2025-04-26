@@ -35,11 +35,29 @@ The grammar production in the Reference seems to be written to assume that these
 I haven't seen any discussion of whether this rustc behaviour is considered desirable.
 
 
+### Restriction on e-suffixes { #e-suffix-restriction }
+
+With the implementation of [pr131656] as of 2025-04-27,
+support for numeric literal suffixes beginning with `e` or `E` is incomplete,
+and rejects some (very obscure) cases.
+
+A numeric literal token is rejected if:
+ - it doesn't have an exponent; and
+ - it has a suffix of the following form:
+   - begins with <b>e</b> or <b>E</b>
+   - immediately followed by one or more <b>_</b> characters
+   - immediately followed by a character which has the `XID_Continue` property but not `XID_Start`.
+
+For example, `123e_·` is rejected.
+
+The `Reserved_float_e_suffix_restriction` and `Reserved_integer_e_suffix_restriction` nonterminals describe this restriction in the grammar.
+
+
 [playground-lifetime]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=31fc06e4d678e1a38d8d39f521e8a11c
 [playground-ident]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=aad27eb75b2774f16fc6b0981b770d56
 
 [rfc2457]: https://rust-lang.github.io/rfcs/2457-non-ascii-idents.html
 
 [#126759]: https://github.com/rust-lang/rust/issues/126759
-
+[pr131656]: https://github.com/rust-lang/rust/pull/131656
 

@@ -47,6 +47,25 @@ The following nonterminals are common to the definitions below:
 > Note: The `Reserved_float_empty_exponent` pretoken nonterminal is placed between `Float_literal_1` and `Float_literal_2` in priority order.
 > This ordering makes sure that forms like `123.4e+` are reserved, rather than being accepted by `FLOAT_BODY_WITHOUT_EXPONENT`).
 
+> See [e-suffix-restriction] for discussion of `Reserved_float_e_suffix_restriction`.
+
+
+#### Reserved integer { .rule }
+
+##### Grammar
+```
+{{#include pretokenise_anchored.pest:reserved_integer}}
+```
+
+##### Pretoken kind
+`Reserved`
+
+##### Attributes
+(none)
+
+See [e-suffix-restriction] for discussion.
+
+
 #### Integer literal { .rule }
 
 ##### Grammar
@@ -85,3 +104,4 @@ The <var>base</var> attribute is determined from the following table, depending 
 > - `0x·` (which is rejected, not accepted as `0` with suffix `x·`)
 
 [rfc0879]: https://github.com/rust-lang/rfcs/pull/0879
+[e-suffix-restriction]: rustc_oddities.md#e-suffix-restriction

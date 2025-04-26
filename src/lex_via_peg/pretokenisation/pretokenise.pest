@@ -10,8 +10,10 @@ PRETOKEN_2015 = {
     Unterminated_literal_2015 |
     Float_literal_1 |
     Reserved_float_empty_exponent |
+    Reserved_float_e_suffix_restriction |
     Float_literal_2 |
     Reserved_float_based |
+    Reserved_integer_e_suffix_restriction |
     Integer_literal |
     Lifetime_or_label |
     Raw_identifier |
@@ -31,8 +33,10 @@ PRETOKEN_2021 = {
     Reserved_literal_2021 |
     Float_literal_1 |
     Reserved_float_empty_exponent |
+    Reserved_float_e_suffix_restriction |
     Float_literal_2 |
     Reserved_float_based |
+    Reserved_integer_e_suffix_restriction |
     Integer_literal |
     Raw_lifetime_or_label_2021 |
     Reserved_lifetime_or_label_prefix_2021 |
@@ -55,8 +59,10 @@ PRETOKEN_2024 = {
     Reserved_guard_2024 |
     Float_literal_1 |
     Reserved_float_empty_exponent |
+    Reserved_float_e_suffix_restriction |
     Float_literal_2 |
     Reserved_float_based |
+    Reserved_integer_e_suffix_restriction |
     Integer_literal |
     Raw_lifetime_or_label_2021 |
     Reserved_lifetime_or_label_prefix_2021 |
@@ -168,6 +174,8 @@ DECIMAL_DIGITS = { ('0'..'9' | "_") * }
 HEXADECIMAL_DIGITS = { ('0'..'9' | 'a' .. 'f' | 'A' .. 'F' | "_") * }
 LOW_BASE_PRETOKEN_DIGITS = { DECIMAL_DIGITS }
 DECIMAL_PART = { '0'..'9' ~ DECIMAL_DIGITS }
+
+RESTRICTED_E_SUFFIX = { ("e"|"E") ~ "_"+ ~ !XID_START ~ XID_CONTINUE }
 // ANCHOR_END: numeric_common
 
 
@@ -200,6 +208,10 @@ Reserved_float_empty_exponent = {
     DECIMAL_PART ~ ("." ~ DECIMAL_PART ) ? ~
     ("e"|"E") ~ ("+"|"-")
 }
+Reserved_float_e_suffix_restriction = {
+    DECIMAL_PART ~ "." ~ DECIMAL_PART ~
+    RESTRICTED_E_SUFFIX
+}
 Reserved_float_based = {
     (
         ("0b" | "0o") ~ LOW_BASE_PRETOKEN_DIGITS |
@@ -210,6 +222,15 @@ Reserved_float_based = {
     )
 }
 // ANCHOR_END: reserved_float
+
+// ANCHOR: reserved_integer
+Reserved_integer_e_suffix_restriction = {
+    ( INTEGER_BINARY_LITERAL |
+      INTEGER_OCTAL_LITERAL |
+      INTEGER_DECIMAL_LITERAL ) ~
+    RESTRICTED_E_SUFFIX
+}
+// ANCHOR_END: reserved_integer
 
 // ANCHOR: integer_literals
 Integer_literal = {
