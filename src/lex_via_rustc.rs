@@ -25,7 +25,7 @@ extern crate rustc_session;
 extern crate rustc_span;
 
 // This compiles with
-// rustc 1.87.0-nightly (f8a913b13 2025-02-23)
+// rustc 1.88.0-nightly (10fa3c449 2025-04-26)
 
 use std::{
     mem,
@@ -166,7 +166,7 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
 
     std::panic::catch_unwind(|| {
         match rustc_driver::catch_fatal_errors(|| {
-            rustc_span::create_session_globals_then(rustc_edition, None, || {
+            rustc_span::create_session_globals_then(rustc_edition, &[], None, || {
                 run_lexer(input, error_list.clone())
             })
         }) {
@@ -221,7 +221,7 @@ fn run_lexer(input: &str, error_list: ErrorAccumulator) -> Vec<RustcToken> {
     let input = String::from(input);
     let filename = FileName::Custom("lex_via_rustc".into());
     let lexed = match rustc_parse::source_str_to_stream(&psess, filename, input, None) {
-        Ok(token_stream) => TokenStreamProcessor::process(&token_stream, &source_map),
+        Ok(token_stream) => TokenStreamProcessor::process(&token_stream, source_map),
         Err(diags) => {
             // Errors constructing the token stream are reported here
             // (ie, unbalanced delimiters).
@@ -338,13 +338,13 @@ impl<'a> TokenStreamProcessor<'a> {
             }
             &TokenTree::Delimited(delim_span, delim_spacing, delimiter, ref token_stream) => {
                 self.output.push(token_from_ast_token(
-                    &Token::new(TokenKind::OpenDelim(delimiter), delim_span.open),
+                    &Token::new(delimiter.as_open_token_kind(), delim_span.open),
                     delim_spacing.open,
                     self.source_map,
                 ));
                 self.add_tokens_from_stream(token_stream);
                 self.output.push(token_from_ast_token(
-                    &Token::new(TokenKind::CloseDelim(delimiter), delim_span.close),
+                    &Token::new(delimiter.as_close_token_kind(), delim_span.close),
                     delim_spacing.close,
                     self.source_map,
                 ));
@@ -373,10 +373,28 @@ fn token_from_ast_token(
         TokenKind::Gt => RustcTokenData::Punctuation,
         TokenKind::AndAnd => RustcTokenData::Punctuation,
         TokenKind::OrOr => RustcTokenData::Punctuation,
-        TokenKind::Not => RustcTokenData::Punctuation,
+        TokenKind::Bang => RustcTokenData::Punctuation,
         TokenKind::Tilde => RustcTokenData::Punctuation,
-        TokenKind::BinOp(_) => RustcTokenData::Punctuation,
-        TokenKind::BinOpEq(_) => RustcTokenData::Punctuation,
+        TokenKind::Plus => RustcTokenData::Punctuation,
+        TokenKind::Minus => RustcTokenData::Punctuation,
+        TokenKind::Star => RustcTokenData::Punctuation,
+        TokenKind::Slash => RustcTokenData::Punctuation,
+        TokenKind::Percent => RustcTokenData::Punctuation,
+        TokenKind::Caret => RustcTokenData::Punctuation,
+        TokenKind::And => RustcTokenData::Punctuation,
+        TokenKind::Or => RustcTokenData::Punctuation,
+        TokenKind::Shl => RustcTokenData::Punctuation,
+        TokenKind::Shr => RustcTokenData::Punctuation,
+        TokenKind::PlusEq => RustcTokenData::Punctuation,
+        TokenKind::MinusEq => RustcTokenData::Punctuation,
+        TokenKind::StarEq => RustcTokenData::Punctuation,
+        TokenKind::SlashEq => RustcTokenData::Punctuation,
+        TokenKind::PercentEq => RustcTokenData::Punctuation,
+        TokenKind::CaretEq => RustcTokenData::Punctuation,
+        TokenKind::AndEq => RustcTokenData::Punctuation,
+        TokenKind::OrEq => RustcTokenData::Punctuation,
+        TokenKind::ShlEq => RustcTokenData::Punctuation,
+        TokenKind::ShrEq => RustcTokenData::Punctuation,
         TokenKind::At => RustcTokenData::Punctuation,
         TokenKind::Dot => RustcTokenData::Punctuation,
         TokenKind::DotDot => RustcTokenData::Punctuation,
@@ -393,8 +411,12 @@ fn token_from_ast_token(
         TokenKind::Dollar => RustcTokenData::Punctuation,
         TokenKind::Question => RustcTokenData::Punctuation,
         TokenKind::SingleQuote => RustcTokenData::Punctuation,
-        TokenKind::OpenDelim(_) => RustcTokenData::Punctuation,
-        TokenKind::CloseDelim(_) => RustcTokenData::Punctuation,
+        TokenKind::OpenParen => RustcTokenData::Punctuation,
+        TokenKind::CloseParen => RustcTokenData::Punctuation,
+        TokenKind::OpenBrace => RustcTokenData::Punctuation,
+        TokenKind::CloseBrace => RustcTokenData::Punctuation,
+        TokenKind::OpenBracket => RustcTokenData::Punctuation,
+        TokenKind::CloseBracket => RustcTokenData::Punctuation,
         TokenKind::Ident(symbol, style) => RustcTokenData::Ident {
             style: style.into(),
             identifier: symbol.to_string(),
@@ -438,10 +460,11 @@ fn token_from_ast_token(
             }
         }
         // These shouldn't happen
-        TokenKind::Interpolated(_) => RustcTokenData::Other,
         TokenKind::NtIdent(_, _) => RustcTokenData::Other,
         TokenKind::NtLifetime(_, _) => RustcTokenData::Other,
         TokenKind::Eof => RustcTokenData::Other,
+        TokenKind::OpenInvisible(_) => RustcTokenData::Other,
+        TokenKind::CloseInvisible(_) => RustcTokenData::Other,
     };
     RustcToken {
         extent: source_map.span_to_snippet(token.span).unwrap(),
