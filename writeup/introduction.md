@@ -20,12 +20,15 @@ This document describes Rust version 1.86.
 That means it describes raw lifetimes/labels and the additional reservations in the 2024 edition, but not
 
 - [rfc3349] (*Mixed UTF-8 literals*)
-- [pr131656] (allowing more numeric suffixes beginning with `e`)
 
 Other statements in this document are intended to be true as of April 2025.
 
 The comparable implementation is intended to be compiled against (and compared against)\
 `rustc 1.87.0-nightly (f8a913b13 2025-02-23)`
+
+> **This branch also documents the behaviour of [pr131656]\
+> _lexer: Treat more floats with empty exponent as valid tokens_\
+> as of 2025-04-27; the comparable implementation should be compared against that PR.**
 
 
 ### Editions
@@ -97,5 +100,6 @@ The source code for this document and the accompanying lexer implementation is a
 
 [rfc3349]: https://rust-lang.github.io/rfcs/3349-mixed-utf8-literals.html
 [rfc3593]: https://github.com/rust-lang/rfcs/pull/3593
+[pr131656]: https://github.com/rust-lang/rust/pull/131656
 
 [pr131656]: https://github.com/rust-lang/rust/pull/131656
