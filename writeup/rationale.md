@@ -80,9 +80,14 @@ Examples where rustc chooses a token which is shorter than the longest available
 rustc treats this as a "reserved number" (`0x`), rather than `0` with suffix `x·`.
 (Note that <b>·</b> has the `XID_Continue` property but not `XID_Start`.)
 
+Similarly the changes from [pr131656] (allowing forms like `1em`)
+introduce ambiguities which are resolved naturally because the floating-point literal definitions have priority over the integer literal definitions.
+
+Again there are examples where the longest available match isn't chosen.
+For example `1e2·` could be interpreted as an integer decimal literal with suffix `e2·`,
+but instead we find the float literal `1e2` and then reject the remainder of the input.
+
 I think that in 2025 it's clear that a priority-based system is a better fit for Rust's lexer.
-In particular, if [pr131656] is accepted (allowing forms like `1em`),
-the new ambiguities will be resolved naturally because the floating-point literal definitions have priority over the integer literal definitions.
 
 Generative grammars don't inherently have prioritisation, but parsing expression grammars do.
 
