@@ -6,12 +6,19 @@ This repository includes:
 * a harness for running `rustc`'s lexer in-process (via `rustc_private`)
 * strategies for comparing the implementation with `rustc`'s using [`proptest`]
 
+> **This branch also documents the behaviour of [pr131656]\
+> _lexer: Treat more floats with empty exponent as valid tokens_\
+> as of 2025-04-27**
+
+[pr131656]: https://github.com/rust-lang/rust/pull/131656
+
+
 [`proptest`]: https://proptest-rs.github.io/proptest/intro.html
 
 
 See also the [rendered description][1].
 
-[1]: https://mjw.woodcraft.me.uk/2025-lexeywan/
+[1]: https://mjw.woodcraft.me.uk/2025-lexeywan-peg-e-suffix/
 
 
 ## Running the tests
