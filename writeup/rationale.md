@@ -76,6 +76,10 @@ For example, the Reference's lexer rules for input such as `0x3` allow two inter
 We want to choose the former interpretation.
 (We could say that these are both the same kind of token and re-analyse it later to decide which part was the suffix, but we'd still have to understand the distinction inside the lexer in order to reject forms like `0b0123`.)
 
+Examples where rustc chooses a token which is shorter than the longest available match are rare. In the model used by the Reference, `0x·` is one:
+rustc treats this as a "reserved number" (`0x`), rather than `0` with suffix `x·`.
+(Note that <b>·</b> has the `XID_Continue` property but not `XID_Start`.)
+
 I think that in 2025 it's clear that a priority-based system is a better fit for Rust's lexer.
 In particular, if [pr131656] is accepted (allowing forms like `1em`),
 the new ambiguities will be resolved naturally because the floating-point literal definitions have priority over the integer literal definitions.
