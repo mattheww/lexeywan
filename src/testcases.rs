@@ -287,6 +287,8 @@ pub const LONGLIST: &[&str] = [
     r#" r"xxx"r"""#,
     r#" r"xxx"r"zzz"#,
     r#" r"xxx"r"zzz""#,
+    r#" r"xxx"r"zzz\""#,
+    r#" r"xxx"r"zzz\"""#,
     r#" r"xxx"b""#,
     r#" r"xxx"b"zzz"#,
     r#" r"xxx"b"zzz""#,
