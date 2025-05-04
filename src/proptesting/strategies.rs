@@ -9,8 +9,8 @@ pub const DEFAULT_STRATEGY: &str = "mix";
 
 #[rustfmt::skip]
 pub const SIMPLE_STRATEGIES: &[(&str, &str)] = [
-    ("whitespace"    ,         r#"[a \t\n\r\x85\u200E\u200F\u2028\u2029]{1,8}"#),
-    ("block-comment" ,         r#"[/*!a \n]{1,16}"#),
+    ("whitespace",             r#"[a \t\n\r\x85\u200E\u200F\u2028\u2029]{1,8}"#),
+    ("block-comment",          r#"[/*!a \n]{1,16}"#),
     ("line-comment",           r#"[/! a\n]{1,10}"#),
     ("punctuation",            r#"[-!#$%&*+,./:;<=>?@^_|~ ]{1,8}"#),
     ("identifier",             "[_#ra1£·áΩ🦀\x07\u{FFFF}. ]{1,12}"),
