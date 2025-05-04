@@ -4,6 +4,7 @@
 //!  `compare`
 //!  `inspect`
 //!  `course`
+//!  `identcheck`
 
 use crate::cleaning;
 use crate::combination;
@@ -53,6 +54,11 @@ pub fn run_coarse_subcommand(inputs: &[&str], edition: Edition) {
         show_coarse(input, edition);
         println!();
     }
+}
+
+/// Implements the `identcheck` CLI command.
+pub fn run_identcheck_subcommand(edition: Edition) {
+    show_identcheck(edition);
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -270,5 +276,27 @@ fn show_coarse(input: &str, edition: Edition) {
                 println!("  error: {}", s);
             }
         }
+    }
+}
+
+fn show_identcheck(edition: Edition) {
+    // This will report errors if there's a unicode version mismatch.
+    println!("Checking each nonascii character as XID_Start and XID_Continue");
+    let mut passes = 0;
+    let mut failures = 0;
+    let mut model_errors = 0;
+    // Start after the ascii range to avoid delimiters
+    for c in '\u{0080}'..=char::MAX {
+        for input in [format!("{}", c), format!("a{}", c)] {
+            match show_comparison(&input, edition, DetailsMode::Never, true) {
+                Comparison::Agree => passes += 1,
+                Comparison::Differ => failures += 1,
+                Comparison::ModelErrors => model_errors += 1,
+            }
+        }
+    }
+    println!("\n{passes} passed, {failures} failed");
+    if model_errors != 0 {
+        println!("*** {model_errors} model errors ***");
     }
 }

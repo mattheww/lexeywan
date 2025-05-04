@@ -2,7 +2,8 @@
 
 use crate::proptesting::{self, Verbosity};
 use crate::simple_reports::{
-    run_coarse_subcommand, run_compare_subcommand, run_inspect_subcommand, DetailsMode,
+    run_coarse_subcommand, run_compare_subcommand, run_identcheck_subcommand,
+    run_inspect_subcommand, DetailsMode,
 };
 use crate::testcases;
 use crate::Edition;
@@ -14,6 +15,7 @@ Subcommands:
  *compare  [suite-opts] [--failures-only] [--details=always|*failures|never]
   inspect  [suite-opts]
   coarse   [suite-opts]
+  identcheck
   proptest [--count] [--strategy=<name>] [--print-failures|--print-all]
 
 * -- default
@@ -84,6 +86,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         Coarse {
             inputs: &'static [&'static str],
         },
+        IdentCheck,
         PropTest {
             strategy_name: String,
             count: u32,
@@ -120,6 +123,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         Some("coarse") => Action::Coarse {
             inputs: requested_inputs(&mut args),
         },
+        Some("identcheck") => Action::IdentCheck,
         Some("proptest") => {
             let strategy_name = args
                 .opt_value_from_str::<_, String>("--strategy")?
@@ -173,6 +177,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         } => run_compare_subcommand(inputs, edition, details_mode, show_failures_only),
         Action::Inspect { inputs } => run_inspect_subcommand(inputs, edition),
         Action::Coarse { inputs } => run_coarse_subcommand(inputs, edition),
+        Action::IdentCheck => run_identcheck_subcommand(edition),
         Action::PropTest {
             strategy_name,
             count,
