@@ -11,7 +11,7 @@ use crate::fine_tokens::{self, CommentStyle, FineToken, FineTokenData};
 
 /// A "Coarse-grained" token.
 ///
-/// This is close to the [`FineToken`] returned by Lexclucid step 2, but:
+/// This is close to [`FineToken`], but:
 /// - There are no tokens for whitespace
 /// - Tokens for comments always represent doc-comments
 /// - Punctuation can have multiple characters

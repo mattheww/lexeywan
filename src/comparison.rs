@@ -1,4 +1,4 @@
-//! High-level support for comparing the rustc and lexclucid analyses.
+//! High-level support for comparing the rustc and peg analyses.
 
 use crate::cleaning;
 use crate::combination;
