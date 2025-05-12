@@ -12,6 +12,9 @@ mod proptesting;
 mod regular_tokens;
 mod simple_reports;
 mod testcases;
+mod tree_construction;
+mod tree_flattening;
+mod trees;
 mod utils;
 
 #[derive(Copy, Clone, PartialEq, Eq)]

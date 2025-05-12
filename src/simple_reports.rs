@@ -14,6 +14,8 @@ use crate::comparison::{
 use crate::fine_tokens::FineToken;
 use crate::lex_via_peg;
 use crate::lex_via_rustc;
+use crate::tree_construction;
+use crate::tree_flattening::flatten;
 use crate::utils::escape_for_display;
 use crate::Edition;
 
@@ -74,9 +76,6 @@ fn format_pretoken(pretoken: &lex_via_peg::Pretoken) -> String {
 fn format_token(token: &FineToken) -> String {
     format!("{:?}, {:?}", token.data, token.extent)
 }
-fn format_coarse_token(ctoken: &combination::CoarseToken) -> String {
-    format!("{:?}, {:?}", ctoken.data, ctoken.extent)
-}
 
 /// Returns a symbol indicating how a single model responded to the input.
 fn single_model_symbol(reg: &Regularisation) -> char {
@@ -126,8 +125,8 @@ fn show_comparison(
         match rustc {
             Regularisation::Accepts(tokens) => {
                 println!("  rustc: accepted");
-                for token in tokens {
-                    println!("    {:?}", token);
+                for item in flatten(&tokens) {
+                    println!("    {:?}", item);
                 }
             }
             Regularisation::Rejects(messages) => {
@@ -146,8 +145,8 @@ fn show_comparison(
         match lex_via_peg {
             Regularisation::Accepts(tokens) => {
                 println!("  lex_via_peg: accepted");
-                for token in tokens {
-                    println!("    {:?}", token);
+                for item in flatten(&tokens) {
+                    println!("    {:?}", item);
                 }
             }
             Regularisation::Rejects(messages) => {
@@ -173,8 +172,8 @@ fn show_detail(input: &str, edition: Edition) {
     match lex_via_rustc::analyse(input, edition) {
         lex_via_rustc::Analysis::Accepts(tokens) => {
             println!("rustc: accepted");
-            for token in tokens {
-                println!("  {}", token.summary);
+            for item in flatten(&tokens) {
+                println!("  {:?}", item);
             }
         }
         lex_via_rustc::Analysis::Rejects(tokens, messages) => {
@@ -184,8 +183,8 @@ fn show_detail(input: &str, edition: Edition) {
             }
             if !tokens.is_empty() {
                 println!("  -- tokens reported --");
-                for token in tokens {
-                    println!("  {}", token.summary);
+                for item in flatten(&tokens) {
+                    println!("  {:?}", item);
                 }
             }
         }
@@ -196,13 +195,21 @@ fn show_detail(input: &str, edition: Edition) {
     let cleaned = cleaning::clean(input);
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(pretokens, tokens) => {
-            println!("lex_via_peg: accepted");
+            match tree_construction::construct_forest(tokens.clone()) {
+                Ok(_) => {
+                    println!("lex_via_peg: accepted");
+                }
+                Err(message) => {
+                    println!("lex_via_peg: rejected in step 3 (tree construction)");
+                    println!("  error: {message}");
+                }
+            }
             println!("  -- pretokens --");
             for pretoken in pretokens {
                 println!("  {}", format_pretoken(&pretoken));
             }
             println!("  -- tokens --");
-            for token in tokens {
+            for token in tokens.iter() {
                 println!("  {}", format_token(&token));
             }
         }
@@ -258,10 +265,20 @@ fn show_coarse(input: &str, edition: Edition) {
             for token in tokens.iter() {
                 println!("  {}", format_token(token));
             }
-            let combined = combination::coarsen(tokens);
-            println!("  -- coarse --");
-            for ctoken in combined {
-                println!("  {}", format_coarse_token(&ctoken));
+            match tree_construction::construct_forest(tokens) {
+                Ok(forest) => {
+                    let combined = combination::coarsen(forest);
+                    println!("  -- coarse --");
+                    for item in flatten(&combined) {
+                        println!("  {:?}", item);
+                    }
+                }
+                Err(message) => {
+                    println!(
+                        "lex_via_peg: rejected during tree construction: {}",
+                        message
+                    );
+                }
             }
         }
         lex_via_peg::Analysis::Rejects(reason) => {

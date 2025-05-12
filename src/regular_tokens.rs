@@ -21,6 +21,7 @@ use crate::{
         RustcCommentKind, RustcDocCommentStyle, RustcIdentIsRaw, RustcLiteralData,
         RustcStringStyle, RustcToken, RustcTokenData,
     },
+    trees::Forest,
 };
 
 #[derive(PartialEq, Eq)]
@@ -121,43 +122,41 @@ pub enum StringStyle {
 }
 
 #[allow(unused)]
-/// Converts a sequence of `RustcToken`s into a sequence of `RegularToken`s.
+/// Converts a forest of `RustcToken`s into a forest of `RegularToken`s.
 ///
 /// May panic if any of the tokens represent an error condition (this won't happen if the tokens
 /// came from a lex_via_rustc::analyse() call which reported success).
-pub fn regularise_from_rustc(tokens: impl IntoIterator<Item = RustcToken>) -> Vec<RegularToken> {
-    tokens
-        .into_iter()
-        .map(|token| RegularToken {
-            extent: token.extent.into(),
-            data: match token.data {
-                RustcTokenData::DocComment {
-                    comment_kind,
-                    style,
-                    body,
-                } => RegularTokenData::DocComment {
-                    comment_kind: comment_kind.into(),
-                    style: (style).into(),
-                    body: body.into(),
-                },
-                RustcTokenData::Punctuation => RegularTokenData::Punctuation,
-                RustcTokenData::Ident { style, identifier } => RegularTokenData::Identifier {
-                    represented_identifier: identifier.into(),
-                    style: style.into(),
-                },
-                RustcTokenData::Lifetime {
-                    style,
-                    symbol: name,
-                } => RegularTokenData::LifetimeOrLabel {
-                    symbol: name.into(),
-                    style: style.into(),
-                },
-                RustcTokenData::Lit { literal_data } => regularise_rustc_literal(literal_data)
-                    .expect("rustc token represented an error"),
-                RustcTokenData::Other => RegularTokenData::Other,
+pub fn regularise_from_rustc(forest: Forest<RustcToken>) -> Forest<RegularToken> {
+    forest.map(|token| RegularToken {
+        extent: token.extent.into(),
+        data: match token.data {
+            RustcTokenData::DocComment {
+                comment_kind,
+                style,
+                body,
+            } => RegularTokenData::DocComment {
+                comment_kind: comment_kind.into(),
+                style: (style).into(),
+                body: body.into(),
             },
-        })
-        .collect()
+            RustcTokenData::Punctuation => RegularTokenData::Punctuation,
+            RustcTokenData::Ident { style, identifier } => RegularTokenData::Identifier {
+                represented_identifier: identifier.into(),
+                style: style.into(),
+            },
+            RustcTokenData::Lifetime {
+                style,
+                symbol: name,
+            } => RegularTokenData::LifetimeOrLabel {
+                symbol: name.into(),
+                style: style.into(),
+            },
+            RustcTokenData::Lit { literal_data } => {
+                regularise_rustc_literal(literal_data).expect("rustc token represented an error")
+            }
+            RustcTokenData::Other => RegularTokenData::Other,
+        },
+    })
 }
 
 fn regularise_rustc_literal(literal_data: RustcLiteralData) -> Result<RegularTokenData, ()> {
@@ -231,15 +230,12 @@ impl From<RustcStringStyle> for StringStyle {
     }
 }
 
-/// Converts a sequence of `CoarseToken`s into a sequence of `RegularToken`s.
-pub fn regularise_from_coarse(tokens: impl IntoIterator<Item = CoarseToken>) -> Vec<RegularToken> {
-    tokens
-        .into_iter()
-        .map(|ctoken| RegularToken {
-            extent: ctoken.extent,
-            data: from_coarse_token_data(ctoken.data),
-        })
-        .collect()
+/// Converts a forest of `CoarseToken`s into a forest of `RegularToken`s.
+pub fn regularise_from_coarse(forest: Forest<CoarseToken>) -> Forest<RegularToken> {
+    forest.map(|ctoken| RegularToken {
+        extent: ctoken.extent,
+        data: from_coarse_token_data(ctoken.data),
+    })
 }
 
 fn from_coarse_token_data(token_data: CoarseTokenData) -> RegularTokenData {

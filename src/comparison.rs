@@ -5,6 +5,8 @@ use crate::combination;
 use crate::lex_via_peg;
 use crate::lex_via_rustc;
 use crate::regular_tokens::{regularise_from_coarse, regularise_from_rustc, RegularToken};
+use crate::tree_construction;
+use crate::trees::Forest;
 use crate::Edition;
 
 /// The "regularised" result of running a lexer.
@@ -12,7 +14,7 @@ pub enum Regularisation {
     /// The lexer accepted the input.
     ///
     /// Contains the lexer's output, in "regularised" form (suitable for comparing implementations).
-    Accepts(Vec<RegularToken>),
+    Accepts(Forest<RegularToken>),
 
     /// The lexer rejected the input.
     ///
@@ -38,9 +40,12 @@ pub fn regularised_from_peg(input: &str, edition: Edition) -> Regularisation {
     use lex_via_peg::Analysis::*;
     let cleaned = cleaning::clean(input);
     match lex_via_peg::analyse(&cleaned, edition) {
-        Accepts(_, fine_tokens) => {
-            Regularisation::Accepts(regularise_from_coarse(combination::coarsen(fine_tokens)))
-        }
+        Accepts(_, fine_tokens) => match tree_construction::construct_forest(fine_tokens) {
+            Ok(forest) => {
+                Regularisation::Accepts(regularise_from_coarse(combination::coarsen(forest)))
+            }
+            Err(message) => Regularisation::Rejects(vec![message]),
+        },
         Rejects(reason) => Regularisation::Rejects(reason.into_description()),
         ModelError(reason) => Regularisation::ModelError(reason.into_description()),
     }

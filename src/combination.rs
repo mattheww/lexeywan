@@ -8,6 +8,7 @@
 
 use crate::char_sequences::{concat_charseqs, Charseq};
 use crate::fine_tokens::{self, CommentStyle, FineToken, FineTokenData};
+use crate::trees::{Forest, Tree};
 
 /// A "Coarse-grained" token.
 ///
@@ -15,12 +16,19 @@ use crate::fine_tokens::{self, CommentStyle, FineToken, FineTokenData};
 /// - There are no tokens for whitespace
 /// - Tokens for comments always represent doc-comments
 /// - Punctuation can have multiple characters
+/// - Punctuation never represents a delimiter
 pub struct CoarseToken {
     /// The token's kind and attributes.
     pub data: CoarseTokenData,
 
     /// The input characters which make up the token.
     pub extent: Charseq,
+}
+
+impl std::fmt::Debug for CoarseToken {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}, {:?}", self.data, self.extent)
+    }
 }
 
 /// A coarse-grained token's kind and attributes.
@@ -114,9 +122,9 @@ pub enum NumericBase {
     Hexadecimal,
 }
 
-/// Converts a sequence of `FineToken`s into a sequence of `CoarseToken`s.
-pub fn coarsen(tokens: impl IntoIterator<Item = FineToken>) -> Vec<CoarseToken> {
-    combine(process_whitespace(tokens))
+/// Converts a fine-grained token forest into a coarse-grained one.
+pub fn coarsen(forest: Forest<FineToken>) -> Forest<CoarseToken> {
+    map_combine(map_process_whitespace(forest))
 }
 
 #[derive(PartialEq, Eq, Copy, Clone, Debug)]
@@ -128,34 +136,29 @@ enum Spacing {
 }
 
 /// Calculates spacing information for fine-grained tokens, dropping tokens representing whitespace.
-fn process_whitespace(tokens: impl IntoIterator<Item = FineToken>) -> Vec<(FineToken, Spacing)> {
-    let mut processed = Vec::new();
-    let mut stream = tokens.into_iter().peekable();
-    while let Some(token) = stream.next() {
-        if !token.data.is_whitespace() {
-            let spacing = match stream.peek() {
-                Some(peeked) => {
-                    if peeked.data.is_whitespace() {
-                        Spacing::Alone
-                    } else {
-                        Spacing::Joint
-                    }
-                }
-                None => Spacing::Alone,
+///
+/// The Spacing returned describes the spacing after the token it's paired with.
+///
+/// We don't try to track spacing around delimiters:
+/// - we don't provide a way to represent spacing after a delimiter
+/// - we don't track spacing before a delimiter (we always say 'Alone')
+fn map_process_whitespace(forest: Forest<FineToken>) -> Forest<(FineToken, Spacing)> {
+    forest.combining_map(|token, tokens| {
+        (!token.data.is_whitespace()).then(|| {
+            let spacing = match tokens.peek() {
+                Some(Tree::Token(token)) if !token.data.is_whitespace() => Spacing::Joint,
+                _ => Spacing::Alone,
             };
-            processed.push((token, spacing));
-        }
-    }
-    processed
+            (token, spacing)
+        })
+    })
 }
 
 /// "Glue"s `FineToken`s with spacing information into `CoarseToken`s.
-fn combine(stream: Vec<(FineToken, Spacing)>) -> Vec<CoarseToken> {
-    let mut result = Vec::new();
-    let mut stream = stream.into_iter().peekable();
-    while let Some((token1, spacing)) = stream.next() {
+fn map_combine(forest: Forest<(FineToken, Spacing)>) -> Forest<CoarseToken> {
+    forest.combining_map(|(token1, spacing), tokens| {
         if spacing == Spacing::Joint {
-            if let Some((token2, spacing2)) = stream.peek() {
+            if let Some(Tree::Token((token2, spacing2))) = tokens.peek() {
                 if let Some(double_token) = merge_two(&token1.data, &token2.data) {
                     let mut combined_token = CoarseToken {
                         data: double_token,
@@ -163,9 +166,9 @@ fn combine(stream: Vec<(FineToken, Spacing)>) -> Vec<CoarseToken> {
                     };
                     let may_combine_further = *spacing2 == Spacing::Joint;
                     // skip the second token
-                    stream.next();
+                    tokens.next();
                     if may_combine_further {
-                        if let Some((token3, _)) = stream.peek() {
+                        if let Some(Tree::Token((token3, _))) = tokens.peek() {
                             if let Some(triple_token) =
                                 merge_three(&combined_token.data, &token3.data)
                             {
@@ -174,21 +177,19 @@ fn combine(stream: Vec<(FineToken, Spacing)>) -> Vec<CoarseToken> {
                                     extent: concat_charseqs(&combined_token.extent, &token3.extent),
                                 };
                                 // skip the third token
-                                stream.next();
+                                tokens.next();
                             }
                         }
                     }
-                    result.push(combined_token);
-                    continue;
+                    return Some(combined_token);
                 }
             }
         }
-        result.push(CoarseToken {
+        Some(CoarseToken {
             data: token1.data.try_into().unwrap(),
             extent: token1.extent,
-        });
-    }
-    result
+        })
+    })
 }
 
 /// Merges two fine-grained tokens if they're mergeable.

@@ -1,19 +1,14 @@
 //! Runs rustc's lexical analysis.
 //!
-//! This works by running the low-level and high-level lexers as far as making a `TokenStream`, then
-//! flattening the `TokenTree`s it contains back into a sequence of tokens in a similar way to
-//! rustc's parser.
+//! This works by running the low-level and high-level lexers as far as making a `TokenStream`.
 //! If rustc emits any error messages (or panics), we treat the input as rejected.
 //!
-//! Stringlike literal tokens are further run through ast::LitKind::from_token_lit(), to obtain the
+//! Stringlike literal tokens are further run through `ast::LitKind::from_token_lit()`, to obtain the
 //! "unescaped" value.
 //!
 //! The input string is fed through `SourceMap::new_source_file()`, which means that "normalisation"
 //! (BOM-removal and CRLF-conversion) happen. Later shebang removal happens too. See the
 //! [`cleaning`][`crate::cleaning`] module for how we make equivalent input for comparison.
-//!
-//! A limitation of this approach is that, because it constructs token trees, input with imbalanced
-//! delimiters is rejected.
 
 extern crate rustc_ast;
 extern crate rustc_data_structures;
@@ -42,7 +37,10 @@ use rustc_span::{
     FileName,
 };
 
-use crate::Edition;
+use crate::{
+    trees::{self, Forest, Tree},
+    Edition,
+};
 
 /// Information we keep about a token from the rustc tokeniser.
 pub struct RustcToken {
@@ -52,6 +50,12 @@ pub struct RustcToken {
     pub data: RustcTokenData,
     /// Human-readable description of the token
     pub summary: String,
+}
+
+impl std::fmt::Debug for RustcToken {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.summary)
+    }
 }
 
 /// A rustc token's kind and attributes
@@ -137,7 +141,7 @@ pub enum RustcStringStyle {
 
 /// Runs rustc's lexical analysis on the specified input.
 ///
-/// If the input is accepted, returns a list of tokens, in [`RustcToken`] form.
+/// If the input is accepted, returns a [`Forest`] of tokens, in [`RustcToken`] form.
 /// Otherwise returns at least one error message.
 ///
 /// If rustc panics (ie, it would report an ICE), the panic message is sent to
@@ -160,20 +164,20 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
                 run_lexer(input, error_list.clone())
             })
         }) {
-            Ok(rustc_tokens) => {
+            Ok(rustc_forest) => {
                 let messages = extract_errors(error_list);
                 if messages.is_empty() {
                     // Lexing succeeded
-                    Analysis::Accepts(rustc_tokens)
+                    Analysis::Accepts(rustc_forest)
                 } else {
                     // Lexing reported a non-fatal error
-                    Analysis::Rejects(rustc_tokens, messages)
+                    Analysis::Rejects(rustc_forest, messages)
                 }
             }
             Err(_) => {
                 let mut messages = extract_errors(error_list);
                 messages.push("reported fatal error (panicked)".into());
-                Analysis::Rejects(Vec::new(), messages)
+                Analysis::Rejects(Forest::new(), messages)
             }
         }
     })
@@ -183,14 +187,14 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
 /// Result of running lexical analysis on a string.
 pub enum Analysis {
     /// Lexical analysis accepted the input.
-    Accepts(Vec<RustcToken>),
+    Accepts(Forest<RustcToken>),
     /// Lexical analysis rejected the input.
     ///
-    /// The tokens are what rustc would have passed on to the parser.
+    /// The forest of tokens is what rustc would have passed on to the parser.
     /// Empty if there was a fatal error, or if there are unbalanced delimiters.
     ///
     /// The strings are error messages. There's always at least one message.
-    Rejects(Vec<RustcToken>, Vec<String>),
+    Rejects(Forest<RustcToken>, Vec<String>),
     /// The input provoked an internal compiler error.
     CompilerError,
 }
@@ -205,13 +209,13 @@ pub enum Analysis {
 ///    been added to error_list
 ///    - in this case, the returned tokens are what would have been passed on to
 ///      the parser (an empty list if token stream construction failed).
-fn run_lexer(input: &str, error_list: ErrorAccumulator) -> Vec<RustcToken> {
+fn run_lexer(input: &str, error_list: ErrorAccumulator) -> Forest<RustcToken> {
     let psess = make_parser_session(error_list.clone());
     let source_map = psess.source_map();
     let input = String::from(input);
     let filename = FileName::Custom("lex_via_rustc".into());
     let lexed = match rustc_parse::source_str_to_stream(&psess, filename, input, None) {
-        Ok(token_stream) => TokenStreamProcessor::process(&token_stream, source_map),
+        Ok(token_stream) => map_forest(&token_stream, source_map),
         Err(diags) => {
             // Errors constructing the token stream are reported here
             // (ie, unbalanced delimiters).
@@ -219,7 +223,7 @@ fn run_lexer(input: &str, error_list: ErrorAccumulator) -> Vec<RustcToken> {
             for diag in diags {
                 diag.emit();
             }
-            Vec::new()
+            Forest::<RustcToken>::new()
         }
     };
     // The lexer doesn't report errors itself when it sees emoji in 'identifiers'. Instead it leaves
@@ -298,46 +302,28 @@ fn make_parser_session(error_list: ErrorAccumulator) -> rustc_session::parse::Pa
     rustc_session::parse::ParseSess::with_dcx(dcx, sm)
 }
 
-/// Converts a rustc_ast `TokenStream` to a flat sequence of `RustcToken`s.
-struct TokenStreamProcessor<'a> {
-    source_map: &'a SourceMap,
-    output: Vec<RustcToken>,
-}
-
-impl<'a> TokenStreamProcessor<'a> {
-    fn process(token_stream: &TokenStream, source_map: &'a SourceMap) -> Vec<RustcToken> {
-        let mut flattener = Self {
-            source_map,
-            output: Vec::new(),
-        };
-        flattener.add_tokens_from_stream(token_stream);
-        flattener.output
-    }
-
-    fn add_tokens_from_stream(&mut self, token_stream: &TokenStream) {
-        for token_tree in token_stream.iter() {
-            self.add_tokens_from_tree(token_tree);
-        }
-    }
-
-    fn add_tokens_from_tree(&mut self, token_tree: &TokenTree) {
-        match token_tree {
-            &TokenTree::Token(ref token, _) => self
-                .output
-                .push(token_from_ast_token(token, self.source_map)),
-            &TokenTree::Delimited(delim_span, _, delimiter, ref token_stream) => {
-                self.output.push(token_from_ast_token(
-                    &Token::new(delimiter.as_open_token_kind(), delim_span.open),
-                    self.source_map,
-                ));
-                self.add_tokens_from_stream(token_stream);
-                self.output.push(token_from_ast_token(
-                    &Token::new(delimiter.as_close_token_kind(), delim_span.close),
-                    self.source_map,
-                ));
+/// Converts a rustc_ast `TokenStream` to our `TokenForest<RustcToken>`
+fn map_forest(token_stream: &TokenStream, source_map: &SourceMap) -> Forest<RustcToken> {
+    token_stream
+        .iter()
+        .map(|token_tree| match token_tree {
+            &TokenTree::Token(ref token, _) => {
+                Tree::<RustcToken>::Token(token_from_ast_token(token, source_map))
             }
-        }
-    }
+            &TokenTree::Delimited(delim_span, _, delimiter, ref token_stream) => {
+                if let Ok(group_kind) = delimiter.try_into() {
+                    Tree::<RustcToken>::Group(group_kind, map_forest(token_stream, source_map))
+                } else {
+                    // Shouldn't happen (invisible delimiter)
+                    Tree::<RustcToken>::Token(RustcToken {
+                        extent: source_map.span_to_snippet(delim_span.open).unwrap(),
+                        data: RustcTokenData::Other,
+                        summary: "((invisible group))".into(),
+                    })
+                }
+            }
+        })
+        .collect()
 }
 
 fn token_from_ast_token(token: &Token, source_map: &SourceMap) -> RustcToken {
@@ -505,6 +491,19 @@ impl From<rustc_ast::StrStyle> for RustcStringStyle {
         match str_style {
             rustc_ast::StrStyle::Cooked => Self::NonRaw,
             rustc_ast::StrStyle::Raw(_) => Self::Raw,
+        }
+    }
+}
+
+impl TryFrom<rustc_ast::token::Delimiter> for trees::GroupKind {
+    type Error = ();
+
+    fn try_from(value: rustc_ast::token::Delimiter) -> Result<Self, Self::Error> {
+        match value {
+            rustc_ast::token::Delimiter::Parenthesis => Ok(trees::GroupKind::Parenthesised),
+            rustc_ast::token::Delimiter::Brace => Ok(trees::GroupKind::Braced),
+            rustc_ast::token::Delimiter::Bracket => Ok(trees::GroupKind::Bracketed),
+            rustc_ast::token::Delimiter::Invisible(_) => Err(()),
         }
     }
 }
