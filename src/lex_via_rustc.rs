@@ -48,20 +48,10 @@ use crate::Edition;
 pub struct RustcToken {
     /// The input characters which make up the token
     pub extent: String,
-    /// Spacing between this token and the next one
-    pub spacing: RustcTokenSpacing,
     /// The token kind, and any data we've extracted specific to this kind of token
     pub data: RustcTokenData,
     /// Human-readable description of the token
     pub summary: String,
-}
-
-#[derive(Copy, Clone)]
-pub enum RustcTokenSpacing {
-    /// This token is followed by whitespace, a (non-doc) comment, or end-of-input.
-    Alone,
-    /// There is no space between this token and the next.
-    Joint,
 }
 
 /// A rustc token's kind and attributes
@@ -332,20 +322,17 @@ impl<'a> TokenStreamProcessor<'a> {
 
     fn add_tokens_from_tree(&mut self, token_tree: &TokenTree) {
         match token_tree {
-            &TokenTree::Token(ref token, spacing) => {
-                self.output
-                    .push(token_from_ast_token(token, spacing, self.source_map))
-            }
-            &TokenTree::Delimited(delim_span, delim_spacing, delimiter, ref token_stream) => {
+            &TokenTree::Token(ref token, _) => self
+                .output
+                .push(token_from_ast_token(token, self.source_map)),
+            &TokenTree::Delimited(delim_span, _, delimiter, ref token_stream) => {
                 self.output.push(token_from_ast_token(
                     &Token::new(delimiter.as_open_token_kind(), delim_span.open),
-                    delim_spacing.open,
                     self.source_map,
                 ));
                 self.add_tokens_from_stream(token_stream);
                 self.output.push(token_from_ast_token(
                     &Token::new(delimiter.as_close_token_kind(), delim_span.close),
-                    delim_spacing.close,
                     self.source_map,
                 ));
             }
@@ -353,11 +340,7 @@ impl<'a> TokenStreamProcessor<'a> {
     }
 }
 
-fn token_from_ast_token(
-    token: &Token,
-    spacing: rustc_ast::tokenstream::Spacing,
-    source_map: &SourceMap,
-) -> RustcToken {
+fn token_from_ast_token(token: &Token, source_map: &SourceMap) -> RustcToken {
     let data = match token.kind {
         TokenKind::DocComment(comment_kind, style, symbol) => RustcTokenData::DocComment {
             comment_kind: comment_kind.into(),
@@ -468,9 +451,8 @@ fn token_from_ast_token(
     };
     RustcToken {
         extent: source_map.span_to_snippet(token.span).unwrap(),
-        spacing: spacing.into(),
         data,
-        summary: format!("{:} {:?}", format_spacing(&spacing), token.kind.clone()),
+        summary: format!("{:?}", token.kind.clone()),
     }
 }
 
@@ -488,24 +470,6 @@ fn literal_data_from_ast_litkind(ast_lit: rustc_ast::ast::LitKind) -> RustcLiter
         rustc_ast::LitKind::Byte(byte) => RustcLiteralData::Byte(byte),
         rustc_ast::LitKind::Char(c) => RustcLiteralData::Character(c),
         _ => RustcLiteralData::Error,
-    }
-}
-
-fn format_spacing(spacing: &rustc_ast::tokenstream::Spacing) -> &str {
-    match spacing {
-        rustc_ast::tokenstream::Spacing::Alone => "alone",
-        rustc_ast::tokenstream::Spacing::Joint => "joint",
-        rustc_ast::tokenstream::Spacing::JointHidden => "-----",
-    }
-}
-
-impl From<rustc_ast::tokenstream::Spacing> for RustcTokenSpacing {
-    fn from(spacing: rustc_ast::tokenstream::Spacing) -> Self {
-        match spacing {
-            rustc_ast::tokenstream::Spacing::Alone => RustcTokenSpacing::Alone,
-            rustc_ast::tokenstream::Spacing::Joint => RustcTokenSpacing::Joint,
-            rustc_ast::tokenstream::Spacing::JointHidden => RustcTokenSpacing::Joint,
-        }
     }
 }
 

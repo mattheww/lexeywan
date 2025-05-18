@@ -5,7 +5,6 @@
 //! At present each regularised token tracks:
 //!  - the span of source characters matched
 //!  - the token's "kind" (see [`RegularTokenData`])
-//!  - information about the [spacing][Spacing] to the following-token
 //!  - the suffix for literal tokens
 //!  - the 'kinds' of literal tokens (but not suffixed string-like ones)
 //!  - how string-family literals would be "unescaped"
@@ -20,33 +19,20 @@ use crate::{
     combination::{self, CoarseToken, CoarseTokenData},
     lex_via_rustc::{
         RustcCommentKind, RustcDocCommentStyle, RustcIdentIsRaw, RustcLiteralData,
-        RustcStringStyle, RustcToken, RustcTokenData, RustcTokenSpacing,
+        RustcStringStyle, RustcToken, RustcTokenData,
     },
 };
 
 #[derive(PartialEq, Eq)]
 pub struct RegularToken {
     pub extent: Charseq,
-    pub spacing: Spacing,
     pub data: RegularTokenData,
 }
 
 impl std::fmt::Debug for RegularToken {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "extent: {:?} {:?}", self.extent, self.data)?;
-        if matches!(self.spacing, Spacing::Alone) {
-            write!(f, " |")?;
-        }
-        Ok(())
+        write!(f, "extent: {:?} {:?}", self.extent, self.data)
     }
-}
-
-#[derive(PartialEq, Eq)]
-pub enum Spacing {
-    /// This token is followed by whitespace, a (non-doc) comment, or end-of-input.
-    Alone,
-    /// There is no space between this token and the next.
-    Joint,
 }
 
 /// A regularised token's kind and attributes.
@@ -144,7 +130,6 @@ pub fn regularise_from_rustc(tokens: impl IntoIterator<Item = RustcToken>) -> Ve
         .into_iter()
         .map(|token| RegularToken {
             extent: token.extent.into(),
-            spacing: token.spacing.into(),
             data: match token.data {
                 RustcTokenData::DocComment {
                     comment_kind,
@@ -210,15 +195,6 @@ fn regularise_rustc_literal(literal_data: RustcLiteralData) -> Result<RegularTok
     }
 }
 
-impl From<RustcTokenSpacing> for Spacing {
-    fn from(spacing: RustcTokenSpacing) -> Self {
-        match spacing {
-            RustcTokenSpacing::Alone => Spacing::Alone,
-            RustcTokenSpacing::Joint => Spacing::Joint,
-        }
-    }
-}
-
 impl From<RustcCommentKind> for CommentKind {
     fn from(kind: RustcCommentKind) -> Self {
         match kind {
@@ -261,7 +237,6 @@ pub fn regularise_from_coarse(tokens: impl IntoIterator<Item = CoarseToken>) -> 
         .into_iter()
         .map(|ctoken| RegularToken {
             extent: ctoken.extent.clone(),
-            spacing: ctoken.spacing.into(),
             data: from_coarse_token(ctoken),
         })
         .collect()
@@ -383,15 +358,6 @@ fn forbidden_literal_suffix(token: &CoarseToken) -> Option<&Charseq> {
         CoarseTokenData::RawByteStringLiteral { suffix, .. } => Some(suffix),
         CoarseTokenData::RawCStringLiteral { suffix, .. } => Some(suffix),
         _ => None,
-    }
-}
-
-impl From<combination::Spacing> for Spacing {
-    fn from(spacing: combination::Spacing) -> Self {
-        match spacing {
-            combination::Spacing::Alone => Spacing::Alone,
-            combination::Spacing::Joint => Spacing::Joint,
-        }
     }
 }
 
