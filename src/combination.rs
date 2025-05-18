@@ -3,8 +3,8 @@
 //! These combine some adjacent punctuation marks into single tokens, in the same way as by-example
 //! macros with the `tt` fragment specifier.
 //!
-//! This representation doesn't have explicit whitespace tokens. It has explicit [`Spacing`]
-//! information instead.
+//! This representation doesn't have whitespace tokens: we've used all the information we need
+//! from them to perform combination.
 
 use crate::char_sequences::{concat_charseqs, Charseq};
 use crate::fine_tokens::{self, CommentStyle, FineToken, FineTokenData};
@@ -21,17 +21,6 @@ pub struct CoarseToken {
 
     /// The input characters which make up the token.
     pub extent: Charseq,
-
-    /// This token's relationship to the following token.
-    pub spacing: Spacing,
-}
-
-#[derive(PartialEq, Eq, Copy, Clone, Debug)]
-pub enum Spacing {
-    /// This token is followed by whitespace, a (non-doc) comment, or end-of-input.
-    Alone,
-    /// There is no space between this token and the next.
-    Joint,
 }
 
 /// A coarse-grained token's kind and attributes.
@@ -130,6 +119,14 @@ pub fn coarsen(tokens: impl IntoIterator<Item = FineToken>) -> Vec<CoarseToken> 
     combine(process_whitespace(tokens))
 }
 
+#[derive(PartialEq, Eq, Copy, Clone, Debug)]
+enum Spacing {
+    /// This token is followed by whitespace, a (non-doc) comment, or end-of-input.
+    Alone,
+    /// There is no space between this token and the next.
+    Joint,
+}
+
 /// Calculates spacing information for fine-grained tokens, dropping tokens representing whitespace.
 fn process_whitespace(tokens: impl IntoIterator<Item = FineToken>) -> Vec<(FineToken, Spacing)> {
     let mut processed = Vec::new();
@@ -163,19 +160,18 @@ fn combine(stream: Vec<(FineToken, Spacing)>) -> Vec<CoarseToken> {
                     let mut combined_token = CoarseToken {
                         data: double_token,
                         extent: concat_charseqs(&token1.extent, &token2.extent),
-                        spacing: *spacing2,
                     };
+                    let may_combine_further = *spacing2 == Spacing::Joint;
                     // skip the second token
                     stream.next();
-                    if combined_token.spacing == Spacing::Joint {
-                        if let Some((token3, spacing3)) = stream.peek() {
+                    if may_combine_further {
+                        if let Some((token3, _)) = stream.peek() {
                             if let Some(triple_token) =
                                 merge_three(&combined_token.data, &token3.data)
                             {
                                 combined_token = CoarseToken {
                                     data: triple_token,
                                     extent: concat_charseqs(&combined_token.extent, &token3.extent),
-                                    spacing: *spacing3,
                                 };
                                 // skip the third token
                                 stream.next();
@@ -190,7 +186,6 @@ fn combine(stream: Vec<(FineToken, Spacing)>) -> Vec<CoarseToken> {
         result.push(CoarseToken {
             data: token1.data.try_into().unwrap(),
             extent: token1.extent,
-            spacing,
         });
     }
     result

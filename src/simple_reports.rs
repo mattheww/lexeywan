@@ -261,7 +261,7 @@ fn show_coarse(input: &str, edition: Edition) {
             let combined = combination::coarsen(tokens);
             println!("  -- coarse --");
             for ctoken in combined {
-                println!("  {} {:?}", format_coarse_token(&ctoken), &ctoken.spacing);
+                println!("  {}", format_coarse_token(&ctoken));
             }
         }
         lex_via_peg::Analysis::Rejects(reason) => {
