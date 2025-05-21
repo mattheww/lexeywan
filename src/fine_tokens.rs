@@ -12,7 +12,7 @@ use crate::char_sequences::Charseq;
 /// [`LifetimeOrLabel`][`FineTokenData::LifetimeOrLabel`] token contains both the leading `'` and
 /// the identifier.
 
-#[derive(std::fmt::Debug)]
+#[derive(Clone, std::fmt::Debug)]
 pub struct FineToken {
     /// The token's kind and attributes.
     pub data: FineTokenData,
