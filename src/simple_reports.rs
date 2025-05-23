@@ -298,12 +298,11 @@ fn show_coarse(input: &str, edition: Edition) {
 
 fn show_identcheck(edition: Edition) {
     // This will report errors if there's a unicode version mismatch.
-    println!("Checking each nonascii character as XID_Start and XID_Continue");
+    println!("Checking all characters as XID_Start and XID_Continue");
     let mut passes = 0;
     let mut failures = 0;
     let mut model_errors = 0;
-    // Start after the ascii range to avoid delimiters
-    for c in '\u{0080}'..=char::MAX {
+    for c in char::MIN..=char::MAX {
         for input in [format!("{}", c), format!("a{}", c)] {
             match show_comparison(&input, edition, DetailsMode::Never, true) {
                 Comparison::Agree => passes += 1,
