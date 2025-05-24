@@ -236,14 +236,14 @@ pub fn regularise_from_coarse(tokens: impl IntoIterator<Item = CoarseToken>) -> 
     tokens
         .into_iter()
         .map(|ctoken| RegularToken {
-            extent: ctoken.extent.clone(),
-            data: from_coarse_token(ctoken),
+            extent: ctoken.extent,
+            data: from_coarse_token_data(ctoken.data),
         })
         .collect()
 }
 
-fn from_coarse_token(token: CoarseToken) -> RegularTokenData {
-    match forbidden_literal_suffix(&token) {
+fn from_coarse_token_data(token_data: CoarseTokenData) -> RegularTokenData {
+    match forbidden_literal_suffix(&token_data) {
         Some(suffix) if !suffix.is_empty() => {
             return RegularTokenData::LiteralWithForbiddenSuffix {
                 suffix: suffix.clone(),
@@ -251,7 +251,7 @@ fn from_coarse_token(token: CoarseToken) -> RegularTokenData {
         }
         _ => (),
     }
-    match token.data {
+    match token_data {
         CoarseTokenData::LineComment { style, body } => RegularTokenData::DocComment {
             comment_kind: CommentKind::Line,
             style: style.into(),
@@ -347,8 +347,8 @@ fn from_coarse_token(token: CoarseToken) -> RegularTokenData {
 ///
 /// Returns None if the token isn't a string-family literal, or an empty string if is such a literal
 /// but has no suffix.
-fn forbidden_literal_suffix(token: &CoarseToken) -> Option<&Charseq> {
-    match &token.data {
+fn forbidden_literal_suffix(token_data: &CoarseTokenData) -> Option<&Charseq> {
+    match &token_data {
         CoarseTokenData::CharacterLiteral { suffix, .. } => Some(suffix),
         CoarseTokenData::ByteLiteral { suffix, .. } => Some(suffix),
         CoarseTokenData::StringLiteral { suffix, .. } => Some(suffix),
