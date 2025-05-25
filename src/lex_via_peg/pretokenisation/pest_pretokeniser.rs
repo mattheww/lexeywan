@@ -77,6 +77,7 @@ pub struct PretokenParser;
 /// An Err return value indicates a problem in the model (for example, that the rule for assigning
 /// properties isn't well-defined) or the implementation (for example, that the assumptions made in
 /// this function don't match the current grammar).
+#[allow(clippy::single_match)]
 fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
     match pair.as_rule() {
         Rule::Whitespace => Ok(PretokenData::Whitespace),
