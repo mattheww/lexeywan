@@ -3,7 +3,7 @@
 //! These subcommands are:
 //!  `compare`
 //!  `inspect`
-//!  `course`
+//!  `coarse`
 //!  `identcheck`
 
 use crate::cleaning;
