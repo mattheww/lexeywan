@@ -210,7 +210,7 @@ fn show_detail(input: &str, edition: Edition) {
             }
             println!("  -- tokens --");
             for token in tokens.iter() {
-                println!("  {}", format_token(&token));
+                println!("  {}", format_token(token));
             }
         }
         lex_via_peg::Analysis::Rejects(lex_via_peg::Reason::Pretokenisation(
