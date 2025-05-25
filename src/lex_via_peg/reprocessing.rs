@@ -1,9 +1,7 @@
 //! Step 2 (reprocessing) of lexical analysis.
 
-use crate::{
-    char_sequences::Charseq,
-    fine_tokens::{self, CommentStyle, FineToken, FineTokenData},
-};
+use crate::char_sequences::Charseq;
+use crate::fine_tokens::{self, CommentStyle, FineToken, FineTokenData};
 
 use self::escape_processing::{
     interpret_7_bit_escape, interpret_8_bit_escape, interpret_8_bit_escape_as_byte,

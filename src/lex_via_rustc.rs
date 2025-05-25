@@ -33,10 +33,8 @@ use rustc_span::{
     FileName,
 };
 
-use crate::{
-    trees::{self, Forest, Tree},
-    Edition,
-};
+use crate::trees::{self, Forest, Tree};
+use crate::Edition;
 
 use self::error_accumulator::ErrorAccumulator;
 

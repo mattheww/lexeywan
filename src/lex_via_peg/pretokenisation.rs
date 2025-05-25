@@ -1,6 +1,7 @@
 //! Step 1 (pretokenisation) of lexical analysis.
 
-use crate::{char_sequences::Charseq, Edition};
+use crate::char_sequences::Charseq;
+use crate::Edition;
 
 mod pest_pretokeniser;
 

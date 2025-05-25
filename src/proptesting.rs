@@ -5,11 +5,9 @@ use proptest::{
     test_runner::{Config, TestCaseError, TestError, TestRunner},
 };
 
+use crate::comparison::{compare, regularised_from_peg, regularised_from_rustc, Comparison};
+use crate::utils::escape_for_display;
 use crate::Edition;
-use crate::{
-    comparison::{compare, regularised_from_peg, regularised_from_rustc, Comparison},
-    utils::escape_for_display,
-};
 
 pub use self::strategies::DEFAULT_STRATEGY;
 use self::strategies::SIMPLE_STRATEGIES;

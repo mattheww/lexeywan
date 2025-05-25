@@ -5,10 +5,8 @@ use super::rustc_error_messages;
 use super::rustc_errors;
 use super::rustc_span;
 
-use std::{
-    mem,
-    sync::{Arc, Mutex},
-};
+use std::mem;
+use std::sync::{Arc, Mutex};
 
 use rustc_error_messages::DiagMessage;
 use rustc_errors::{registry::Registry, DiagCtxt, LazyFallbackBundle};

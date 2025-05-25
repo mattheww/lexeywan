@@ -6,8 +6,10 @@
 
 use pest::{iterators::Pair, Parser};
 
+use crate::char_sequences::Charseq;
 use crate::Edition;
-use crate::{char_sequences::Charseq, lex_via_peg::pretokenisation::PretokenData};
+
+use crate::lex_via_peg::pretokenisation::PretokenData;
 
 use super::{NumericBase, Pretoken};
 

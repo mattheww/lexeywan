@@ -14,15 +14,13 @@
 
 use std::iter::once;
 
-use crate::{
-    char_sequences::Charseq,
-    combination::{self, CoarseToken, CoarseTokenData},
-    lex_via_rustc::{
-        RustcCommentKind, RustcDocCommentStyle, RustcIdentIsRaw, RustcLiteralData,
-        RustcStringStyle, RustcToken, RustcTokenData,
-    },
-    trees::Forest,
+use crate::char_sequences::Charseq;
+use crate::combination::{self, CoarseToken, CoarseTokenData};
+use crate::lex_via_rustc::{
+    RustcCommentKind, RustcDocCommentStyle, RustcIdentIsRaw, RustcLiteralData, RustcStringStyle,
+    RustcToken, RustcTokenData,
 };
+use crate::trees::Forest;
 
 #[derive(PartialEq, Eq)]
 pub struct RegularToken {
