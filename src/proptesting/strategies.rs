@@ -28,16 +28,8 @@ pub const SIMPLE_STRATEGIES: &[(&str, &str)] = [
 ]
 .as_slice();
 
-const DELIMITERS: &str = "{}()[]";
-
-/// Strategy returning a single character.
-///
-/// Avoids delimiters, because they'll make unbalanced trees.
 pub(crate) fn any_char() -> BoxedStrategy<String> {
-    proptest::char::any()
-        .prop_filter("delimiters cause problems", |c| !DELIMITERS.contains(*c))
-        .prop_map(|c| c.to_string())
-        .boxed()
+    proptest::char::any().prop_map(|c| c.to_string()).boxed()
 }
 
 /// Strategy returning sequences made from a mix of some of the simple strategies.
