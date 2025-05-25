@@ -75,7 +75,7 @@ In particular, this representation may be unsuitable for direct use by a descrip
 - there's a single "kind" of token for all punctuation;
 - sequences of punctuation such as `::` aren't glued together to make a single token.
 
-(The comparable implementation includes code to make compound punctuation tokens so they can be compared with `rustc`'s, but that process isn't described here.)
+(The comparable implementation includes code to make compound punctuation tokens so they can be compared with `rustc`'s, and to organise them into delimited trees, but those processes aren't described here.)
 
 
 ### Licence
