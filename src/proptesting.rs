@@ -41,7 +41,7 @@ pub fn run_proptests(strategy_name: &str, count: u32, verbosity: Verbosity, edit
             );
         }
         Err(TestError::Abort(reason)) => {
-            println!("Proptest aborted: {}", reason);
+            println!("Proptest aborted: {reason}");
         }
     }
 }

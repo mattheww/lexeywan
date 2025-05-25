@@ -45,7 +45,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
     let mut args = pico_args::Arguments::from_env();
 
     if args.contains("--help") {
-        print!("{}", USAGE);
+        print!("{USAGE}");
         return Ok(());
     }
 

@@ -126,7 +126,7 @@ fn show_comparison(
             Regularisation::Accepts(tokens) => {
                 println!("  rustc: accepted");
                 for item in flatten(&tokens) {
-                    println!("    {:?}", item);
+                    println!("    {item:?}");
                 }
             }
             Regularisation::Rejects(messages) => {
@@ -146,7 +146,7 @@ fn show_comparison(
             Regularisation::Accepts(tokens) => {
                 println!("  lex_via_peg: accepted");
                 for item in flatten(&tokens) {
-                    println!("    {:?}", item);
+                    println!("    {item:?}");
                 }
             }
             Regularisation::Rejects(messages) => {
@@ -173,18 +173,18 @@ fn show_detail(input: &str, edition: Edition) {
         lex_via_rustc::Analysis::Accepts(tokens) => {
             println!("rustc: accepted");
             for item in flatten(&tokens) {
-                println!("  {:?}", item);
+                println!("  {item:?}");
             }
         }
         lex_via_rustc::Analysis::Rejects(tokens, messages) => {
             println!("rustc: rejected");
             for s in messages {
-                println!("  error: {}", s);
+                println!("  error: {s}");
             }
             if !tokens.is_empty() {
                 println!("  -- tokens reported --");
                 for item in flatten(&tokens) {
-                    println!("  {:?}", item);
+                    println!("  {item:?}");
                 }
             }
         }
@@ -249,7 +249,7 @@ fn show_detail(input: &str, edition: Edition) {
         lex_via_peg::Analysis::ModelError(reason) => {
             println!("lex_via_peg: reported a bug in its model");
             for s in reason.into_description() {
-                println!("  error: {}", s);
+                println!("  error: {s}");
             }
         }
     }
@@ -270,14 +270,11 @@ fn show_coarse(input: &str, edition: Edition) {
                     let combined = combination::coarsen(forest);
                     println!("  -- coarse --");
                     for item in flatten(&combined) {
-                        println!("  {:?}", item);
+                        println!("  {item:?}");
                     }
                 }
                 Err(message) => {
-                    println!(
-                        "lex_via_peg: rejected during tree construction: {}",
-                        message
-                    );
+                    println!("lex_via_peg: rejected during tree construction: {message}");
                 }
             }
         }
@@ -290,7 +287,7 @@ fn show_coarse(input: &str, edition: Edition) {
         lex_via_peg::Analysis::ModelError(reason) => {
             println!("lex_via_peg: reported a bug in its model:");
             for s in reason.into_description() {
-                println!("  error: {}", s);
+                println!("  error: {s}");
             }
         }
     }
@@ -303,7 +300,7 @@ fn show_identcheck(edition: Edition) {
     let mut failures = 0;
     let mut model_errors = 0;
     for c in char::MIN..=char::MAX {
-        for input in [format!("{}", c), format!("a{}", c)] {
+        for input in [format!("{c}"), format!("a{c}")] {
             match show_comparison(&input, edition, DetailsMode::Never, true) {
                 Comparison::Agree => passes += 1,
                 Comparison::Differ => failures += 1,

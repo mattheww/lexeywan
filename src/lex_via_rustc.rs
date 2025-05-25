@@ -276,7 +276,7 @@ impl rustc_errors::emitter::Emitter for ErrorEmitter {
         }
         let mut seen = self.seen.lock().unwrap();
         if let Some(code) = diag.code {
-            seen.push(format!("code: {}", code));
+            seen.push(format!("code: {code}"));
         } else if diag.messages.is_empty() {
             // I don't think this happens, but in case it does we store a
             // message so the caller knows to report failure.

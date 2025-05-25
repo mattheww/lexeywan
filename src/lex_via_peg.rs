@@ -127,7 +127,7 @@ impl Reason {
             }
             Reason::Reprocessing(message, rejected, _, _) => {
                 description.push(message);
-                description.push(format!("reprocessing rejected {:?}", rejected))
+                description.push(format!("reprocessing rejected {rejected:?}"))
             }
         };
         description

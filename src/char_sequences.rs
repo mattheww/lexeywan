@@ -119,7 +119,7 @@ impl std::fmt::Debug for Charseq {
         write!(f, "«")?;
         for c in self.0.iter().copied() {
             if c.is_ascii_graphic() || c == ' ' || c == '·' {
-                write!(f, "{}", c)?;
+                write!(f, "{c}")?;
             } else if (c as u32) < 256 {
                 write!(f, "‹{:02X}›", c as u32)?;
             } else {
