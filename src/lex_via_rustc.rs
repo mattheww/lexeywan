@@ -22,16 +22,12 @@ extern crate rustc_span;
 // This compiles with
 // rustc 1.88.0-nightly (10fa3c449 2025-04-26)
 
-use std::{
-    mem,
-    sync::{Arc, Mutex},
-};
+use std::sync::Arc;
 
 use rustc_ast::{
     token::{Token, TokenKind},
     tokenstream::{TokenStream, TokenTree},
 };
-use rustc_errors::{registry::Registry, DiagCtxt, LazyFallbackBundle};
 use rustc_span::{
     source_map::{FilePathMapping, SourceMap},
     FileName,
@@ -41,6 +37,10 @@ use crate::{
     trees::{self, Forest, Tree},
     Edition,
 };
+
+use self::error_accumulator::ErrorAccumulator;
+
+mod error_accumulator;
 
 /// Information we keep about a token from the rustc tokeniser.
 pub struct RustcToken {
@@ -147,10 +147,7 @@ pub enum RustcStringStyle {
 /// If rustc panics (ie, it would report an ICE), the panic message is sent to
 /// standard error and this function returns CompilerError.
 pub fn analyse(input: &str, edition: Edition) -> Analysis {
-    let error_list = Arc::new(Mutex::new(Vec::new()));
-    fn extract_errors(error_list: ErrorAccumulator) -> Vec<String> {
-        mem::take(&mut error_list.lock().unwrap())
-    }
+    let error_list = ErrorAccumulator::new();
 
     let rustc_edition = match edition {
         Edition::E2015 => rustc_span::edition::Edition::Edition2015,
@@ -165,7 +162,7 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
             })
         }) {
             Ok(rustc_forest) => {
-                let messages = extract_errors(error_list);
+                let messages = error_list.extract();
                 if messages.is_empty() {
                     // Lexing succeeded
                     Analysis::Accepts(rustc_forest)
@@ -175,7 +172,7 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
                 }
             }
             Err(_) => {
-                let mut messages = extract_errors(error_list);
+                let mut messages = error_list.extract();
                 messages.push("reported fatal error (panicked)".into());
                 Analysis::Rejects(Forest::new(), messages)
             }
@@ -229,76 +226,15 @@ fn run_lexer(input: &str, error_list: ErrorAccumulator) -> Forest<RustcToken> {
     // The lexer doesn't report errors itself when it sees emoji in 'identifiers'. Instead it leaves
     // a note in the ParseSess to be examined later. So we have to make this extra check.
     if !&psess.bad_unicode_identifiers.borrow_mut().is_empty() {
-        psess.dcx().err("bad unicode identifier(s)");
+        error_list.push("bad unicode identifier(s)".into());
     }
     lexed
 }
 
-type ErrorAccumulator = Arc<Mutex<Vec<String>>>;
-
-struct ErrorEmitter {
-    pub fallback_bundle: LazyFallbackBundle,
-    seen: ErrorAccumulator,
-}
-
-impl ErrorEmitter {
-    fn new(error_list: ErrorAccumulator) -> Self {
-        let fallback_bundle = rustc_errors::fallback_fluent_bundle(
-            rustc_driver::DEFAULT_LOCALE_RESOURCES.to_vec(),
-            false,
-        );
-        ErrorEmitter {
-            fallback_bundle,
-            seen: error_list,
-        }
-    }
-}
-
-impl rustc_errors::translation::Translate for ErrorEmitter {
-    fn fluent_bundle(&self) -> Option<&rustc_errors::FluentBundle> {
-        None
-    }
-
-    fn fallback_fluent_bundle(&self) -> &rustc_errors::FluentBundle {
-        &self.fallback_bundle
-    }
-}
-
-impl rustc_errors::emitter::Emitter for ErrorEmitter {
-    fn source_map(&self) -> Option<&SourceMap> {
-        None
-    }
-
-    fn emit_diagnostic(&mut self, diag: rustc_errors::DiagInner, _: &Registry) {
-        use rustc_error_messages::DiagMessage;
-        if !diag.is_error() {
-            return;
-        }
-        let mut seen = self.seen.lock().unwrap();
-        if let Some(code) = diag.code {
-            seen.push(format!("code: {code}"));
-        } else if diag.messages.is_empty() {
-            // I don't think this happens, but in case it does we store a
-            // message so the caller knows to report failure.
-            seen.push("error with no message".into());
-        }
-        for (msg, _style) in &diag.messages {
-            let s = match msg {
-                DiagMessage::Str(msg) => msg.to_string(),
-                DiagMessage::Translated(msg) => msg.to_string(),
-                DiagMessage::FluentIdentifier(fluent_id, _) => fluent_id.to_string(),
-            };
-            seen.push(s);
-        }
-    }
-}
-
 fn make_parser_session(error_list: ErrorAccumulator) -> rustc_session::parse::ParseSess {
-    let emitter = ErrorEmitter::new(error_list);
     #[allow(clippy::arc_with_non_send_sync)]
     let sm = Arc::new(SourceMap::new(FilePathMapping::empty()));
-    let emitter = Box::new(emitter);
-    let dcx = DiagCtxt::new(emitter).disable_warnings();
+    let dcx = error_list.into_diag_ctxt().disable_warnings();
     rustc_session::parse::ParseSess::with_dcx(dcx, sm)
 }
 
