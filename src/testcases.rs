@@ -1030,7 +1030,11 @@ pub const LONGLIST: &[&str] = [
 
     //// Delimiters
 
-    "x ( [ { ((y)) } ] ) z",
+    "a ( [ { ((b)) } (c) {} ] ) d",
+    "unclosed ( paren",
+    "close brace } first",
+    "unclosed ( [ bracket in group )",
+    "mismatched { delimiters )",
 
 ]
 .as_slice();
@@ -1040,8 +1044,5 @@ pub const XFAIL: &[&str] = [
     // Unhandled cases of shebang (comment-in-attribute)
     "#! /* oops */ [attr]\nfn",
     "#! // oops\n[attr]\nfn",
-
-    // At present we can't see rustc lexing input with unbalanced delimiters
-    "unbalanced ( parens",
 ]
 .as_slice();
