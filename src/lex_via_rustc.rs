@@ -307,7 +307,7 @@ fn map_forest(token_stream: &TokenStream, source_map: &SourceMap) -> Forest<Rust
     token_stream
         .iter()
         .map(|token_tree| match token_tree {
-            &TokenTree::Token(ref token, _) => {
+            TokenTree::Token(token, _) => {
                 Tree::<RustcToken>::Token(token_from_ast_token(token, source_map))
             }
             &TokenTree::Delimited(delim_span, _, delimiter, ref token_stream) => {
