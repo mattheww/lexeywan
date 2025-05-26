@@ -1,6 +1,6 @@
 //! Transformations we make to input text before tokenisation.
 //!
-//! See <https://doc.rust-lang.org/nightly/reference/input-format.html> for the behavour we're
+//! See "Processing that happens before tokenising" for the behaviour we're
 //! imitating.
 
 use crate::char_sequences::Charseq;
@@ -18,7 +18,7 @@ pub fn clean(input: &Charseq, edition: Edition) -> Charseq {
     cleaned
 }
 
-/// Skips the first character if it's a byte order mark.
+/// Performs "Byte order mark removal"
 fn remove_bom(input: &[char]) -> &[char] {
     if input.starts_with(&['\u{feff}']) {
         &input[1..]
@@ -27,7 +27,7 @@ fn remove_bom(input: &[char]) -> &[char] {
     }
 }
 
-/// Replaces each sequence of CRLF in the input with a single LF.
+/// Performs "CRLF normalisation"
 fn replace_crlf(input: &[char]) -> Charseq {
     let mut rewritten = Vec::with_capacity(input.len());
     let mut it = input.iter().copied().peekable();
@@ -39,12 +39,7 @@ fn replace_crlf(input: &[char]) -> Charseq {
     Charseq::new(rewritten)
 }
 
-/// Removes the first line of the input if it appears to be a shebang.
-///
-/// We don't modify the input if it might start with a Rust attribute. That isn't trivial to
-/// check, because there can be whitespace and (non-doc) comments after the `!`.
-/// rustc deals with this by running its lexer for long enough to answer this question and throwing
-/// away the result, so we do the same.
+/// Performs "Shebang removal"
 fn clean_shebang(mut input: Charseq, edition: Edition) -> Charseq {
     if !input.chars().starts_with(&['#', '!']) {
         return input;
