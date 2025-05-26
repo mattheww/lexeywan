@@ -1,5 +1,6 @@
 //! Reimplementation of rustc's lexical analysis.
 
+use crate::char_sequences::Charseq;
 use crate::fine_tokens::FineToken;
 use crate::utils::escape_for_display;
 use crate::Edition;
@@ -33,7 +34,8 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
 
     let mut pretokens = Vec::new();
     let mut tokens = Vec::new();
-    for outcome in pretokenisation::pretokenise(input.into(), edition) {
+    let input: Charseq = input.into();
+    for outcome in pretokenisation::pretokenise(input.chars(), edition) {
         use pretokenisation::Outcome::*;
         let pretoken = match outcome {
             Found(pretoken) => pretoken,

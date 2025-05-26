@@ -83,7 +83,7 @@ pub enum NumericBase {
 /// lexer.
 ///
 /// It may instead report a problem with lex_via_peg's model or implementation.
-pub fn pretokenise(input: Charseq, edition: Edition) -> impl Iterator<Item = Outcome> {
+pub fn pretokenise(input: &[char], edition: Edition) -> impl Iterator<Item = Outcome> + use<'_> {
     Pretokeniser {
         edition,
         input,
@@ -107,17 +107,17 @@ pub enum Outcome {
     ModelError(Vec<String>),
 }
 
-struct Pretokeniser {
+struct Pretokeniser<'a> {
     edition: Edition,
-    input: Charseq,
+    input: &'a [char],
     index: usize,
 }
 
-impl Iterator for Pretokeniser {
+impl<'a> Iterator for Pretokeniser<'a> {
     type Item = Outcome;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let rest = &self.input.chars()[self.index..];
+        let rest = &self.input[self.index..];
         if rest.is_empty() {
             return None;
         }
