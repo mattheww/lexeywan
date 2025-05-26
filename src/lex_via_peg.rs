@@ -20,8 +20,8 @@ const MAX_INPUT_LENGTH: usize = 0x100_0000;
 ///
 /// May instead report a problem with lex_via_peg's model or implementation.
 ///
-/// Panics if the input is longer than 2^24 bytes (this is a sanity check, not part of the model).
-pub fn analyse(input: &str, edition: Edition) -> Analysis {
+/// Panics if the input is longer than 2^24 characters (this is a sanity check, not part of the model).
+pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
     assert_eq!(
         unicode_normalization::UNICODE_VERSION,
         (16, 0, 0),
@@ -34,7 +34,6 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
 
     let mut pretokens = Vec::new();
     let mut tokens = Vec::new();
-    let input: Charseq = input.into();
     for outcome in pretokenisation::pretokenise(input.chars(), edition) {
         use pretokenisation::Outcome::*;
         let pretoken = match outcome {

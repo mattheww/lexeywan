@@ -192,7 +192,7 @@ fn show_detail(input: &str, edition: Edition) {
             println!("rustc: internal compiler error");
         }
     }
-    let cleaned = cleaning::clean(input);
+    let cleaned = cleaning::clean(&input.into());
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(pretokens, tokens) => {
             match tree_construction::construct_forest(tokens.clone()) {
@@ -257,7 +257,7 @@ fn show_detail(input: &str, edition: Edition) {
 
 fn show_coarse(input: &str, edition: Edition) {
     println!("Lexing «{}»", escape_for_display(input));
-    let cleaned = cleaning::clean(input);
+    let cleaned = cleaning::clean(&input.into());
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(_, tokens) => {
             println!("lex_via_peg: accepted");
