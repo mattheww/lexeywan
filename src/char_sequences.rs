@@ -52,6 +52,14 @@ impl Charseq {
     pub fn nfc(&self) -> Self {
         self.iter().copied().nfc().collect()
     }
+
+    /// Removes the characters in the specified range from the sequence.
+    pub fn remove_range<R>(&mut self, range: R)
+    where
+        R: std::ops::RangeBounds<usize>,
+    {
+        self.0.drain(range);
+    }
 }
 
 impl std::fmt::Display for Charseq {
