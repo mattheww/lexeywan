@@ -2,9 +2,7 @@
 
 This document's description of tokenising takes a sequence of characters as input.
 
-`rustc` obtains that sequence of characters as follows:
-
-> This description is taken from the *[Input format]* chapter of the Reference.
+That sequence of characters is derived from an input source file as follows:
 
 
 ## Source encoding
@@ -18,32 +16,30 @@ If the first character in the sequence is `U+FEFF` (BYTE ORDER MARK), it is remo
 
 ## CRLF normalisation
 
-Each pair of characters `U+000D` <kbd>CR</kbd> immediately followed by `U+000A` <kbd>LF</kbd> is replaced by a single `U+000A` <kbd>LF</kbd>.
+Each pair of characters <kbd>CR</kbd> immediately followed by <kbd>LF</kbd> is replaced by a single <kbd>LF</kbd> character.
 
-Other occurrences of the character `U+000D` <kbd>CR</kbd> are left in place (they are treated as whitespace).
+> Note: It's not possible for two such pairs to overlap, so this operation is unambiguously defined.
 
-> Note: It's still possible for the sequence <kbd>CR</kbd><kbd>LF</kbd> to be passed on to the tokeniser:
-> that will happen if the source file contained the sequence <kbd>CR</kbd><kbd>CR</kbd><kbd>LF</kbd>.
+> Note: Other occurrences of the character <kbd>CR</kbd> are left in place.
+> It's still possible for the sequence <kbd>CR</kbd><kbd>LF</kbd> to be passed on to the tokeniser:
+> that will happen if the input contained the sequence <kbd>CR</kbd><kbd>CR</kbd><kbd>LF</kbd>.
 
 
 ## Shebang removal
 
-If the remaining sequence begins with the characters <b>#!</b>, the characters up to and including the first `U+000A` <kbd>LF</kbd> are removed from the sequence.
+Shebang removal is performed if:
 
-For example, the first line of the following file would be ignored:
+ - the remaining sequence begins with the characters <b>#!</b>; and
+ - the result of [finding the first non-whitespace token] with the characters following the <b>#!</b> as input is not a `Punctuation` token whose <var>mark</var> is the <b>[</b> character.
 
-```rust,ignore
-#!/usr/bin/env rustx
+If shebang removal is performed:
+- the characters up to and including the first <kbd>LF</kbd> character are removed from the sequence
+- if the sequence did not contain a <kbd>LF</kbd> character, all characters are removed from the sequence.
 
-fn main() {
-    println!("Hello!");
-}
-```
+> Note: The check for <b>[</b> prevents an inner attribute at the start of the input being removed.
+> See [#70528] and [#71487] for history.
 
-As an exception, if the <b>#!</b> characters are followed (ignoring intervening comments or whitespace) by a `[` punctuation token, nothing is removed.
-This prevents an inner attribute at the start of a source file being removed.
+[finding the first non-whitespace token]: tokenising.md#find-first-nw-token
 
-> See open question: [How to model shebang removal]
-
-[Input format]: https://doc.rust-lang.org/nightly/reference/input-format.html
-[How to model shebang removal]: open_questions.md#how-to-model-shebang-removal
+[#70528]: https://github.com/rust-lang/rust/issues/70528
+[#71487]: https://github.com/rust-lang/rust/pull/71487

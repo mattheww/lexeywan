@@ -8,7 +8,6 @@
 [Token kinds and attributes](#token-kinds-and-attributes)\
 [How to indicate captured text](#how-to-indicate-captured-text)\
 [Wording for string unescaping](#wording-for-string-unescaping)\
-[How to model shebang removal](#how-to-model-shebang-removal)\
 [String continuation escapes](#string-continuation-escapes)
 
 
@@ -143,19 +142,6 @@ but I'm not sure that's obvious enough that it can be stated without justificati
 This is a place where the comparable implementation isn't closely parallel to the writeup.
 
 
-### How to model shebang removal
-
-This part of the Reference text isn't trying to be rigorous:
-
-> As an exception, if the `#!` characters are followed (ignoring intervening comments or whitespace) by a `[` token, nothing is removed. This prevents an inner attribute at the start of a source file being removed.
-
-`rustc` implements the "ignoring intervening comments or whitespace" part by
-running its lexer for long enough to see whether the `[` is there or not,
-then discarding the result (see [#70528] and [#71487] for history).
-
-So should the spec define this in terms of its model of the lexer?
-
-
 ### String continuation escapes
 
 `rustc` has a warning that the behaviour of [String continuation escapes][string-continuation]
@@ -173,8 +159,6 @@ and points to [#1042][Ref#1042] for more information.
 
 [string-continuation]: escape_processing.md#string-continuation-escapes
 
-[#70528]: https://github.com/rust-lang/rust/issues/70528
-[#71487]: https://github.com/rust-lang/rust/pull/71487
 [#136600]: https://github.com/rust-lang/rust/issues/136600
 
 [Ref#1042]: https://github.com/rust-lang/reference/pull/1042

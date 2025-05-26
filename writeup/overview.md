@@ -14,7 +14,7 @@ The following processes might be considered to be part of Rust's lexer:
 - Prepare proc-macro input: convert fine-grained tokens to the form used for proc-macros
 - Remove whitespace: remove whitespace tokens
 
-> This document attempts to completely describe the "Tokenise" process.
+> This document attempts to completely describe the "Clean" and "Tokenise" processes.
 
 [Clean]: before_tokenising.md
 [Tokenise]: tokenising.md
