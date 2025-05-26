@@ -3,9 +3,9 @@
 //! See <https://doc.rust-lang.org/nightly/reference/input-format.html> for the behavour we're
 //! imitating.
 
-use regex::{Regex, RegexBuilder};
-
 use crate::char_sequences::Charseq;
+use crate::fine_tokens::{FineToken, FineTokenData};
+use crate::lex_via_peg::first_nonwhitespace_token;
 
 /// Apply the transformations we make to input text before tokenisation.
 #[allow(clippy::let_and_return)]
@@ -38,47 +38,27 @@ fn replace_crlf(input: &[char]) -> Charseq {
     Charseq::new(rewritten)
 }
 
-fn mkre(s: &str) -> Regex {
-    RegexBuilder::new(s)
-        .ignore_whitespace(true)
-        .build()
-        .unwrap()
-}
-
-macro_rules! make_regex {
-    ($re:literal $(,)?) => {{
-        static RE: ::std::sync::OnceLock<regex::Regex> = ::std::sync::OnceLock::new();
-        RE.get_or_init(|| mkre($re))
-    }};
-}
-
-/// Approximation to rustc's shebang-cleaning.
+/// Removes the first line of the input if it appears to be a shebang.
 ///
-/// We're not supposed to remove the first line if it looks like the start of a Rust attribute.
-///
-/// The implementation below for that exception only accepts whitespace after the `#!`, so
-/// it goes wrong if there's a comment there.
+/// We don't modify the input if it might start with a Rust attribute. That isn't trivial to
+/// check, because there can be whitespace and (non-doc) comments after the `!`.
 /// rustc deals with this by running its lexer for long enough to answer this question and throwing
-/// away the result. I suppose we could do something similar.
-fn clean_shebang(input: Charseq) -> Charseq {
-    let mut input = input.to_string();
-
-    #[rustfmt::skip]
-    let attributelike_re = make_regex!(r##"\A
-        \# !
-        [ \p{Pattern_White_Space} ] *
-        \[
-    "##);
-    if !attributelike_re.is_match(&input) {
-        #[rustfmt::skip]
-        let shebang_re = make_regex!(r##"\A
-            \# !
-            .*?
-            ( \n | \z )
-        "##);
-        if let Some(m) = shebang_re.find(&input) {
-            input.replace_range(..m.end(), "");
-        }
+/// away the result, so we do the same.
+fn clean_shebang(mut input: Charseq) -> Charseq {
+    if !input.chars().starts_with(&['#', '!']) {
+        return input;
+    };
+    if let Some(FineToken {
+        data: FineTokenData::Punctuation { mark: '[' },
+        ..
+    }) = first_nonwhitespace_token(&input[2..])
+    {
+        return input;
     }
-    input.into()
+    let first_nl = input.iter().position(|c| *c == '\n');
+    match first_nl {
+        Some(idx) => input.remove_range(..idx),
+        None => input.remove_range(..),
+    };
+    input
 }

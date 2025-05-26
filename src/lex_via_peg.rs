@@ -134,3 +134,34 @@ impl Reason {
         description
     }
 }
+
+/// Returns the first non-whitespace token in the input.
+///
+/// Returns None if there are no tokens in the input, or if lexical analysis wouldn't accept the
+/// input.
+///
+/// For this purpose, comment tokens with style `NonDoc` count as whitespace.
+pub fn first_nonwhitespace_token(input: &[char]) -> Option<FineToken> {
+    use crate::fine_tokens::{CommentStyle, FineTokenData::*};
+    for outcome in pretokenisation::pretokenise(input, Edition::E2015) {
+        let pretokenisation::Outcome::Found(pretoken) = outcome else {
+            return None;
+        };
+        let Ok(token) = reprocessing::reprocess(&pretoken) else {
+            return None;
+        };
+        match token.data {
+            Whitespace => {}
+            LineComment {
+                style: CommentStyle::NonDoc,
+                ..
+            } => {}
+            BlockComment {
+                style: CommentStyle::NonDoc,
+                ..
+            } => {}
+            _ => return Some(token),
+        }
+    }
+    None
+}
