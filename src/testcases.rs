@@ -1031,6 +1031,10 @@ pub const LONGLIST: &[&str] = [
     "#![attr]\nfn",
     "#! [attr]\nfn",
     "#!\n[attr]\nfn",
+    "#! /* nondoc */ [attr]\nfn",
+    "#! // nondoc\n[attr]\nfn",
+    "#! /** doc */ [attr]\nfn",
+    "#! /// doc\n[attr]\nfn",
 
     //// Delimiters
 
@@ -1045,8 +1049,5 @@ pub const LONGLIST: &[&str] = [
 
 /// These tests fail
 pub const XFAIL: &[&str] = [
-    // Unhandled cases of shebang (comment-in-attribute)
-    "#! /* oops */ [attr]\nfn",
-    "#! // oops\n[attr]\nfn",
 ]
 .as_slice();
