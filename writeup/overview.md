@@ -2,7 +2,7 @@
 
 The following processes might be considered to be part of Rust's lexer:
 
-- Decode: interpret UTF-8 input as a sequence of Unicode characters
+- [Decode]: interpret UTF-8 input as a sequence of Unicode characters
 - [Clean]:
   - Byte order mark removal
   - CRLF normalisation
@@ -14,7 +14,8 @@ The following processes might be considered to be part of Rust's lexer:
 - Prepare proc-macro input: convert fine-grained tokens to the form used for proc-macros
 - Remove whitespace: remove whitespace tokens
 
-> This document attempts to completely describe the "Clean" and "Tokenise" processes.
+> This document attempts to completely describe the "Decode", "Clean" and "Tokenise" processes.
 
-[Clean]: before_tokenising.md
+[Decode]: before_tokenising.md#decoding
+[Clean]: before_tokenising.md#byte-order-mark-removal
 [Tokenise]: tokenising.md

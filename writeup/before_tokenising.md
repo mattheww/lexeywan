@@ -2,17 +2,22 @@
 
 This document's description of tokenising takes a sequence of characters as input.
 
-That sequence of characters is derived from an input source file as follows:
+That sequence of characters is derived from an input sequence of bytes by peforming the steps listed below in order.
+
+> Normally the input sequence of bytes is the contents of a single source file.
 
 
-## Source encoding
+## Decoding
 
-Each source file is interpreted as a sequence of Unicode characters encoded in UTF-8.
-It is an error if the file is not valid UTF-8.
+The input sequence of bytes is interpreted as a sequence of characters represented using the [UTF-8] Unicode [encoding scheme].
+
+If the input sequence of bytes is not a well-formed UTF-8 code unit sequence, the input is rejected.
+
 
 ## Byte order mark removal
 
 If the first character in the sequence is `U+FEFF` (BYTE ORDER MARK), it is removed.
+
 
 ## CRLF normalisation
 
@@ -38,6 +43,9 @@ If shebang removal is performed:
 
 > Note: The check for <b>[</b> prevents an inner attribute at the start of the input being removed.
 > See [#70528] and [#71487] for history.
+
+[UTF-8]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G31703
+[encoding scheme]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G28070
 
 [finding the first non-whitespace token]: tokenising.md#find-first-nw-token
 
