@@ -90,26 +90,13 @@ impl From<char> for Charseq {
     }
 }
 
-impl std::ops::Index<usize> for Charseq {
-    type Output = char;
+impl<I> std::ops::Index<I> for Charseq
+where
+    I: std::slice::SliceIndex<[char]>,
+{
+    type Output = I::Output;
 
-    fn index(&self, index: usize) -> &char {
-        self.0.index(index)
-    }
-}
-
-impl std::ops::Index<std::ops::RangeFrom<usize>> for Charseq {
-    type Output = [char];
-
-    fn index(&self, index: std::ops::RangeFrom<usize>) -> &[char] {
-        self.0.index(index)
-    }
-}
-
-impl std::ops::Index<std::ops::Range<usize>> for Charseq {
-    type Output = [char];
-
-    fn index(&self, index: std::ops::Range<usize>) -> &[char] {
+    fn index(&self, index: I) -> &Self::Output {
         self.0.index(index)
     }
 }
