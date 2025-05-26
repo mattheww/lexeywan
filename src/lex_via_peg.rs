@@ -141,9 +141,9 @@ impl Reason {
 /// input.
 ///
 /// For this purpose, comment tokens with style `NonDoc` count as whitespace.
-pub fn first_nonwhitespace_token(input: &[char]) -> Option<FineToken> {
+pub fn first_nonwhitespace_token(input: &[char], edition: Edition) -> Option<FineToken> {
     use crate::fine_tokens::{CommentStyle, FineTokenData::*};
-    for outcome in pretokenisation::pretokenise(input, Edition::E2015) {
+    for outcome in pretokenisation::pretokenise(input, edition) {
         let pretokenisation::Outcome::Found(pretoken) = outcome else {
             return None;
         };

@@ -38,7 +38,7 @@ pub fn regularised_from_rustc(input: &str, edition: Edition) -> Regularisation {
 /// Run lex_via_peg's lexical analysis and return the regularised result.
 pub fn regularised_from_peg(input: &str, edition: Edition) -> Regularisation {
     use lex_via_peg::Analysis::*;
-    let cleaned = cleaning::clean(&input.into());
+    let cleaned = cleaning::clean(&input.into(), edition);
     match lex_via_peg::analyse(&cleaned, edition) {
         Accepts(_, fine_tokens) => match tree_construction::construct_forest(fine_tokens) {
             Ok(forest) => {

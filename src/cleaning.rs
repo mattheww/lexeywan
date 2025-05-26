@@ -6,14 +6,15 @@
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::{FineToken, FineTokenData};
 use crate::lex_via_peg::first_nonwhitespace_token;
+use crate::Edition;
 
 /// Apply the transformations we make to input text before tokenisation.
 #[allow(clippy::let_and_return)]
-pub fn clean(input: &Charseq) -> Charseq {
+pub fn clean(input: &Charseq, edition: Edition) -> Charseq {
     let cleaned = input.chars();
     let cleaned = remove_bom(cleaned);
     let cleaned = replace_crlf(cleaned);
-    let cleaned = clean_shebang(cleaned);
+    let cleaned = clean_shebang(cleaned, edition);
     cleaned
 }
 
@@ -44,14 +45,14 @@ fn replace_crlf(input: &[char]) -> Charseq {
 /// check, because there can be whitespace and (non-doc) comments after the `!`.
 /// rustc deals with this by running its lexer for long enough to answer this question and throwing
 /// away the result, so we do the same.
-fn clean_shebang(mut input: Charseq) -> Charseq {
+fn clean_shebang(mut input: Charseq, edition: Edition) -> Charseq {
     if !input.chars().starts_with(&['#', '!']) {
         return input;
     };
     if let Some(FineToken {
         data: FineTokenData::Punctuation { mark: '[' },
         ..
-    }) = first_nonwhitespace_token(&input[2..])
+    }) = first_nonwhitespace_token(&input[2..], edition)
     {
         return input;
     }
