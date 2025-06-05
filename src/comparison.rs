@@ -2,12 +2,13 @@
 
 use crate::cleaning;
 use crate::combination;
+use crate::doc_lowering::lower_doc_comments;
 use crate::lex_via_peg;
 use crate::lex_via_rustc;
 use crate::regular_tokens::{regularise_from_coarse, regularise_from_rustc, RegularToken};
 use crate::tree_construction;
 use crate::trees::Forest;
-use crate::Edition;
+use crate::{Edition, Lowering};
 
 /// The "regularised" result of running a lexer.
 pub enum Regularisation {
@@ -26,9 +27,9 @@ pub enum Regularisation {
 }
 
 /// Run rustc's lexical analysis and return the regularised result.
-pub fn regularised_from_rustc(input: &str, edition: Edition) -> Regularisation {
+pub fn regularised_from_rustc(input: &str, edition: Edition, lowering: Lowering) -> Regularisation {
     use lex_via_rustc::Analysis::*;
-    match lex_via_rustc::analyse(input, edition) {
+    match lex_via_rustc::analyse(input, edition, lowering) {
         Accepts(tokens) => Regularisation::Accepts(regularise_from_rustc(tokens)),
         Rejects(_, messages) => Regularisation::Rejects(messages),
         CompilerError => Regularisation::ModelError(vec!["rustc compiler error".into()]),
@@ -36,16 +37,21 @@ pub fn regularised_from_rustc(input: &str, edition: Edition) -> Regularisation {
 }
 
 /// Run lex_via_peg's lexical analysis and return the regularised result.
-pub fn regularised_from_peg(input: &str, edition: Edition) -> Regularisation {
+pub fn regularised_from_peg(input: &str, edition: Edition, lowering: Lowering) -> Regularisation {
     use lex_via_peg::Analysis::*;
     let cleaned = cleaning::clean(&input.into(), edition);
     match lex_via_peg::analyse(&cleaned, edition) {
-        Accepts(_, fine_tokens) => match tree_construction::construct_forest(fine_tokens) {
-            Ok(forest) => {
-                Regularisation::Accepts(regularise_from_coarse(combination::coarsen(forest)))
+        Accepts(_, mut fine_tokens) => {
+            if lowering == Lowering::LowerDocComments {
+                fine_tokens = lower_doc_comments(fine_tokens);
             }
-            Err(message) => Regularisation::Rejects(vec![message]),
-        },
+            match tree_construction::construct_forest(fine_tokens) {
+                Ok(forest) => {
+                    Regularisation::Accepts(regularise_from_coarse(combination::coarsen(forest)))
+                }
+                Err(message) => Regularisation::Rejects(vec![message]),
+            }
+        }
         Rejects(reason) => Regularisation::Rejects(reason.into_description()),
         ModelError(reason) => Regularisation::ModelError(reason.into_description()),
     }

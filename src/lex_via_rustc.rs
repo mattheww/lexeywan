@@ -34,7 +34,7 @@ use rustc_span::{
 };
 
 use crate::trees::{self, Forest, Tree};
-use crate::Edition;
+use crate::{Edition, Lowering};
 
 use self::error_accumulator::ErrorAccumulator;
 
@@ -146,7 +146,7 @@ pub enum RustcStringStyle {
 ///
 /// If rustc panics (ie, it would report an ICE), the panic message is sent to
 /// standard error and this function returns CompilerError.
-pub fn analyse(input: &str, edition: Edition) -> Analysis {
+pub fn analyse(input: &str, edition: Edition, lowering: Lowering) -> Analysis {
     let error_list = ErrorAccumulator::new();
 
     let rustc_edition = match edition {
@@ -158,7 +158,7 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
     std::panic::catch_unwind(|| {
         match rustc_driver::catch_fatal_errors(|| {
             rustc_span::create_session_globals_then(rustc_edition, &[], None, || {
-                run_lexer(input, error_list.clone())
+                run_lexer(input, lowering, error_list.clone())
             })
         }) {
             Ok(rustc_forest) => {
@@ -202,17 +202,23 @@ pub enum Analysis {
 ///
 /// Otherwise:
 ///  - returns the lexed tokens, in RustcToken form
+///  - doc-comments are desugared if requested by the 'lowering' parameter
 ///  - if rustc would have reported a non-fatal error, at least one message has
 ///    been added to error_list
 ///    - in this case, the returned tokens are what would have been passed on to
 ///      the parser (an empty list if token stream construction failed).
-fn run_lexer(input: &str, error_list: ErrorAccumulator) -> Forest<RustcToken> {
+fn run_lexer(input: &str, lowering: Lowering, error_list: ErrorAccumulator) -> Forest<RustcToken> {
     let psess = make_parser_session(error_list.clone());
     let source_map = psess.source_map();
     let input = String::from(input);
     let filename = FileName::Custom("lex_via_rustc".into());
     let lexed = match rustc_parse::source_str_to_stream(&psess, filename, input, None) {
-        Ok(token_stream) => map_forest(&token_stream, source_map),
+        Ok(mut token_stream) => {
+            if lowering == Lowering::LowerDocComments {
+                token_stream.desugar_doc_comments();
+            }
+            map_forest(&token_stream, source_map)
+        }
         Err(diags) => {
             // Errors constructing the token stream are reported here
             // (ie, unbalanced delimiters).

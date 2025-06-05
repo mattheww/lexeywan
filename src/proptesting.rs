@@ -5,9 +5,12 @@ use proptest::{
     test_runner::{Config, TestCaseError, TestError, TestRunner},
 };
 
-use crate::comparison::{compare, regularised_from_peg, regularised_from_rustc, Comparison};
 use crate::utils::escape_for_display;
 use crate::Edition;
+use crate::{
+    comparison::{compare, regularised_from_peg, regularised_from_rustc, Comparison},
+    Lowering,
+};
 
 pub use self::strategies::DEFAULT_STRATEGY;
 use self::strategies::SIMPLE_STRATEGIES;
@@ -15,7 +18,13 @@ use self::strategies::SIMPLE_STRATEGIES;
 mod strategies;
 
 /// Implements the `proptest` cli subcommand.
-pub fn run_proptests(strategy_name: &str, count: u32, verbosity: Verbosity, edition: Edition) {
+pub fn run_proptests(
+    strategy_name: &str,
+    count: u32,
+    verbosity: Verbosity,
+    edition: Edition,
+    lowering: Lowering,
+) {
     println!("Running property tests with strategy {strategy_name} for {count} iterations");
     let mut runner = TestRunner::new(Config {
         cases: count,
@@ -24,10 +33,12 @@ pub fn run_proptests(strategy_name: &str, count: u32, verbosity: Verbosity, edit
         ..Config::default()
     });
     let strategy = &named_strategy(strategy_name).expect("unknown strategy");
-    let result = runner.run(strategy, |input| match check_lexing(&input, edition) {
-        ComparisonStatus::Pass => Ok(()),
-        ComparisonStatus::Fail(msg) => Err(TestCaseError::Fail(msg.into())),
-        ComparisonStatus::Unsupported(msg) => Err(TestCaseError::Reject(msg.into())),
+    let result = runner.run(strategy, |input| {
+        match check_lexing(&input, edition, lowering) {
+            ComparisonStatus::Pass => Ok(()),
+            ComparisonStatus::Fail(msg) => Err(TestCaseError::Fail(msg.into())),
+            ComparisonStatus::Unsupported(msg) => Err(TestCaseError::Reject(msg.into())),
+        }
     });
     match result {
         Ok(_) => println!("No discrepancies found"),
@@ -49,11 +60,11 @@ pub fn run_proptests(strategy_name: &str, count: u32, verbosity: Verbosity, edit
 /// This is the "test" function given to proptest.
 ///
 /// Returns Unsupported for input that may trigger known problems.
-fn check_lexing(input: &str, edition: Edition) -> ComparisonStatus {
+fn check_lexing(input: &str, edition: Edition, lowering: Lowering) -> ComparisonStatus {
     // See the history of this function for how to use `Unsupported`
 
-    let rustc = regularised_from_rustc(input, edition);
-    let lex_via_peg = regularised_from_peg(input, edition);
+    let rustc = regularised_from_rustc(input, edition, lowering);
+    let lex_via_peg = regularised_from_peg(input, edition, lowering);
     match compare(&rustc, &lex_via_peg) {
         Comparison::Agree => ComparisonStatus::Pass,
         Comparison::Differ => ComparisonStatus::Fail("rustc and lex_via_peg disagree".into()),

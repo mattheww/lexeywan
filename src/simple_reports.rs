@@ -11,18 +11,20 @@ use crate::combination;
 use crate::comparison::{
     compare, regularised_from_peg, regularised_from_rustc, Comparison, Regularisation,
 };
+use crate::doc_lowering::lower_doc_comments;
 use crate::fine_tokens::FineToken;
 use crate::lex_via_peg;
 use crate::lex_via_rustc;
 use crate::tree_construction;
 use crate::tree_flattening::flatten;
 use crate::utils::escape_for_display;
-use crate::Edition;
+use crate::{Edition, Lowering};
 
 /// Implements the `compare` (default) CLI command.
 pub fn run_compare_subcommand(
     inputs: &[&str],
     edition: Edition,
+    lowering: Lowering,
     details_mode: DetailsMode,
     show_failures_only: bool,
 ) {
@@ -30,7 +32,7 @@ pub fn run_compare_subcommand(
     let mut failures = 0;
     let mut model_errors = 0;
     for input in inputs {
-        match show_comparison(input, edition, details_mode, show_failures_only) {
+        match show_comparison(input, edition, lowering, details_mode, show_failures_only) {
             Comparison::Agree => passes += 1,
             Comparison::Differ => failures += 1,
             Comparison::ModelErrors => model_errors += 1,
@@ -43,24 +45,24 @@ pub fn run_compare_subcommand(
 }
 
 /// Implements the `inspect` CLI command.
-pub fn run_inspect_subcommand(inputs: &[&str], edition: Edition) {
+pub fn run_inspect_subcommand(inputs: &[&str], edition: Edition, lowering: Lowering) {
     for input in inputs {
-        show_detail(input, edition);
+        show_detail(input, edition, lowering);
         println!();
     }
 }
 
 /// Implements the `coarse` CLI command.
-pub fn run_coarse_subcommand(inputs: &[&str], edition: Edition) {
+pub fn run_coarse_subcommand(inputs: &[&str], edition: Edition, lowering: Lowering) {
     for input in inputs {
-        show_coarse(input, edition);
+        show_coarse(input, edition, lowering);
         println!();
     }
 }
 
 /// Implements the `identcheck` CLI command.
-pub fn run_identcheck_subcommand(edition: Edition) {
-    show_identcheck(edition);
+pub fn run_identcheck_subcommand(edition: Edition, lowering: Lowering) {
+    show_identcheck(edition, lowering);
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -95,11 +97,12 @@ fn single_model_symbol(reg: &Regularisation) -> char {
 fn show_comparison(
     input: &str,
     edition: Edition,
+    lowering: Lowering,
     details_mode: DetailsMode,
     show_failures_only: bool,
 ) -> Comparison {
-    let rustc = regularised_from_rustc(input, edition);
-    let lex_via_peg = regularised_from_peg(input, edition);
+    let rustc = regularised_from_rustc(input, edition, lowering);
+    let lex_via_peg = regularised_from_peg(input, edition, lowering);
     let comparison = compare(&rustc, &lex_via_peg);
 
     let passes = matches!(comparison, Comparison::Agree);
@@ -167,9 +170,9 @@ fn show_comparison(
 }
 
 /// Lexes with both rustc and lex_via_peg, and prints the results.
-fn show_detail(input: &str, edition: Edition) {
+fn show_detail(input: &str, edition: Edition, lowering: Lowering) {
     println!("Lexing «{}»", escape_for_display(input));
-    match lex_via_rustc::analyse(input, edition) {
+    match lex_via_rustc::analyse(input, edition, lowering) {
         lex_via_rustc::Analysis::Accepts(tokens) => {
             println!("rustc: accepted");
             for item in flatten(&tokens) {
@@ -194,7 +197,10 @@ fn show_detail(input: &str, edition: Edition) {
     }
     let cleaned = cleaning::clean(&input.into(), edition);
     match lex_via_peg::analyse(&cleaned, edition) {
-        lex_via_peg::Analysis::Accepts(pretokens, tokens) => {
+        lex_via_peg::Analysis::Accepts(pretokens, mut tokens) => {
+            if lowering == Lowering::LowerDocComments {
+                tokens = lower_doc_comments(tokens);
+            }
             match tree_construction::construct_forest(tokens.clone()) {
                 Ok(_) => {
                     println!("lex_via_peg: accepted");
@@ -231,8 +237,11 @@ fn show_detail(input: &str, edition: Edition) {
             message,
             rejected,
             pretokens,
-            tokens,
+            mut tokens,
         )) => {
+            if lowering == Lowering::LowerDocComments {
+                tokens = lower_doc_comments(tokens);
+            }
             println!("lex_via_peg: rejected in step 2 (reprocessing)");
             println!("  error: {message}");
             println!("  -- rejected pretoken: --");
@@ -255,11 +264,14 @@ fn show_detail(input: &str, edition: Edition) {
     }
 }
 
-fn show_coarse(input: &str, edition: Edition) {
+fn show_coarse(input: &str, edition: Edition, lowering: Lowering) {
     println!("Lexing «{}»", escape_for_display(input));
     let cleaned = cleaning::clean(&input.into(), edition);
     match lex_via_peg::analyse(&cleaned, edition) {
-        lex_via_peg::Analysis::Accepts(_, tokens) => {
+        lex_via_peg::Analysis::Accepts(_, mut tokens) => {
+            if lowering == Lowering::LowerDocComments {
+                tokens = lower_doc_comments(tokens);
+            }
             println!("lex_via_peg: accepted");
             println!("  -- fine-grained --");
             for token in tokens.iter() {
@@ -293,7 +305,7 @@ fn show_coarse(input: &str, edition: Edition) {
     }
 }
 
-fn show_identcheck(edition: Edition) {
+fn show_identcheck(edition: Edition, lowering: Lowering) {
     // This will report errors if there's a unicode version mismatch.
     println!("Checking all characters as XID_Start and XID_Continue");
     let mut passes = 0;
@@ -301,7 +313,7 @@ fn show_identcheck(edition: Edition) {
     let mut model_errors = 0;
     for c in char::MIN..=char::MAX {
         for input in [format!("{c}"), format!("a{c}")] {
-            match show_comparison(&input, edition, DetailsMode::Never, true) {
+            match show_comparison(&input, edition, lowering, DetailsMode::Never, true) {
                 Comparison::Agree => passes += 1,
                 Comparison::Differ => failures += 1,
                 Comparison::ModelErrors => model_errors += 1,

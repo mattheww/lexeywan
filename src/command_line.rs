@@ -5,11 +5,14 @@ use crate::simple_reports::{
     run_coarse_subcommand, run_compare_subcommand, run_identcheck_subcommand,
     run_inspect_subcommand, DetailsMode,
 };
-use crate::testcases;
-use crate::Edition;
+use crate::{testcases, Edition, Lowering};
 
 const USAGE: &str = "\
-Usage: lexeywan [--edition=2015|2021|*2024] [<subcommand>] [...options]
+Usage: lexeywan [global-opts] [<subcommand>] [...options]
+
+global-opts:
+  --edition=2015|2021|*2024
+  --lower-doc-comments
 
 Subcommands:
  *compare  [suite-opts] [--failures-only] [--details=always|*failures|never]
@@ -18,11 +21,11 @@ Subcommands:
   identcheck
   proptest [--count] [--strategy=<name>] [--print-failures|--print-all]
 
-* -- default
-
 suite-opts (specify at most one):
   --short: run the SHORTLIST rather than the LONGLIST
   --xfail: run the tests which are expected to to fail
+
+* -- default
 
 ";
 
@@ -62,6 +65,12 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
                 cause: "unknown edition".into(),
             })
         }
+    };
+
+    let lowering = if args.contains("--lower-doc-comments") {
+        Lowering::LowerDocComments
+    } else {
+        Lowering::NoLowering
     };
 
     fn requested_inputs(args: &mut pico_args::Arguments) -> &'static [&'static str] {
@@ -174,15 +183,15 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs,
             show_failures_only,
             details_mode,
-        } => run_compare_subcommand(inputs, edition, details_mode, show_failures_only),
-        Action::Inspect { inputs } => run_inspect_subcommand(inputs, edition),
-        Action::Coarse { inputs } => run_coarse_subcommand(inputs, edition),
-        Action::IdentCheck => run_identcheck_subcommand(edition),
+        } => run_compare_subcommand(inputs, edition, lowering, details_mode, show_failures_only),
+        Action::Inspect { inputs } => run_inspect_subcommand(inputs, edition, lowering),
+        Action::Coarse { inputs } => run_coarse_subcommand(inputs, edition, lowering),
+        Action::IdentCheck => run_identcheck_subcommand(edition, lowering),
         Action::PropTest {
             strategy_name,
             count,
             verbosity,
-        } => proptesting::run_proptests(&strategy_name, count, verbosity, edition),
+        } => proptesting::run_proptests(&strategy_name, count, verbosity, edition, lowering),
     }
 
     Ok(())

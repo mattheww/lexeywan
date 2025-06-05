@@ -5,6 +5,7 @@ mod cleaning;
 mod combination;
 mod command_line;
 mod comparison;
+mod doc_lowering;
 mod fine_tokens;
 mod lex_via_peg;
 mod lex_via_rustc;
@@ -25,6 +26,14 @@ enum Edition {
     E2021,
     /// Rust 2024
     E2024,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq)]
+enum Lowering {
+    /// Omit the "Convert doc-comments to attributes" pass
+    NoLowering,
+    /// Include the "Convert doc-comments to attributes" pass
+    LowerDocComments,
 }
 
 fn main() -> impl std::process::Termination {
