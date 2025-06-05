@@ -92,7 +92,7 @@ pub enum FineTokenData {
 }
 
 /// Whether a comment is a doc-comment, and if so which sort of doc-comment.
-#[derive(Copy, Clone, std::fmt::Debug)]
+#[derive(PartialEq, Eq, Copy, Clone, std::fmt::Debug)]
 #[allow(clippy::enum_variant_names)]
 pub enum CommentStyle {
     NonDoc,
