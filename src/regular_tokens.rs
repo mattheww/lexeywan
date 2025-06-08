@@ -9,6 +9,7 @@
 //!  - the 'kinds' of literal tokens (but not suffixed string-like ones)
 //!  - how string-family literals would be "unescaped"
 //!  - the (normalised) representation of identifiers
+//!  - the characters in punctuation
 //!  - the 'name' of a lifetime/label
 //!  - the contents of doc-comment tokens
 
@@ -44,7 +45,9 @@ pub enum RegularTokenData {
         style: DocCommentStyle,
         body: Charseq,
     },
-    Punctuation,
+    Punctuation {
+        marks: Charseq,
+    },
     Identifier {
         represented_identifier: Charseq,
         style: IdentifierStyle,
@@ -137,7 +140,9 @@ pub fn regularise_from_rustc(forest: Forest<RustcToken>) -> Forest<RegularToken>
                 style: (style).into(),
                 body: body.into(),
             },
-            RustcTokenData::Punctuation => RegularTokenData::Punctuation,
+            RustcTokenData::Punctuation { marks } => RegularTokenData::Punctuation {
+                marks: marks.into(),
+            },
             RustcTokenData::Ident { style, identifier } => RegularTokenData::Identifier {
                 represented_identifier: identifier.into(),
                 style: style.into(),
@@ -256,7 +261,7 @@ fn from_coarse_token_data(token_data: CoarseTokenData) -> RegularTokenData {
             style: style.into(),
             body,
         },
-        CoarseTokenData::Punctuation { .. } => RegularTokenData::Punctuation,
+        CoarseTokenData::Punctuation { marks } => RegularTokenData::Punctuation { marks },
         CoarseTokenData::Identifier {
             represented_identifier,
         } => RegularTokenData::Identifier {
