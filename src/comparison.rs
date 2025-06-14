@@ -43,7 +43,7 @@ pub fn regularised_from_peg(input: &str, edition: Edition, lowering: Lowering) -
     match lex_via_peg::analyse(&cleaned, edition) {
         Accepts(_, mut fine_tokens) => {
             if lowering == Lowering::LowerDocComments {
-                fine_tokens = lower_doc_comments(fine_tokens);
+                fine_tokens = lower_doc_comments(fine_tokens, edition);
             }
             match tree_construction::construct_forest(fine_tokens) {
                 Ok(forest) => {

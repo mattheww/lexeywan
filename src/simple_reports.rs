@@ -199,7 +199,7 @@ fn show_inspect(input: &str, edition: Edition, lowering: Lowering) {
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(pretokens, mut tokens) => {
             if lowering == Lowering::LowerDocComments {
-                tokens = lower_doc_comments(tokens);
+                tokens = lower_doc_comments(tokens, edition);
             }
             match tree_construction::construct_forest(tokens.clone()) {
                 Ok(_) => {
@@ -240,7 +240,7 @@ fn show_inspect(input: &str, edition: Edition, lowering: Lowering) {
             mut tokens,
         )) => {
             if lowering == Lowering::LowerDocComments {
-                tokens = lower_doc_comments(tokens);
+                tokens = lower_doc_comments(tokens, edition);
             }
             println!("lex_via_peg: rejected in step 2 (reprocessing)");
             println!("  error: {message}");
@@ -270,7 +270,7 @@ fn show_coarse(input: &str, edition: Edition, lowering: Lowering) {
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(_, mut tokens) => {
             if lowering == Lowering::LowerDocComments {
-                tokens = lower_doc_comments(tokens);
+                tokens = lower_doc_comments(tokens, edition);
             }
             println!("lex_via_peg: accepted");
             println!("  -- fine-grained --");

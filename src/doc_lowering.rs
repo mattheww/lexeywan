@@ -3,6 +3,7 @@
 use crate::{
     char_sequences::Charseq,
     fine_tokens::{CommentStyle, FineToken, FineTokenData},
+    Edition,
 };
 
 /// Convert doc-comments to attributes.
@@ -16,7 +17,10 @@ use crate::{
 /// The extent of each synthetic token is the extent of the entire doc-comment it's derived from.
 /// That means the returned sequence may not have the property that concatenating the extents
 /// reproduces the original input.
-pub fn lower_doc_comments(tokens: impl IntoIterator<Item = FineToken>) -> Vec<FineToken> {
+pub fn lower_doc_comments(
+    tokens: impl IntoIterator<Item = FineToken>,
+    _edition: Edition,
+) -> Vec<FineToken> {
     let mut processed = Vec::new();
     for token in tokens {
         match token.data {
