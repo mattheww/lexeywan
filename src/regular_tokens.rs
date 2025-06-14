@@ -23,6 +23,12 @@ use crate::lex_via_rustc::{
 };
 use crate::trees::Forest;
 
+/// A token in common form for comparing lexer implementations' output.
+///
+/// The token might originally come from either the rustc tokeniser or lex_via_peg.
+///
+/// The 'extent' matches what the rustc tokeniser uses as 'span': for synthetic tokens, it's the
+/// span of the (doc-comment) token that was expanded to form this token.
 #[derive(PartialEq, Eq)]
 pub struct RegularToken {
     pub extent: Charseq,
