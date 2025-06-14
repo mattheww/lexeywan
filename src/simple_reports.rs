@@ -47,7 +47,7 @@ pub fn run_compare_subcommand(
 /// Implements the `inspect` CLI command.
 pub fn run_inspect_subcommand(inputs: &[&str], edition: Edition, lowering: Lowering) {
     for input in inputs {
-        show_detail(input, edition, lowering);
+        show_inspect(input, edition, lowering);
         println!();
     }
 }
@@ -170,7 +170,7 @@ fn show_comparison(
 }
 
 /// Lexes with both rustc and lex_via_peg, and prints the results.
-fn show_detail(input: &str, edition: Edition, lowering: Lowering) {
+fn show_inspect(input: &str, edition: Edition, lowering: Lowering) {
     println!("Lexing «{}»", escape_for_display(input));
     match lex_via_rustc::analyse(input, edition, lowering) {
         lex_via_rustc::Analysis::Accepts(tokens) => {
