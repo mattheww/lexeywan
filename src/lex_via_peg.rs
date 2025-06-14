@@ -135,6 +135,22 @@ impl Reason {
     }
 }
 
+/// Runs lexical analysis, expecting to find a single token.
+///
+/// If the complete input is accepted as a single token, retuns that (fine-grained) token.
+///
+/// Otherwise returns None.
+pub fn lex_as_single_token(input: &[char], edition: Edition) -> Option<FineToken> {
+    let mut iter = pretokenisation::pretokenise(input, edition);
+    let Some(pretokenisation::Outcome::Found(pretoken)) = iter.next() else {
+        return None;
+    };
+    let None = iter.next() else {
+        return None;
+    };
+    reprocessing::reprocess(&pretoken).ok()
+}
+
 /// Returns the first non-whitespace token in the input.
 ///
 /// Returns None if there are no tokens in the input, or if lexical analysis wouldn't accept the
