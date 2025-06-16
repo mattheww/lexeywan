@@ -7,7 +7,8 @@
 //! from them to perform combination.
 
 use crate::char_sequences::{concat_charseqs, Charseq};
-use crate::fine_tokens::{self, CommentStyle, FineToken, FineTokenData};
+use crate::fine_tokens::{CommentStyle, FineToken, FineTokenData};
+use crate::tokens_common::NumericBase;
 use crate::trees::{Forest, Tree};
 
 /// A "Coarse-grained" token.
@@ -111,15 +112,6 @@ pub enum CoarseTokenData {
 pub enum DocCommentStyle {
     Inner,
     Outer,
-}
-
-/// Base (radix) of a numeric literal.
-#[derive(Copy, Clone, std::fmt::Debug)]
-pub enum NumericBase {
-    Binary,
-    Octal,
-    Decimal,
-    Hexadecimal,
 }
 
 /// Converts a fine-grained token forest into a coarse-grained one.
@@ -390,24 +382,13 @@ impl TryFrom<FineTokenData> for CoarseTokenData {
                 digits,
                 suffix,
             } => Ok(CoarseTokenData::IntegerLiteral {
-                base: base.into(),
+                base,
                 digits,
                 suffix,
             }),
             FineTokenData::FloatLiteral { body, suffix } => {
                 Ok(CoarseTokenData::FloatLiteral { body, suffix })
             }
-        }
-    }
-}
-
-impl From<fine_tokens::NumericBase> for NumericBase {
-    fn from(base: fine_tokens::NumericBase) -> Self {
-        match base {
-            fine_tokens::NumericBase::Binary => NumericBase::Binary,
-            fine_tokens::NumericBase::Octal => NumericBase::Octal,
-            fine_tokens::NumericBase::Decimal => NumericBase::Decimal,
-            fine_tokens::NumericBase::Hexadecimal => NumericBase::Hexadecimal,
         }
     }
 }

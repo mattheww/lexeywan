@@ -1,6 +1,7 @@
 //! Step 1 (pretokenisation) of lexical analysis.
 
 use crate::char_sequences::Charseq;
+use crate::tokens_common::NumericBase;
 use crate::Edition;
 
 mod pest_pretokeniser;
@@ -64,15 +65,6 @@ pub enum PretokenData {
         body: Charseq,
         suffix: Option<Charseq>,
     },
-}
-
-/// Base (radix) of a numeric literal.
-#[derive(Copy, Clone, std::fmt::Debug)]
-pub enum NumericBase {
-    Binary,
-    Octal,
-    Decimal,
-    Hexadecimal,
 }
 
 /// Runs step 1 (pretokenisation) of lexical analysis on the specified input.

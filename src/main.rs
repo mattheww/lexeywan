@@ -13,6 +13,7 @@ mod proptesting;
 mod regular_tokens;
 mod simple_reports;
 mod testcases;
+mod tokens_common;
 mod tree_construction;
 mod tree_flattening;
 mod trees;

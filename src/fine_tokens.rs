@@ -2,7 +2,7 @@
 //!
 //! This representation uses explicit whitespace tokens.
 
-use crate::char_sequences::Charseq;
+use crate::{char_sequences::Charseq, tokens_common::NumericBase};
 
 /// A "Fine-grained" token.
 ///
@@ -98,15 +98,6 @@ pub enum CommentStyle {
     NonDoc,
     InnerDoc,
     OuterDoc,
-}
-
-/// Base (radix) of a numeric literal.
-#[derive(Copy, Clone, std::fmt::Debug)]
-pub enum NumericBase {
-    Binary,
-    Octal,
-    Decimal,
-    Hexadecimal,
 }
 
 impl FineTokenData {

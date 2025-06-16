@@ -1,7 +1,8 @@
 //! Step 2 (reprocessing) of lexical analysis.
 
 use crate::char_sequences::Charseq;
-use crate::fine_tokens::{self, CommentStyle, FineToken, FineTokenData};
+use crate::fine_tokens::{CommentStyle, FineToken, FineTokenData};
+use crate::tokens_common::NumericBase;
 
 use self::escape_processing::{
     interpret_7_bit_escape, interpret_8_bit_escape, interpret_8_bit_escape_as_byte,
@@ -9,7 +10,7 @@ use self::escape_processing::{
     is_string_continuation_whitespace,
 };
 
-use super::pretokenisation::{self, Pretoken, PretokenData};
+use super::pretokenisation::{Pretoken, PretokenData};
 
 mod escape_processing;
 
@@ -228,7 +229,7 @@ fn lex_raw_double_quote_literal(
 
 /// Validates and interprets an integer literal.
 fn lex_integer_literal(
-    base: pretokenisation::NumericBase,
+    base: NumericBase,
     digits: &Charseq,
     suffix: &Option<Charseq>,
 ) -> Result<FineTokenData, Error> {
@@ -237,26 +238,20 @@ fn lex_integer_literal(
         return Err(rejected("no digits"));
     }
     match base {
-        pretokenisation::NumericBase::Binary => {
+        NumericBase::Binary => {
             if !digits.iter().all(|c| *c == '_' || (*c >= '0' && *c < '2')) {
                 return Err(rejected("invalid digit"));
             }
         }
-        pretokenisation::NumericBase::Octal => {
+        NumericBase::Octal => {
             if !digits.iter().all(|c| *c == '_' || (*c >= '0' && *c < '8')) {
                 return Err(rejected("invalid digit"));
             }
         }
         _ => {}
     }
-    let fine_base = match base {
-        pretokenisation::NumericBase::Binary => fine_tokens::NumericBase::Binary,
-        pretokenisation::NumericBase::Octal => fine_tokens::NumericBase::Octal,
-        pretokenisation::NumericBase::Decimal => fine_tokens::NumericBase::Decimal,
-        pretokenisation::NumericBase::Hexadecimal => fine_tokens::NumericBase::Hexadecimal,
-    };
     Ok(FineTokenData::IntegerLiteral {
-        base: fine_base,
+        base,
         digits: digits.clone(),
         suffix,
     })
