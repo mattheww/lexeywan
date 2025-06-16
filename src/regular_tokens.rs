@@ -21,11 +21,14 @@ use crate::lex_via_rustc::{
     RustcCommentKind, RustcDocCommentStyle, RustcIdentIsRaw, RustcLiteralData, RustcStringStyle,
     RustcToken, RustcTokenData,
 };
+use crate::tokens_common::Origin;
 use crate::trees::Forest;
 
 /// A token in common form for comparing lexer implementations' output.
 ///
 /// The token might originally come from either the rustc tokeniser or lex_via_peg.
+///
+/// Synthetic tokens aren't distinguished here, because rustc tokens don't make that distinction.
 ///
 /// The 'extent' matches what the rustc tokeniser uses as 'span': for synthetic tokens, it's the
 /// span of the (doc-comment) token that was expanded to form this token.
@@ -242,7 +245,10 @@ impl From<RustcStringStyle> for StringStyle {
 /// Converts a forest of `CoarseToken`s into a forest of `RegularToken`s.
 pub fn regularise_from_coarse(forest: Forest<CoarseToken>) -> Forest<RegularToken> {
     forest.map(|ctoken| RegularToken {
-        extent: ctoken.extent,
+        extent: match ctoken.origin {
+            Origin::Natural { extent } => extent,
+            Origin::Synthetic { lowered_from } => lowered_from,
+        },
         data: from_coarse_token_data(ctoken.data),
     })
 }

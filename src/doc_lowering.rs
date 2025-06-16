@@ -1,10 +1,9 @@
 //! Convert doc-comments to attributes.
 
-use crate::{
-    char_sequences::Charseq,
-    fine_tokens::{CommentStyle, FineToken, FineTokenData},
-    Edition,
-};
+use crate::char_sequences::Charseq;
+use crate::fine_tokens::{CommentStyle, FineToken, FineTokenData};
+use crate::tokens_common::Origin;
+use crate::Edition;
 
 /// Convert doc-comments to attributes.
 ///
@@ -13,22 +12,22 @@ use crate::{
 ///
 /// The sequence does't include any synthetic whitespace tokens (and so I think it doesn't provide
 /// enough information to reproduce the Spacing that a proc macro would see).
-///
-/// The extent of each synthetic token is the extent of the entire doc-comment it's derived from.
-/// That means the returned sequence may not have the property that concatenating the extents
-/// reproduces the original input.
 pub fn lower_doc_comments(
     tokens: impl IntoIterator<Item = FineToken>,
     _edition: Edition,
 ) -> Vec<FineToken> {
     let mut processed = Vec::new();
     for token in tokens {
+        let lowered_from = match &token.origin {
+            Origin::Natural { extent } => extent,
+            Origin::Synthetic { lowered_from } => lowered_from,
+        };
         match token.data {
             FineTokenData::LineComment { style, body }
             | FineTokenData::BlockComment { style, body }
                 if style != CommentStyle::NonDoc =>
             {
-                processed.extend(lowered(body, style, &token.extent))
+                processed.extend(lowered(body, style, lowered_from))
             }
             _ => processed.push(token),
         }
@@ -36,19 +35,25 @@ pub fn lower_doc_comments(
     processed
 }
 
-fn lowered(comment_body: Charseq, style: CommentStyle, full_extent: &Charseq) -> Vec<FineToken> {
+fn lowered(comment_body: Charseq, style: CommentStyle, lowered_from: &Charseq) -> Vec<FineToken> {
     let punct = |c| FineToken {
-        extent: full_extent.clone(),
+        origin: Origin::Synthetic {
+            lowered_from: lowered_from.clone(),
+        },
         data: FineTokenData::Punctuation { mark: c },
     };
     let ident = |name: &str| FineToken {
-        extent: full_extent.clone(),
+        origin: Origin::Synthetic {
+            lowered_from: lowered_from.clone(),
+        },
         data: FineTokenData::Identifier {
             represented_identifier: name.into(),
         },
     };
     let rawstring = |represented_string| FineToken {
-        extent: full_extent.clone(),
+        origin: Origin::Synthetic {
+            lowered_from: lowered_from.clone(),
+        },
         data: FineTokenData::RawStringLiteral {
             represented_string,
             suffix: Charseq::default(),

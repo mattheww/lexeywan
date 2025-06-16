@@ -8,7 +8,7 @@
 
 use crate::char_sequences::{concat_charseqs, Charseq};
 use crate::fine_tokens::{CommentStyle, FineToken, FineTokenData};
-use crate::tokens_common::NumericBase;
+use crate::tokens_common::{NumericBase, Origin};
 use crate::trees::{Forest, Tree};
 
 /// A "Coarse-grained" token.
@@ -22,13 +22,18 @@ pub struct CoarseToken {
     /// The token's kind and attributes.
     pub data: CoarseTokenData,
 
-    /// The input characters which make up the token.
-    pub extent: Charseq,
+    /// Where this token came from.
+    pub origin: Origin,
 }
 
 impl std::fmt::Debug for CoarseToken {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}, {:?}", self.data, self.extent)
+        match &self.origin {
+            Origin::Natural { extent } => write!(f, "{:?}, {:?}", self.data, extent),
+            Origin::Synthetic { lowered_from } => {
+                write!(f, "{:?}, lowered from {:?}", self.data, lowered_from)
+            }
+        }
     }
 }
 
@@ -154,7 +159,7 @@ fn map_combine(forest: Forest<(FineToken, Spacing)>) -> Forest<CoarseToken> {
                 if let Some(double_token) = merge_two(&token1.data, &token2.data) {
                     let mut combined_token = CoarseToken {
                         data: double_token,
-                        extent: concat_charseqs(&token1.extent, &token2.extent),
+                        origin: combine_origins(&token1.origin, &token2.origin),
                     };
                     let may_combine_further = *spacing2 == Spacing::Joint;
                     // skip the second token
@@ -166,7 +171,7 @@ fn map_combine(forest: Forest<(FineToken, Spacing)>) -> Forest<CoarseToken> {
                             {
                                 combined_token = CoarseToken {
                                     data: triple_token,
-                                    extent: concat_charseqs(&combined_token.extent, &token3.extent),
+                                    origin: combine_origins(&combined_token.origin, &token3.origin),
                                 };
                                 // skip the third token
                                 tokens.next();
@@ -179,9 +184,30 @@ fn map_combine(forest: Forest<(FineToken, Spacing)>) -> Forest<CoarseToken> {
         }
         Some(CoarseToken {
             data: token1.data.try_into().unwrap(),
-            extent: token1.extent,
+            origin: token1.origin,
         })
     })
+}
+
+/// Merge the origin information for two tokens.
+///
+/// The cases where one of the tokens is synthetic don't actually happen, so we just make up
+/// something plausible.
+fn combine_origins(o1: &Origin, o2: &Origin) -> Origin {
+    match (o1, o2) {
+        (Origin::Natural { extent: e1 }, Origin::Natural { extent: e2 }) => Origin::Natural {
+            extent: concat_charseqs(e1, e2),
+        },
+        (Origin::Natural { .. }, Origin::Synthetic { lowered_from: lf2 }) => Origin::Synthetic {
+            lowered_from: lf2.clone(),
+        },
+        (Origin::Synthetic { lowered_from: lf1 }, Origin::Natural { .. }) => Origin::Synthetic {
+            lowered_from: lf1.clone(),
+        },
+        (Origin::Synthetic { lowered_from: lf1 }, Origin::Synthetic { .. }) => Origin::Synthetic {
+            lowered_from: lf1.clone(),
+        },
+    }
 }
 
 /// Merges two fine-grained tokens if they're mergeable.

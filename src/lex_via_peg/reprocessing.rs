@@ -2,7 +2,7 @@
 
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::{CommentStyle, FineToken, FineTokenData};
-use crate::tokens_common::NumericBase;
+use crate::tokens_common::{NumericBase, Origin};
 
 use self::escape_processing::{
     interpret_7_bit_escape, interpret_8_bit_escape, interpret_8_bit_escape_as_byte,
@@ -61,7 +61,9 @@ pub fn reprocess(pretoken: &Pretoken) -> Result<FineToken, Error> {
     };
     Ok(FineToken {
         data: token_data,
-        extent: pretoken.extent.clone(),
+        origin: Origin::Natural {
+            extent: pretoken.extent.clone(),
+        },
     })
 }
 

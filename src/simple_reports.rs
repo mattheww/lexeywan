@@ -15,6 +15,7 @@ use crate::doc_lowering::lower_doc_comments;
 use crate::fine_tokens::FineToken;
 use crate::lex_via_peg;
 use crate::lex_via_rustc;
+use crate::tokens_common::Origin;
 use crate::tree_construction;
 use crate::tree_flattening::flatten;
 use crate::utils::escape_for_display;
@@ -76,7 +77,12 @@ fn format_pretoken(pretoken: &lex_via_peg::Pretoken) -> String {
     format!("{:?}, {:?}", pretoken.data, pretoken.extent)
 }
 fn format_token(token: &FineToken) -> String {
-    format!("{:?}, {:?}", token.data, token.extent)
+    match &token.origin {
+        Origin::Natural { extent } => format!("{:?}, {:?}", token.data, extent),
+        Origin::Synthetic { lowered_from } => {
+            format!("{:?}, lowered from {:?}", token.data, lowered_from)
+        }
+    }
 }
 
 /// Returns a symbol indicating how a single model responded to the input.

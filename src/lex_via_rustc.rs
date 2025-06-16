@@ -41,6 +41,8 @@ use self::error_accumulator::ErrorAccumulator;
 mod error_accumulator;
 
 /// Information we keep about a token from the rustc tokeniser.
+///
+/// Synthetic tokens aren't distinguished here, because I don't see a robust way to detect them.
 pub struct RustcToken {
     /// The input characters which make up the token
     pub extent: String,

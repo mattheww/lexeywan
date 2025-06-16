@@ -2,7 +2,8 @@
 //!
 //! This representation uses explicit whitespace tokens.
 
-use crate::{char_sequences::Charseq, tokens_common::NumericBase};
+use crate::char_sequences::Charseq;
+use crate::tokens_common::{NumericBase, Origin};
 
 /// A "Fine-grained" token.
 ///
@@ -17,8 +18,8 @@ pub struct FineToken {
     /// The token's kind and attributes.
     pub data: FineTokenData,
 
-    /// The input characters which make up the token.
-    pub extent: Charseq,
+    /// Where this token came from.
+    pub origin: Origin,
 }
 
 /// A fine-grained token's kind and attributes.
