@@ -247,7 +247,7 @@ pub fn regularise_from_coarse(forest: Forest<CoarseToken>) -> Forest<RegularToke
     forest.map(|ctoken| RegularToken {
         extent: match ctoken.origin {
             Origin::Natural { extent } => extent,
-            Origin::Synthetic { lowered_from } => lowered_from,
+            Origin::Synthetic { lowered_from, .. } => lowered_from,
         },
         data: from_coarse_token_data(ctoken.data),
     })

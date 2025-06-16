@@ -79,7 +79,7 @@ fn format_pretoken(pretoken: &lex_via_peg::Pretoken) -> String {
 fn format_token(token: &FineToken) -> String {
     match &token.origin {
         Origin::Natural { extent } => format!("{:?}, {:?}", token.data, extent),
-        Origin::Synthetic { lowered_from } => {
+        Origin::Synthetic { lowered_from, .. } => {
             format!("{:?}, lowered from {:?}", token.data, lowered_from)
         }
     }

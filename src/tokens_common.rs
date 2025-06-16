@@ -26,5 +26,10 @@ pub enum Origin {
         /// This may not be meaningful for a coarse-grained token which was created by combination
         /// from at least one synthetic token (we don't care because that doesn't happen).
         lowered_from: Charseq,
+        /// What stringify!() would return for the token.
+        ///
+        /// This isn't meaningful for a coarse-grained token which was created by combination
+        /// from at least one synthetic token (we don't care because that doesn't happen).
+        stringified: Charseq,
     },
 }

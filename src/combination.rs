@@ -30,7 +30,7 @@ impl std::fmt::Debug for CoarseToken {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.origin {
             Origin::Natural { extent } => write!(f, "{:?}, {:?}", self.data, extent),
-            Origin::Synthetic { lowered_from } => {
+            Origin::Synthetic { lowered_from, .. } => {
                 write!(f, "{:?}, lowered from {:?}", self.data, lowered_from)
             }
         }
@@ -198,14 +198,32 @@ fn combine_origins(o1: &Origin, o2: &Origin) -> Origin {
         (Origin::Natural { extent: e1 }, Origin::Natural { extent: e2 }) => Origin::Natural {
             extent: concat_charseqs(e1, e2),
         },
-        (Origin::Natural { .. }, Origin::Synthetic { lowered_from: lf2 }) => Origin::Synthetic {
+        (
+            Origin::Natural { .. },
+            Origin::Synthetic {
+                lowered_from: lf2, ..
+            },
+        ) => Origin::Synthetic {
             lowered_from: lf2.clone(),
+            stringified: "".into(),
         },
-        (Origin::Synthetic { lowered_from: lf1 }, Origin::Natural { .. }) => Origin::Synthetic {
+        (
+            Origin::Synthetic {
+                lowered_from: lf1, ..
+            },
+            Origin::Natural { .. },
+        ) => Origin::Synthetic {
             lowered_from: lf1.clone(),
+            stringified: "".into(),
         },
-        (Origin::Synthetic { lowered_from: lf1 }, Origin::Synthetic { .. }) => Origin::Synthetic {
+        (
+            Origin::Synthetic {
+                lowered_from: lf1, ..
+            },
+            Origin::Synthetic { .. },
+        ) => Origin::Synthetic {
             lowered_from: lf1.clone(),
+            stringified: "".into(),
         },
     }
 }
