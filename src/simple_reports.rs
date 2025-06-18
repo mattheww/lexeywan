@@ -9,7 +9,7 @@
 use crate::cleaning;
 use crate::combination;
 use crate::comparison::{
-    compare, regularised_from_peg, regularised_from_rustc, Comparison, Regularisation,
+    compare, regularised_from_peg, regularised_from_rustc, Comparison, Verdict,
 };
 use crate::doc_lowering::lower_doc_comments;
 use crate::fine_tokens::FineToken;
@@ -86,11 +86,11 @@ fn format_token(token: &FineToken) -> String {
 }
 
 /// Returns a symbol indicating how a single model responded to the input.
-fn single_model_symbol(reg: &Regularisation) -> char {
+fn single_model_symbol<T: Eq>(reg: &Verdict<T>) -> char {
     match reg {
-        Regularisation::Accepts(_) => '✓',
-        Regularisation::Rejects(_) => '✗',
-        Regularisation::ModelError(_) => '💣',
+        Verdict::Accepts(_) => '✓',
+        Verdict::Rejects(_) => '✗',
+        Verdict::ModelError(_) => '💣',
     }
 }
 
@@ -132,19 +132,19 @@ fn show_comparison(
 
     if show_detail {
         match rustc {
-            Regularisation::Accepts(tokens) => {
+            Verdict::Accepts(tokens) => {
                 println!("  rustc: accepted");
                 for item in flatten(&tokens) {
                     println!("    {item:?}");
                 }
             }
-            Regularisation::Rejects(messages) => {
+            Verdict::Rejects(messages) => {
                 println!("  rustc: rejected");
                 for msg in messages {
                     println!("    {msg}");
                 }
             }
-            Regularisation::ModelError(messages) => {
+            Verdict::ModelError(messages) => {
                 println!("  rustc: reported model error");
                 for msg in messages {
                     println!("    {msg}");
@@ -152,19 +152,19 @@ fn show_comparison(
             }
         };
         match lex_via_peg {
-            Regularisation::Accepts(tokens) => {
+            Verdict::Accepts(tokens) => {
                 println!("  lex_via_peg: accepted");
                 for item in flatten(&tokens) {
                     println!("    {item:?}");
                 }
             }
-            Regularisation::Rejects(messages) => {
+            Verdict::Rejects(messages) => {
                 println!("  lex_via_peg: rejected");
                 for msg in messages {
                     println!("    {msg}");
                 }
             }
-            Regularisation::ModelError(messages) => {
+            Verdict::ModelError(messages) => {
                 println!("  lex_via_peg: reported a bug in its model");
                 for msg in messages {
                     println!("    {msg}");
