@@ -8,9 +8,8 @@
 
 use crate::cleaning;
 use crate::combination;
-use crate::comparison::{
-    compare, regularised_from_peg, regularised_from_rustc, Comparison, Verdict,
-};
+use crate::comparison::{compare, Comparison, Verdict};
+use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::doc_lowering::lower_doc_comments;
 use crate::fine_tokens::FineToken;
 use crate::lex_via_peg;

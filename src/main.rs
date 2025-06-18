@@ -5,6 +5,7 @@ mod cleaning;
 mod combination;
 mod command_line;
 mod comparison;
+mod direct_lexing;
 mod doc_lowering;
 mod fine_tokens;
 mod lex_via_peg;
