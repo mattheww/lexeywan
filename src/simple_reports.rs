@@ -61,8 +61,8 @@ pub fn run_coarse_subcommand(inputs: &[&str], edition: Edition, lowering: Loweri
 }
 
 /// Implements the `identcheck` CLI command.
-pub fn run_identcheck_subcommand(edition: Edition, lowering: Lowering) {
-    show_identcheck(edition, lowering);
+pub fn run_identcheck_subcommand(edition: Edition) {
+    show_identcheck(edition, Lowering::NoLowering);
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]

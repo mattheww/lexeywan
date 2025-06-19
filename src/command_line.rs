@@ -12,18 +12,22 @@ Usage: lexeywan [global-opts] [<subcommand>] [...options]
 
 global-opts:
   --edition=2015|2021|*2024
-  --lower-doc-comments
 
 Subcommands:
- *compare  [suite-opts] [--failures-only] [--details=always|*failures|never]
-  inspect  [suite-opts]
-  coarse   [suite-opts]
+ *compare     [suite-opts] [comparison-opts] [--lower-doc-comments]
+  inspect     [suite-opts] [--lower-doc-comments]
+  coarse      [suite-opts] [--lower-doc-comments]
   identcheck
-  proptest [--count] [--strategy=<name>] [--print-failures|--print-all]
+  proptest    [--count] [--strategy=<name>] [--print-failures|--print-all]
+              [--lower-doc-comments]
 
 suite-opts (specify at most one):
   --short: run the SHORTLIST rather than the LONGLIST
   --xfail: run the tests which are expected to to fail
+
+comparison-opts:
+  --failures-only: don't report cases where the lexers agree
+  --details=always|*failures|never
 
 * -- default
 
@@ -67,11 +71,13 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         }
     };
 
-    let lowering = if args.contains("--lower-doc-comments") {
-        Lowering::LowerDocComments
-    } else {
-        Lowering::NoLowering
-    };
+    fn requested_lowering(args: &mut pico_args::Arguments) -> Lowering {
+        if args.contains("--lower-doc-comments") {
+            Lowering::LowerDocComments
+        } else {
+            Lowering::NoLowering
+        }
+    }
 
     fn requested_inputs(args: &mut pico_args::Arguments) -> &'static [&'static str] {
         if args.contains("--short") {
@@ -88,18 +94,22 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs: &'static [&'static str],
             show_failures_only: bool,
             details_mode: DetailsMode,
+            lowering: Lowering,
         },
         Inspect {
             inputs: &'static [&'static str],
+            lowering: Lowering,
         },
         Coarse {
             inputs: &'static [&'static str],
+            lowering: Lowering,
         },
         IdentCheck,
         PropTest {
             strategy_name: String,
             count: u32,
             verbosity: Verbosity,
+            lowering: Lowering,
         },
     }
     fn compare_action(args: &mut pico_args::Arguments) -> Result<Action, pico_args::Error> {
@@ -122,15 +132,18 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs: requested_inputs(args),
             show_failures_only,
             details_mode,
+            lowering: requested_lowering(args),
         })
     }
     let action = match args.subcommand()?.as_deref() {
         Some("compare") => compare_action(&mut args)?,
         Some("inspect") => Action::Inspect {
             inputs: requested_inputs(&mut args),
+            lowering: requested_lowering(&mut args),
         },
         Some("coarse") => Action::Coarse {
             inputs: requested_inputs(&mut args),
+            lowering: requested_lowering(&mut args),
         },
         Some("identcheck") => Action::IdentCheck,
         Some("proptest") => {
@@ -162,6 +175,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
                 strategy_name,
                 count,
                 verbosity,
+                lowering: requested_lowering(&mut args),
             }
         }
         None => compare_action(&mut args)?,
@@ -183,14 +197,16 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs,
             show_failures_only,
             details_mode,
+            lowering,
         } => run_compare_subcommand(inputs, edition, lowering, details_mode, show_failures_only),
-        Action::Inspect { inputs } => run_inspect_subcommand(inputs, edition, lowering),
-        Action::Coarse { inputs } => run_coarse_subcommand(inputs, edition, lowering),
-        Action::IdentCheck => run_identcheck_subcommand(edition, lowering),
+        Action::Inspect { inputs, lowering } => run_inspect_subcommand(inputs, edition, lowering),
+        Action::Coarse { inputs, lowering } => run_coarse_subcommand(inputs, edition, lowering),
+        Action::IdentCheck => run_identcheck_subcommand(edition),
         Action::PropTest {
             strategy_name,
             count,
             verbosity,
+            lowering,
         } => proptesting::run_proptests(&strategy_name, count, verbosity, edition, lowering),
     }
 
