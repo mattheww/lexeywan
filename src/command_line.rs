@@ -2,8 +2,8 @@
 
 use crate::proptesting::{self, Verbosity};
 use crate::simple_reports::{
-    run_coarse_subcommand, run_compare_subcommand, run_identcheck_subcommand,
-    run_inspect_subcommand, DetailsMode,
+    run_coarse_subcommand, run_compare_subcommand, run_decl_compare_subcommand,
+    run_identcheck_subcommand, run_inspect_subcommand, DetailsMode,
 };
 use crate::{testcases, Edition, Lowering};
 
@@ -14,12 +14,13 @@ global-opts:
   --edition=2015|2021|*2024
 
 Subcommands:
- *compare     [suite-opts] [comparison-opts] [--lower-doc-comments]
-  inspect     [suite-opts] [--lower-doc-comments]
-  coarse      [suite-opts] [--lower-doc-comments]
+ *compare       [suite-opts] [comparison-opts] [--lower-doc-comments]
+  decl-compare  [suite-opts] [comparison-opts]
+  inspect       [suite-opts] [--lower-doc-comments]
+  coarse        [suite-opts] [--lower-doc-comments]
   identcheck
-  proptest    [--count] [--strategy=<name>] [--print-failures|--print-all]
-              [--lower-doc-comments]
+  proptest      [--count] [--strategy=<name>] [--print-failures|--print-all]
+                [--lower-doc-comments]
 
 suite-opts (specify at most one):
   --short: run the SHORTLIST rather than the LONGLIST
@@ -89,12 +90,38 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         }
     }
 
+    fn requested_details_mode(
+        args: &mut pico_args::Arguments,
+    ) -> Result<DetailsMode, pico_args::Error> {
+        Ok(
+            match args
+                .opt_value_from_str::<_, String>("--details")?
+                .as_deref()
+            {
+                Some("always") => DetailsMode::Always,
+                Some("failures-only") => DetailsMode::Failures,
+                Some("never") => DetailsMode::Never,
+                None => DetailsMode::Failures,
+                _ => {
+                    return Err(pico_args::Error::ArgumentParsingFailed {
+                        cause: "unknown details mode".into(),
+                    })
+                }
+            },
+        )
+    }
+
     enum Action {
         Compare {
             inputs: &'static [&'static str],
             show_failures_only: bool,
             details_mode: DetailsMode,
             lowering: Lowering,
+        },
+        DeclCompare {
+            inputs: &'static [&'static str],
+            show_failures_only: bool,
+            details_mode: DetailsMode,
         },
         Inspect {
             inputs: &'static [&'static str],
@@ -114,29 +141,24 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
     }
     fn compare_action(args: &mut pico_args::Arguments) -> Result<Action, pico_args::Error> {
         let show_failures_only = args.contains("--failures-only");
-        let details_mode = match args
-            .opt_value_from_str::<_, String>("--details")?
-            .as_deref()
-        {
-            Some("always") => DetailsMode::Always,
-            Some("failures-only") => DetailsMode::Failures,
-            Some("never") => DetailsMode::Never,
-            None => DetailsMode::Failures,
-            _ => {
-                return Err(pico_args::Error::ArgumentParsingFailed {
-                    cause: "unknown details mode".into(),
-                })
-            }
-        };
         Ok(Action::Compare {
             inputs: requested_inputs(args),
             show_failures_only,
-            details_mode,
+            details_mode: requested_details_mode(args)?,
             lowering: requested_lowering(args),
+        })
+    }
+    fn decl_compare_action(args: &mut pico_args::Arguments) -> Result<Action, pico_args::Error> {
+        let show_failures_only = args.contains("--failures-only");
+        Ok(Action::DeclCompare {
+            inputs: requested_inputs(args),
+            show_failures_only,
+            details_mode: requested_details_mode(args)?,
         })
     }
     let action = match args.subcommand()?.as_deref() {
         Some("compare") => compare_action(&mut args)?,
+        Some("decl-compare") => decl_compare_action(&mut args)?,
         Some("inspect") => Action::Inspect {
             inputs: requested_inputs(&mut args),
             lowering: requested_lowering(&mut args),
@@ -199,6 +221,11 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             details_mode,
             lowering,
         } => run_compare_subcommand(inputs, edition, lowering, details_mode, show_failures_only),
+        Action::DeclCompare {
+            inputs,
+            show_failures_only,
+            details_mode,
+        } => run_decl_compare_subcommand(inputs, edition, details_mode, show_failures_only),
         Action::Inspect { inputs, lowering } => run_inspect_subcommand(inputs, edition, lowering),
         Action::Coarse { inputs, lowering } => run_coarse_subcommand(inputs, edition, lowering),
         Action::IdentCheck => run_identcheck_subcommand(edition),

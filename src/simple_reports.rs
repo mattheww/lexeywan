@@ -2,13 +2,17 @@
 //!
 //! These subcommands are:
 //!  `compare`
+//!  'decl_compare'
 //!  `inspect`
 //!  `coarse`
 //!  `identcheck`
 
+use std::fmt::Debug;
+
 use crate::cleaning;
 use crate::combination;
 use crate::comparison::{compare, Comparison, Verdict};
+use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::doc_lowering::lower_doc_comments;
 use crate::fine_tokens::FineToken;
@@ -17,6 +21,7 @@ use crate::rustc_harness::lex_via_rustc;
 use crate::tokens_common::Origin;
 use crate::tree_construction;
 use crate::tree_flattening::flatten;
+use crate::trees::Forest;
 use crate::utils::escape_for_display;
 use crate::{Edition, Lowering};
 
@@ -33,6 +38,29 @@ pub fn run_compare_subcommand(
     let mut model_errors = 0;
     for input in inputs {
         match show_comparison(input, edition, lowering, details_mode, show_failures_only) {
+            Comparison::Agree => passes += 1,
+            Comparison::Differ => failures += 1,
+            Comparison::ModelErrors => model_errors += 1,
+        }
+    }
+    println!("\n{passes} passed, {failures} failed");
+    if model_errors != 0 {
+        println!("*** {model_errors} model errors ***");
+    }
+}
+
+/// Implements the `decl-compare` CLI command.
+pub fn run_decl_compare_subcommand(
+    inputs: &[&str],
+    edition: Edition,
+    details_mode: DetailsMode,
+    show_failures_only: bool,
+) {
+    let mut passes = 0;
+    let mut failures = 0;
+    let mut model_errors = 0;
+    for input in inputs {
+        match show_decl_compare(input, edition, details_mode, show_failures_only) {
             Comparison::Agree => passes += 1,
             Comparison::Differ => failures += 1,
             Comparison::ModelErrors => model_errors += 1,
@@ -108,70 +136,24 @@ fn show_comparison(
 ) -> Comparison {
     let rustc = regularised_from_rustc(input, edition, lowering);
     let lex_via_peg = regularised_from_peg(input, edition, lowering);
-    let comparison = compare(&rustc, &lex_via_peg);
+    report_verdict(input, details_mode, show_failures_only, rustc, lex_via_peg)
+}
 
-    let passes = matches!(comparison, Comparison::Agree);
-    if passes && show_failures_only {
-        return comparison;
-    }
-    let show_detail = (details_mode == DetailsMode::Always)
-        || ((details_mode == DetailsMode::Failures) && !passes);
-
-    println!(
-        "{} R:{} L:{} «{}»",
-        match comparison {
-            Comparison::Agree => '✔',
-            Comparison::Differ => '‼',
-            Comparison::ModelErrors => '💣',
-        },
-        single_model_symbol(&rustc),
-        single_model_symbol(&lex_via_peg),
-        escape_for_display(input)
-    );
-
-    if show_detail {
-        match rustc {
-            Verdict::Accepts(tokens) => {
-                println!("  rustc: accepted");
-                for item in flatten(&tokens) {
-                    println!("    {item:?}");
-                }
-            }
-            Verdict::Rejects(messages) => {
-                println!("  rustc: rejected");
-                for msg in messages {
-                    println!("    {msg}");
-                }
-            }
-            Verdict::ModelError(messages) => {
-                println!("  rustc: reported model error");
-                for msg in messages {
-                    println!("    {msg}");
-                }
-            }
-        };
-        match lex_via_peg {
-            Verdict::Accepts(tokens) => {
-                println!("  lex_via_peg: accepted");
-                for item in flatten(&tokens) {
-                    println!("    {item:?}");
-                }
-            }
-            Verdict::Rejects(messages) => {
-                println!("  lex_via_peg: rejected");
-                for msg in messages {
-                    println!("    {msg}");
-                }
-            }
-            Verdict::ModelError(messages) => {
-                println!("  lex_via_peg: reported a bug in its model");
-                for msg in messages {
-                    println!("    {msg}");
-                }
-            }
-        }
-    }
-    comparison
+/// Compares stringified forms from rustc declarative macros and the reimplementation.
+///
+/// Shows whether the stringified forms match.
+/// May also show detail, depending on `details_mode`.
+///
+/// Returns the result of the comparison.
+fn show_decl_compare(
+    input: &str,
+    edition: Edition,
+    details_mode: DetailsMode,
+    show_failures_only: bool,
+) -> Comparison {
+    let rustc = stringified_via_declarative_macros(input, edition);
+    let lex_via_peg = stringified_via_peg(input, edition);
+    report_verdict(input, details_mode, show_failures_only, rustc, lex_via_peg)
 }
 
 /// Lexes with both rustc and lex_via_peg, and prints the results.
@@ -308,6 +290,80 @@ fn show_coarse(input: &str, edition: Edition, lowering: Lowering) {
             }
         }
     }
+}
+
+/// Common implementation for reports which compare two models of the lexer.
+fn report_verdict<TOKEN: Eq + Debug>(
+    input: &str,
+    details_mode: DetailsMode,
+    show_failures_only: bool,
+    rustc: Verdict<Forest<TOKEN>>,
+    lex_via_peg: Verdict<Forest<TOKEN>>,
+) -> Comparison {
+    let comparison = compare(&rustc, &lex_via_peg);
+
+    let passes = matches!(comparison, Comparison::Agree);
+    if passes && show_failures_only {
+        return comparison;
+    }
+    let show_detail = (details_mode == DetailsMode::Always)
+        || ((details_mode == DetailsMode::Failures) && !passes);
+
+    println!(
+        "{} R:{} L:{} «{}»",
+        match comparison {
+            Comparison::Agree => '✔',
+            Comparison::Differ => '‼',
+            Comparison::ModelErrors => '💣',
+        },
+        single_model_symbol(&rustc),
+        single_model_symbol(&lex_via_peg),
+        escape_for_display(input)
+    );
+
+    if show_detail {
+        match rustc {
+            Verdict::Accepts(tokens) => {
+                println!("  rustc: accepted");
+                for item in flatten(&tokens) {
+                    println!("    {item:?}");
+                }
+            }
+            Verdict::Rejects(messages) => {
+                println!("  rustc: rejected");
+                for msg in messages {
+                    println!("    {msg}");
+                }
+            }
+            Verdict::ModelError(messages) => {
+                println!("  rustc: reported model error");
+                for msg in messages {
+                    println!("    {msg}");
+                }
+            }
+        };
+        match lex_via_peg {
+            Verdict::Accepts(tokens) => {
+                println!("  lex_via_peg: accepted");
+                for item in flatten(&tokens) {
+                    println!("    {item:?}");
+                }
+            }
+            Verdict::Rejects(messages) => {
+                println!("  lex_via_peg: rejected");
+                for msg in messages {
+                    println!("    {msg}");
+                }
+            }
+            Verdict::ModelError(messages) => {
+                println!("  lex_via_peg: reported a bug in its model");
+                for msg in messages {
+                    println!("    {msg}");
+                }
+            }
+        }
+    }
+    comparison
 }
 
 fn show_identcheck(edition: Edition, lowering: Lowering) {
