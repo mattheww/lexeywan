@@ -52,6 +52,13 @@ fn lowered(
     lowered_from: &Charseq,
     edition: Edition,
 ) -> Vec<FineToken> {
+    let whitespace = || FineToken {
+        origin: Origin::Synthetic {
+            lowered_from: lowered_from.clone(),
+            stringified: " ".into(),
+        },
+        data: FineTokenData::Whitespace,
+    };
     let punct = |c: char| FineToken {
         origin: Origin::Synthetic {
             lowered_from: lowered_from.clone(),
@@ -84,12 +91,14 @@ fn lowered(
 
     let mut tokens = Vec::new();
     tokens.push(punct('#'));
+    tokens.push(whitespace());
     if style != CommentStyle::OuterDoc {
         tokens.push(punct('!'));
     }
     tokens.push(punct('['));
     tokens.push(ident("doc"));
     tokens.push(punct('='));
+    tokens.push(whitespace());
     tokens.push(rawstring(comment_body, stringified));
     tokens.push(punct(']'));
     tokens
