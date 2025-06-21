@@ -40,6 +40,7 @@ pub const LONGLIST: &[&str] = [
     "///",
     "//!",
     "//!!",
+    "/// this is not NFC qa\u{0301}",
 
     "/* comment */",
     "/* comment */+",
