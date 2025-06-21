@@ -36,7 +36,7 @@ pub fn lower_doc_comments(
         match token.data {
             FineTokenData::LineComment { style, body }
             | FineTokenData::BlockComment { style, body }
-                if style != CommentStyle::NonDoc =>
+                if style == CommentStyle::InnerDoc || style == CommentStyle::OuterDoc =>
             {
                 processed.extend(lowered(body, style, lowered_from, edition))
             }
@@ -84,7 +84,7 @@ fn lowered(
 
     let mut tokens = Vec::new();
     tokens.push(punct('#'));
-    if style == CommentStyle::InnerDoc {
+    if style != CommentStyle::OuterDoc {
         tokens.push(punct('!'));
     }
     tokens.push(punct('['));
