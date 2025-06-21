@@ -1099,7 +1099,9 @@ pub const LONGLIST: &[&str] = [
 ]
 .as_slice();
 
-/// These tests fail
+/// These tests fail in at least some models.
 pub const XFAIL: &[&str] = [
+    // This doesn't work in decl-compare: it breaks out of the macro invocation.
+    ");}; const _: () = { (",
 ]
 .as_slice();
