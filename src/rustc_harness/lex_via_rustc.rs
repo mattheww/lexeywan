@@ -13,8 +13,6 @@
 extern crate rustc_ast;
 extern crate rustc_data_structures;
 extern crate rustc_driver;
-extern crate rustc_error_messages;
-extern crate rustc_errors;
 extern crate rustc_parse;
 extern crate rustc_session;
 extern crate rustc_span;
@@ -36,9 +34,7 @@ use rustc_span::{
 use crate::trees::{self, Forest, Tree};
 use crate::{Edition, Lowering};
 
-use self::error_accumulator::ErrorAccumulator;
-
-mod error_accumulator;
+use super::error_accumulator::ErrorAccumulator;
 
 /// Information we keep about a token from the rustc tokeniser.
 ///

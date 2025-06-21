@@ -1,9 +1,9 @@
 //! Support for capturing errors emitted by rustc.
 
-use super::rustc_driver;
-use super::rustc_error_messages;
-use super::rustc_errors;
-use super::rustc_span;
+extern crate rustc_driver;
+extern crate rustc_error_messages;
+extern crate rustc_errors;
+extern crate rustc_span;
 
 use std::mem;
 use std::sync::{Arc, Mutex};

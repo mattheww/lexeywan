@@ -13,7 +13,7 @@ use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::doc_lowering::lower_doc_comments;
 use crate::fine_tokens::FineToken;
 use crate::lex_via_peg;
-use crate::lex_via_rustc;
+use crate::rustc_harness::lex_via_rustc;
 use crate::tokens_common::Origin;
 use crate::tree_construction;
 use crate::tree_flattening::flatten;
