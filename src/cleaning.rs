@@ -18,6 +18,14 @@ pub fn clean(input: &Charseq, edition: Edition) -> Charseq {
     cleaned
 }
 
+/// Apply the transformations we make to input text before tokenisation inside a declarative macro.
+#[allow(clippy::let_and_return)]
+pub fn clean_for_macro_input(input: &Charseq, _edition: Edition) -> Charseq {
+    let cleaned = input.chars();
+    let cleaned = replace_crlf(cleaned);
+    cleaned
+}
+
 /// Performs "Byte order mark removal"
 fn remove_bom(input: &[char]) -> &[char] {
     if input.starts_with(&['\u{feff}']) {
