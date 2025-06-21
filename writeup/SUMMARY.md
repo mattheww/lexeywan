@@ -21,6 +21,7 @@
   - [Reprocessing](./reprocessing.md)
     - [Escape processing](./escape_processing.md)
     - [List of reprocessing cases](./reprocessing_cases.md)
+- [Lowering doc-comments](./doc_comments.md)
 
 # Appendices
 
