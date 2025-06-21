@@ -16,8 +16,6 @@ Tokenisation is described using two operations:
 
 Either operation can cause lexical analysis to fail.
 
-> Note: If lexical analysis succeeds, concatenating the extents of the produced tokens produces an exact copy of the input.
-
 
 ## Process
 

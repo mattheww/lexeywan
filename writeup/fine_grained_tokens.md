@@ -2,8 +2,6 @@
 
 Reprocessing produces <dfn>fine-grained tokens</dfn>.
 
-Each fine-grained token has an <dfn>extent</dfn>, which is a sequence of characters taken from the input.
-
 Each fine-grained token has a <dfn>kind</dfn>, and possibly also some attributes, as described in the tables below.
 
 | Kind                   | Attributes                                            |
