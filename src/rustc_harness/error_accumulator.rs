@@ -33,11 +33,22 @@ impl ErrorAccumulator {
         mem::take(&mut self.contents.lock().unwrap())
     }
 
+    /// Says whether any error messages have been accumulated.
+    pub fn has_any_errors(&self) -> bool {
+        !self.contents.lock().unwrap().is_empty()
+    }
+
+    /// Returns an implementator of `rustc_errors::emitter::Emitter` which stores emitted errors
+    /// into this accumulator.
+    pub fn into_error_emitter(self) -> Box<impl rustc_errors::emitter::Emitter> {
+        Box::new(ErrorEmitter::new(self))
+    }
+
     /// Returns a `rustc_errors::DiagCtxt` which stores emitted errors into this accumulator.
     ///
     /// The `DiagCtxt` ignores non-error diagnostics.
     pub fn into_diag_ctxt(self) -> DiagCtxt {
-        DiagCtxt::new(Box::new(ErrorEmitter::new(self)))
+        DiagCtxt::new(self.into_error_emitter())
     }
 
     /// Adds a non-rustc error message to the accumulator.
