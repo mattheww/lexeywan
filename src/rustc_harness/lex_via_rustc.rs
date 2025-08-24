@@ -18,7 +18,7 @@ extern crate rustc_session;
 extern crate rustc_span;
 
 // This compiles with
-// rustc 1.88.0-nightly (10fa3c449 2025-04-26)
+// rustc 1.91.0-nightly (69b76df90 2025-08-23)
 
 use std::sync::Arc;
 
@@ -388,10 +388,10 @@ fn literal_data_from_ast_litkind(ast_lit: rustc_ast::ast::LitKind) -> RustcLiter
             RustcLiteralData::String(symbol.to_string(), style.into())
         }
         rustc_ast::LitKind::ByteStr(bytes, style) => {
-            RustcLiteralData::ByteString(bytes.as_ref().into(), style.into())
+            RustcLiteralData::ByteString(bytes.as_byte_str().into(), style.into())
         }
         rustc_ast::LitKind::CStr(bytes, style) => {
-            RustcLiteralData::CString(bytes.as_ref().into(), style.into())
+            RustcLiteralData::CString(bytes.as_byte_str().into(), style.into())
         }
         rustc_ast::LitKind::Byte(byte) => RustcLiteralData::Byte(byte),
         rustc_ast::LitKind::Char(c) => RustcLiteralData::Character(c),

@@ -73,7 +73,7 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
     };
     std::panic::catch_unwind(|| {
         let error_list = ErrorAccumulator::new();
-        let psess_error_emitter = error_list.clone().into_error_emitter();
+        let psess_error_accumulator = error_list.clone();
         let config = rustc_interface::Config {
             opts: config::Options {
                 edition: rustc_edition,
@@ -91,7 +91,9 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
             locale_resources: rustc_driver::DEFAULT_LOCALE_RESOURCES.to_owned(),
             lint_caps: FxHashMap::default(),
             psess_created: Some(Box::new(|psess| {
-                psess.dcx().set_emitter(psess_error_emitter);
+                psess
+                    .dcx()
+                    .set_emitter(psess_error_accumulator.into_error_emitter());
             })),
             register_lints: None,
             override_queries: None,

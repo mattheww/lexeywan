@@ -9,7 +9,8 @@ use std::mem;
 use std::sync::{Arc, Mutex};
 
 use rustc_error_messages::DiagMessage;
-use rustc_errors::{registry::Registry, DiagCtxt, LazyFallbackBundle};
+use rustc_errors::translation::Translator;
+use rustc_errors::{registry::Registry, DiagCtxt};
 use rustc_span::source_map::SourceMap;
 
 #[derive(Clone)]
@@ -58,30 +59,16 @@ impl ErrorAccumulator {
 }
 
 struct ErrorEmitter {
-    fallback_bundle: LazyFallbackBundle,
+    translator: Translator,
     accumulator: ErrorAccumulator,
 }
 
 impl ErrorEmitter {
     fn new(error_list: ErrorAccumulator) -> Self {
-        let fallback_bundle = rustc_errors::fallback_fluent_bundle(
-            rustc_driver::DEFAULT_LOCALE_RESOURCES.to_vec(),
-            false,
-        );
         ErrorEmitter {
-            fallback_bundle,
+            translator: rustc_driver::default_translator(),
             accumulator: error_list,
         }
-    }
-}
-
-impl rustc_errors::translation::Translate for ErrorEmitter {
-    fn fluent_bundle(&self) -> Option<&rustc_errors::FluentBundle> {
-        None
-    }
-
-    fn fallback_fluent_bundle(&self) -> &rustc_errors::FluentBundle {
-        &self.fallback_bundle
     }
 }
 
@@ -110,5 +97,9 @@ impl rustc_errors::emitter::Emitter for ErrorEmitter {
             };
             messages.push(s);
         }
+    }
+
+    fn translator(&self) -> &rustc_errors::translation::Translator {
+        &self.translator
     }
 }
