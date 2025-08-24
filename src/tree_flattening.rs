@@ -8,7 +8,7 @@ use crate::trees::{Forest, GroupKind, Tree};
 ///
 /// The result contains references to the original tokens, together with `OpenDelimiter` and
 /// `CloseDelimiter` items indicating the forest's group structure.
-pub fn flatten<T>(forest: &Forest<T>) -> Vec<FlatItem<T>> {
+pub fn flatten<T>(forest: &Forest<T>) -> Vec<FlatItem<'_, T>> {
     Flattener::process(forest)
 }
 
