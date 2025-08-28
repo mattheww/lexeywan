@@ -20,6 +20,7 @@ This document describes Rust version 1.86.
 That means it describes raw lifetimes/labels and the additional reservations in the 2024 edition, but not
 
 - [rfc3349] (*Mixed UTF-8 literals*)
+- [rfc3503] (frontmatter)
 - [pr131656] (allowing more numeric suffixes beginning with `e`)
 
 Other statements in this document are intended to be true as of April 2025.
@@ -96,6 +97,6 @@ The source code for this document and the accompanying lexer implementation is a
 [pest]: https://pest.rs/
 
 [rfc3349]: https://rust-lang.github.io/rfcs/3349-mixed-utf8-literals.html
-[rfc3593]: https://github.com/rust-lang/rfcs/pull/3593
+[rfc3503]: https://rust-lang.github.io/rfcs/3503-frontmatter.html
 
 [pr131656]: https://github.com/rust-lang/rust/pull/131656
