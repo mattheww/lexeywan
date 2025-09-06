@@ -1,4 +1,4 @@
-//! Run all phases of lexing, through to producing coarse token forests.
+//! Runs all phases of lexing, through to producing coarse token forests.
 //!
 //! This module works with `RegularToken`s. These track more than simply which sequence of
 //! characters was matched, but they don't track everything we might be interested in. See
@@ -15,7 +15,7 @@ use crate::tree_construction;
 use crate::trees::Forest;
 use crate::{Edition, Lowering};
 
-/// Run rustc's lexical analysis and return the regularised result.
+/// Runs rustc's lexical analysis and returns the regularised result.
 pub fn regularised_from_rustc(
     input: &str,
     edition: Edition,
@@ -29,7 +29,7 @@ pub fn regularised_from_rustc(
     }
 }
 
-/// Run lex_via_peg's lexical analysis and return the regularised result.
+/// Runs lex_via_peg's lexical analysis and returns the regularised result.
 pub fn regularised_from_peg(
     input: &str,
     edition: Edition,

@@ -2,7 +2,7 @@
 //!
 //! These subcommands are:
 //!  `compare`
-//!  'decl_compare'
+//!  `decl-compare`
 //!  `inspect`
 //!  `coarse`
 //!  `identcheck`

@@ -1,4 +1,4 @@
-//! Run the form of lexing used by declarative macros.
+//! Runs the form of lexing used by declarative macros.
 //!
 //! This module works with the stringified representation of coarse tokens.
 
