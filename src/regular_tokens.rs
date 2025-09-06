@@ -131,7 +131,6 @@ pub enum StringStyle {
     Raw,
 }
 
-#[allow(unused)]
 /// Converts a forest of `RustcToken`s into a forest of `RegularToken`s.
 ///
 /// May panic if any of the tokens represent an error condition (this won't happen if the tokens
