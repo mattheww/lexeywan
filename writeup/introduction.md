@@ -26,7 +26,7 @@ That means it describes raw lifetimes/labels and the additional reservations in 
 Other statements in this document are intended to be true as of April 2025.
 
 The comparable implementation is intended to be compiled against (and compared against)\
-`rustc 1.91.0-nightly (69b76df90 2025-08-23)`
+`rustc 1.91.0-nightly (4ba1cf9ad 2025-09-12)`
 
 
 ### Editions
