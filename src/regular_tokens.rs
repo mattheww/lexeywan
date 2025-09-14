@@ -17,7 +17,7 @@ use std::iter::once;
 
 use crate::char_sequences::Charseq;
 use crate::combination::{self, CoarseToken, CoarseTokenData};
-use crate::rustc_harness::lex_via_rustc::{
+use crate::rustc_harness::rustc_tokens::{
     RustcCommentKind, RustcDocCommentStyle, RustcIdentIsRaw, RustcLiteralData, RustcStringStyle,
     RustcToken, RustcTokenData,
 };

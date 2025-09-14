@@ -10,5 +10,6 @@
 
 pub mod decl_via_rustc;
 pub mod lex_via_rustc;
+pub mod rustc_tokens;
 
 mod error_accumulator;
