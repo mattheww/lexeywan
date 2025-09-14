@@ -1054,11 +1054,13 @@ pub const LONGLIST: &[&str] = [
 
     //// BOM
 
+    "\u{feff}",
     "\u{feff}bom",
     "bom\u{feff}\n\u{feff}bom\n",
 
 
     //// CRLF removal
+
     "one\r\ntwo\r\nthree",
     "one\r\ntwo\rthree",
     " \"one\r\ntwo\r\nthree\" ",
@@ -1075,18 +1077,37 @@ pub const LONGLIST: &[&str] = [
 
     //// Shebang
 
+    "#!/shebang\n",
     "#!/shebang\nfn",
+    "#!/shebang\n\n",
+    "#!/shebang\nfn",
+    "#!/shebang\n£",
+    "#!\n",
     "#!\nfn",
     "#!",
     "#!shebang",
-    "#!shebang\nfn",
-    "#![attr]\nfn",
-    "#! [attr]\nfn",
-    "#!\n[attr]\nfn",
-    "#! /* nondoc */ [attr]\nfn",
-    "#! // nondoc\n[attr]\nfn",
-    "#! /** doc */ [attr]\nfn",
-    "#! /// doc\n[attr]\nfn",
+    "#!shebang\n",
+    "#![attr]\n",
+    "#! [attr]\n",
+    "#!\n[attr]\n",
+    "#! /* nondoc */ [attr]\n",
+    "#! // nondoc\n[attr]\n",
+    "#! /** doc */ [attr]\n",
+    "#! /// doc\n[attr]\n",
+    // CRs around shebang
+    "#!/shebang\r\n",
+    "#!/shebang\r\nfn",
+    "#!/shebang\r",
+    "#!/shebang\rfn",
+    "#!/shebang\rxxx\nfn",
+    "#!\r\n",
+    "#!\r\nfn",
+    "#!\r\n[attr]\n",
+    // BOM and shebang
+    "\u{feff}#!/shebang\n",
+    "\u{feff}#!/shebang\nfn",
+    "#!/shebang\n\u{feff}",
+
 
     //// Delimiters
 
