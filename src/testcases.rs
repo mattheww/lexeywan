@@ -1109,6 +1109,13 @@ pub const LONGLIST: &[&str] = [
     "#!/shebang\n\u{feff}",
 
 
+    //// Frontmatter
+
+    // We don't process frontmatter yet, so this just demonstrates that it gets no special
+    // treatment.
+    "---\nfront matter\n---\nident",
+
+
     //// Delimiters
 
     "a ( [ { ((b)) } (c) {} ] ) d",
