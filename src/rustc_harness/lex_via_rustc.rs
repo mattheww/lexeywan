@@ -16,9 +16,6 @@ extern crate rustc_parse;
 extern crate rustc_session;
 extern crate rustc_span;
 
-// This compiles with
-// rustc 1.91.0-nightly (4ba1cf9ad 2025-09-12)
-
 use std::sync::Arc;
 
 use rustc_ast::{
