@@ -15,7 +15,7 @@ the comparable implementation uses the [Pest] library to generate the correspond
 
 ### Rust language version
 
-This document describes Rust version 1.86.
+This document describes Rust version 1.90.
 
 That means it describes raw lifetimes/labels and the additional reservations in the 2024 edition, but not
 
@@ -23,7 +23,7 @@ That means it describes raw lifetimes/labels and the additional reservations in 
 - [rfc3503] (frontmatter)
 - [pr131656] (allowing more numeric suffixes beginning with `e`)
 
-Other statements in this document are intended to be true as of April 2025.
+Other statements in this document are intended to be true as of September 2025.
 
 The comparable implementation is intended to be compiled against (and compared against)\
 `rustc 1.91.0-nightly (4ba1cf9ad 2025-09-12)`
@@ -31,7 +31,7 @@ The comparable implementation is intended to be compiled against (and compared a
 
 ### Editions
 
-This document describes the editions supported by Rust 1.86:
+This document describes the editions supported by Rust 1.90:
 - 2015
 - 2018
 - 2021
