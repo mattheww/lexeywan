@@ -4,6 +4,7 @@
 
 use crate::char_sequences::Charseq;
 use crate::tokens_common::{NumericBase, Origin};
+use crate::tree_construction;
 
 /// A "Fine-grained" token.
 ///
@@ -119,6 +120,15 @@ impl FineTokenData {
             } => true,
             FineTokenData::BlockComment { .. } => false,
             _ => false,
+        }
+    }
+}
+
+impl tree_construction::Token for FineToken {
+    fn as_delimiter(&self) -> Option<char> {
+        match self.data {
+            FineTokenData::Punctuation { mark } => Some(mark),
+            _ => None,
         }
     }
 }

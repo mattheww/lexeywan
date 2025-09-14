@@ -1,25 +1,32 @@
 //! Converts a sequence of ["fine-grained"][FineToken] tokens into trees.
 
-use crate::fine_tokens::{FineToken, FineTokenData};
 use crate::trees::{Forest, GroupKind, Tree};
 
-/// Converts a sequence of `FineToken`s into a TokenForest.
-pub fn construct_forest(
-    tokens: impl IntoIterator<Item = FineToken>,
-) -> Result<Forest<FineToken>, String> {
+pub trait Token {
+    /// If this token might represent a delimiter, returns the delimiter character.
+    ///
+    /// For tokens which don't represent delimiters, it doesn't matter whether this returns None or
+    /// a non-delimiter character.
+    fn as_delimiter(&self) -> Option<char>;
+}
+
+/// Converts a sequence of tokens into a TokenForest.
+pub fn construct_forest<TOKEN: Token>(
+    tokens: impl IntoIterator<Item = TOKEN>,
+) -> Result<Forest<TOKEN>, String> {
     construct_forest_inner(&mut tokens.into_iter(), None)
 }
 
-fn construct_forest_inner(
-    tokens: &mut impl Iterator<Item = FineToken>,
+fn construct_forest_inner<TOKEN: Token>(
+    tokens: &mut impl Iterator<Item = TOKEN>,
     in_group: Option<GroupKind>,
-) -> Result<Forest<FineToken>, String> {
-    let mut constructed = Forest::<FineToken>::new();
+) -> Result<Forest<TOKEN>, String> {
+    let mut constructed = Forest::<TOKEN>::new();
     while let Some(token) = tokens.next() {
-        let tree = match token.data {
-            FineTokenData::Punctuation { mark } => {
+        let tree = match token.as_delimiter() {
+            Some(mark) => {
                 if let Some(group_kind) = GroupKind::for_open_char(mark) {
-                    Tree::<FineToken>::Group(
+                    Tree::<TOKEN>::Group(
                         group_kind,
                         construct_forest_inner(tokens, Some(group_kind))?,
                     )
@@ -30,10 +37,10 @@ fn construct_forest_inner(
                         return Err(format!("unexpected close delimiter: {mark}"));
                     }
                 } else {
-                    Tree::<FineToken>::Token(token)
+                    Tree::<TOKEN>::Token(token)
                 }
             }
-            _ => Tree::<FineToken>::Token(token),
+            None => Tree::<TOKEN>::Token(token),
         };
         constructed.push(tree);
     }
