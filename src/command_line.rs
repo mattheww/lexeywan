@@ -5,7 +5,7 @@ use crate::simple_reports::{
     run_coarse_subcommand, run_compare_subcommand, run_decl_compare_subcommand,
     run_identcheck_subcommand, run_inspect_subcommand, DetailsMode,
 };
-use crate::{testcases, Edition, Lowering};
+use crate::{testcases, CleaningMode, Edition, Lowering};
 
 const USAGE: &str = "\
 Usage: lexeywan [global-opts] [<subcommand>] [...options]
@@ -14,17 +14,21 @@ global-opts:
   --edition=2015|2021|*2024
 
 Subcommands:
- *compare       [suite-opts] [comparison-opts] [--lower-doc-comments]
+ *compare       [suite-opts] [comparison-opts] [dialect-opts]
   decl-compare  [suite-opts] [comparison-opts]
-  inspect       [suite-opts] [--lower-doc-comments]
-  coarse        [suite-opts] [--lower-doc-comments]
+  inspect       [suite-opts] [dialect-opts]
+  coarse        [suite-opts] [dialect-opts]
   identcheck
   proptest      [--count] [--strategy=<name>] [--print-failures|--print-all]
-                [--lower-doc-comments]
+                [dialect-opts]
 
 suite-opts (specify at most one):
   --short: run the SHORTLIST rather than the LONGLIST
   --xfail: run the tests which are expected to to fail
+
+dialect-opts:
+  --cleaning=none|*shebang|shebang-and-frontmatter
+  --lower-doc-comments
 
 comparison-opts:
   --failures-only: don't report cases where the lexers agree
@@ -72,6 +76,27 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         }
     };
 
+    fn requested_cleaning_mode(
+        args: &mut pico_args::Arguments,
+    ) -> Result<CleaningMode, pico_args::Error> {
+        Ok(
+            match args
+                .opt_value_from_str::<_, String>("--cleaning")?
+                .as_deref()
+            {
+                Some("none") => CleaningMode::NoCleaning,
+                Some("shebang") => CleaningMode::CleanShebang,
+                Some("shebang-and-frontmatter") => CleaningMode::CleanShebangAndFrontmatter,
+                None => CleaningMode::CleanShebang,
+                _ => {
+                    return Err(pico_args::Error::ArgumentParsingFailed {
+                        cause: "unknown cleaning mode".into(),
+                    })
+                }
+            },
+        )
+    }
+
     fn requested_lowering(args: &mut pico_args::Arguments) -> Lowering {
         if args.contains("--lower-doc-comments") {
             Lowering::LowerDocComments
@@ -116,6 +141,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs: &'static [&'static str],
             show_failures_only: bool,
             details_mode: DetailsMode,
+            cleaning: CleaningMode,
             lowering: Lowering,
         },
         DeclCompare {
@@ -125,10 +151,12 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         },
         Inspect {
             inputs: &'static [&'static str],
+            cleaning: CleaningMode,
             lowering: Lowering,
         },
         Coarse {
             inputs: &'static [&'static str],
+            cleaning: CleaningMode,
             lowering: Lowering,
         },
         IdentCheck,
@@ -136,6 +164,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             strategy_name: String,
             count: u32,
             verbosity: Verbosity,
+            cleaning: CleaningMode,
             lowering: Lowering,
         },
     }
@@ -145,6 +174,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs: requested_inputs(args),
             show_failures_only,
             details_mode: requested_details_mode(args)?,
+            cleaning: requested_cleaning_mode(args)?,
             lowering: requested_lowering(args),
         })
     }
@@ -161,10 +191,12 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         Some("decl-compare") => decl_compare_action(&mut args)?,
         Some("inspect") => Action::Inspect {
             inputs: requested_inputs(&mut args),
+            cleaning: requested_cleaning_mode(&mut args)?,
             lowering: requested_lowering(&mut args),
         },
         Some("coarse") => Action::Coarse {
             inputs: requested_inputs(&mut args),
+            cleaning: requested_cleaning_mode(&mut args)?,
             lowering: requested_lowering(&mut args),
         },
         Some("identcheck") => Action::IdentCheck,
@@ -197,6 +229,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
                 strategy_name,
                 count,
                 verbosity,
+                cleaning: requested_cleaning_mode(&mut args)?,
                 lowering: requested_lowering(&mut args),
             }
         }
@@ -219,22 +252,46 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs,
             show_failures_only,
             details_mode,
+            cleaning,
             lowering,
-        } => run_compare_subcommand(inputs, edition, lowering, details_mode, show_failures_only),
+        } => run_compare_subcommand(
+            inputs,
+            edition,
+            cleaning,
+            lowering,
+            details_mode,
+            show_failures_only,
+        ),
         Action::DeclCompare {
             inputs,
             show_failures_only,
             details_mode,
         } => run_decl_compare_subcommand(inputs, edition, details_mode, show_failures_only),
-        Action::Inspect { inputs, lowering } => run_inspect_subcommand(inputs, edition, lowering),
-        Action::Coarse { inputs, lowering } => run_coarse_subcommand(inputs, edition, lowering),
+        Action::Inspect {
+            inputs,
+            cleaning,
+            lowering,
+        } => run_inspect_subcommand(inputs, edition, cleaning, lowering),
+        Action::Coarse {
+            inputs,
+            cleaning,
+            lowering,
+        } => run_coarse_subcommand(inputs, edition, cleaning, lowering),
         Action::IdentCheck => run_identcheck_subcommand(edition),
         Action::PropTest {
             strategy_name,
             count,
             verbosity,
+            cleaning,
             lowering,
-        } => proptesting::run_proptests(&strategy_name, count, verbosity, edition, lowering),
+        } => proptesting::run_proptests(
+            &strategy_name,
+            count,
+            verbosity,
+            edition,
+            cleaning,
+            lowering,
+        ),
     }
 
     Ok(())

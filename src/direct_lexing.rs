@@ -13,16 +13,17 @@ use crate::regular_tokens::{regularise_from_coarse, regularise_from_rustc, Regul
 use crate::rustc_harness::lex_via_rustc;
 use crate::tree_construction;
 use crate::trees::Forest;
-use crate::{Edition, Lowering};
+use crate::{CleaningMode, Edition, Lowering};
 
 /// Runs rustc's lexical analysis and returns the regularised result.
 pub fn regularised_from_rustc(
     input: &str,
     edition: Edition,
+    cleaning: CleaningMode,
     lowering: Lowering,
 ) -> Verdict<Forest<RegularToken>> {
     use lex_via_rustc::Analysis::*;
-    match lex_via_rustc::analyse(input, edition, lowering) {
+    match lex_via_rustc::analyse(input, edition, cleaning, lowering) {
         Accepts(tokens) => Verdict::Accepts(regularise_from_rustc(tokens)),
         Rejects(_, messages) => Verdict::Rejects(messages),
         CompilerError => Verdict::ModelError(vec!["rustc compiler error".into()]),

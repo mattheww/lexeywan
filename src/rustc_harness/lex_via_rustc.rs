@@ -52,9 +52,12 @@ use super::rustc_tokenstreams::make_token_stream;
 ///
 /// If rustc panics (ie, it would report an ICE), the panic message is sent to
 /// standard error and this function returns CompilerError.
-pub fn analyse(input: &str, edition: Edition, lowering: Lowering) -> Analysis {
-    let cleaning = CleaningMode::CleanShebang;
-
+pub fn analyse(
+    input: &str,
+    edition: Edition,
+    cleaning: CleaningMode,
+    lowering: Lowering,
+) -> Analysis {
     let error_list = ErrorAccumulator::new();
 
     let rustc_edition = match edition {
