@@ -1111,9 +1111,122 @@ pub const LONGLIST: &[&str] = [
 
     //// Frontmatter
 
-    // We don't process frontmatter yet, so this just demonstrates that it gets no special
-    // treatment.
+    // Basic good cases
+    "---\n---\n",
+    "---\nfront matter\n---\n",
+    "---\n---\nident",
     "---\nfront matter\n---\nident",
+    "----\nfront matter\n----\nident",
+    "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nfront matter\n----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nident",
+    "---\r\nfront matter\r\n---\r\nident",
+
+    // What follows the frontmatter
+    "---\nfront matter\n---\n//! words\n",
+    "---\nfront matter\n---\n#![attr]\n",
+    "---\nfront matter\n---\n\nident",
+    "---\nfront matter\n---\n\n//! words\n",
+    "---\nfront matter\n---\n\n#![attr]\n",
+    "---\nfront matter\n---\n---",
+    "---\nfront matter\n---\n---\nident",
+    "---\nfront matter\n---\n---\nsecond front matter\n---\nident",
+
+    // What's inside the front matter
+    "---\n\n---\nident",
+    "---\nline one\nline two\n---\nident",
+    "---\nline one\r\nline two\n---\nident",
+    "---\nfront £ matter\n---\nident",
+    "---\nfront matter 🦀\n---\nident",
+    "---\nfront matter\n--\n---\nident",
+    "---\nfront matter\nx---\n---\nident",
+    "---\nfront matter\n ---\n---\nident",
+    "---\nfront matter\n ----\n---\nident",
+    "---\n ---🦀\n---\nident",
+    "---\nfront matter\n----\n---\nident",
+    "----\nfront matter\n---\n----\nident",
+    "-----\nfront matter\n----\n-----\nident",
+    "---\nfront matter\nuse x\n---\nident",
+    "---\nfront matter\n//! x\n---\nident",
+    "---\nfront matter\n#![attr]\n---\nident",
+
+    // Start fence (info strings)
+    "--- \nfront matter\n---\nident",
+    "--- \t\nfront matter\n---\nident",
+    "---infostring\nfront matter\n---\nident",
+    "--- infostring\nfront matter\n---\nident",
+    "--- \tinfostring\nfront matter\n---\nident",
+    "---infostring \nfront matter\n---\nident",
+    "---infostring\t \nfront matter\n---\nident",
+    "---\u{000C}infostring\u{000C}\nfront matter\n---\nident",
+    "---\r \nfront matter\n---\nident",
+    "---\rinfostring\nfront matter\n---\nident",
+    "---infostring\r \nfront matter\n---\nident",
+    "---info_string2\nfront matter\n---\nident",
+    "---info·string\nfront matter\n---\nident",
+    "---info.string\nfront matter\n---\nident",
+    "---info-string\nfront matter\n---\nident",
+    "---info+string\nfront matter\n---\nident",
+    "---info🧵\nfront matter\n---\nident",
+    "---info-\nfront matter\n---\nident",
+    "---_infostring\nfront matter\n---\nident",
+    "---.infostring\nfront matter\n---\nident",
+    "--- -infostring\nfront matter\n---\nident",
+    "---2infostring\nfront matter\n---\nident",
+    "---·infostring\nfront matter\n---\nident",
+    " ---\nfront matter\n---\nident",
+    "\t---\nfront matter\n---\nident",
+    "\u{000C}---\nfront matter\n---\nident",
+
+    // End fence
+    "---\nfront matter\n---tail\nident",
+    "---\nfront matter\n--- \nident",
+    "---\nfront matter\n---  \nident",
+    "---\nfront matter\n---\t\nident",
+    "---\nfront matter\n---\u{000C}ident",
+    "---\nfront matter\n---\r \nident",
+    "----\nfront matter\n---- \nident",
+    "---\nfront matter\r---\nident",
+    "---\nfront matter\n---\rident",
+
+    // Pairing fences
+    "-----\nfront matter\n-----\nident",
+    "---\nfront matter\n----\nident",
+    "----\nfront matter\n---\nident",
+    "---\nfront matter\n ---\nident",
+    " ---\nfront matter\n ---\nident",
+    "---\n",
+    "---\nunterminated\n",
+    "---\nfront matter\nuse x\nident",
+    "---\nfront matter\n//! x\nident",
+    "---\nfront matter\n#![attr]\nident",
+    "----\n🦀---\n ---\nident", // #146847
+    "---🦀--- ---", // Minimal case of #146847
+
+    // What's before the frontmatter
+    "ident\n---\nfront matter\n---\nident",
+    "ident---\nfront matter\n---\nident",
+    "\n---\nfront matter\n---\nident",
+    "\n\n---\nfront matter\n---\nident",
+    " \n---\nfront matter\n---\nident",
+    " \n \n---\nfront matter\n---\nident",
+    "\t\n---\nfront matter\n---\nident",
+    "\r---\nfront matter\n---\nident",
+    "\r\n---\nfront matter\n---\nident",
+    "\r\r\n---\nfront matter\n---\nident",
+    "\u{000C}\n---\nfront matter\n---\nident",
+    "\n ---\nfront matter\n---\nident",
+
+    // BOM and shebang
+    "#!/shebang\n---\nfront matter\n---\nident",
+    "#!/shebang\r\n---\r\nfront matter\r\n---\r\nident",
+    "#!/shebang\n\n---\nfront matter\n---\nident",
+    "#!\n---\nfront matter\n---\n[]",
+    "\u{feff}---\nfront matter\n---\n[]",
+    "---\nfront matter\n---\n#!/notshebang\n",
+
+    // No newline at EOF
+    "---",
+    "---\n---",
+    "---\n--- ",
 
 
     //// Delimiters
