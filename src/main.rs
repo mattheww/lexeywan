@@ -39,6 +39,16 @@ enum Lowering {
     LowerDocComments,
 }
 
+#[derive(Copy, Clone, PartialEq, Eq)]
+enum CleaningMode {
+    /// Strip neither shebang nor frontmatter
+    NoCleaning,
+    /// Strip the shebang but not frontmatter
+    CleanShebang,
+    /// Strip both shebang and frontmatter
+    CleanShebangAndFrontmatter,
+}
+
 fn main() -> impl std::process::Termination {
     command_line::run_cli()
 }

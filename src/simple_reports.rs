@@ -181,6 +181,9 @@ fn show_inspect(input: &str, edition: Edition, lowering: Lowering) {
         lex_via_rustc::Analysis::CompilerError => {
             println!("rustc: internal compiler error");
         }
+        lex_via_rustc::Analysis::HarnessError(message) => {
+            println!("rustc: internal error in harness: {message}");
+        }
     }
     let cleaned = cleaning::clean(&input.into(), edition);
     match lex_via_peg::analyse(&cleaned, edition) {

@@ -26,6 +26,7 @@ pub fn regularised_from_rustc(
         Accepts(tokens) => Verdict::Accepts(regularise_from_rustc(tokens)),
         Rejects(_, messages) => Verdict::Rejects(messages),
         CompilerError => Verdict::ModelError(vec!["rustc compiler error".into()]),
+        HarnessError(message) => Verdict::ModelError(vec![message]),
     }
 }
 
