@@ -5,15 +5,13 @@
 
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::{FineToken, FineTokenData};
+use crate::frontmatter::{find_frontmatter, FrontmatterOutcome};
 use crate::lex_via_peg::first_nonwhitespace_token;
 use crate::{CleaningMode, Edition};
 
 /// Apply the transformations we make to input text before tokenisation.
 ///
 /// Honours the requested cleaning mode.
-///
-/// TODO: handle frontmatter
-#[allow(clippy::let_and_return)]
 pub fn clean(input: &Charseq, edition: Edition, cleaning: CleaningMode) -> CleaningOutcome {
     use CleaningMode::*;
     use CleaningOutcome::*;
@@ -22,6 +20,18 @@ pub fn clean(input: &Charseq, edition: Edition, cleaning: CleaningMode) -> Clean
     let mut cleaned = replace_crlf(cleaned);
     if matches!(cleaning, CleanShebang | CleanShebangAndFrontmatter) {
         cleaned = clean_shebang(cleaned, edition);
+    }
+    if matches!(cleaning, CleanShebangAndFrontmatter) {
+        match find_frontmatter(cleaned.chars()) {
+            FrontmatterOutcome::NotFound => {}
+            FrontmatterOutcome::Found(range) => {
+                cleaned.remove_range(range);
+            }
+            FrontmatterOutcome::Reserved => return Rejects("malformed frontmatter".into()),
+            FrontmatterOutcome::ModelError(message) => {
+                return ModelError(format!("frontmatter processing failed: {message}"))
+            }
+        }
     }
     Accepts(cleaned)
 }

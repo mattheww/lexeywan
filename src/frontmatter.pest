@@ -1,0 +1,45 @@
+FRONTMATTER = {
+    WHITESPACE_ONLY_LINE * ~
+    START_LINE ~
+    CONTENT_LINE * ~
+    END_LINE
+}
+
+WHITESPACE_ONLY_LINE = {
+    ( !"\n" ~ PATTERN_WHITE_SPACE ) * ~
+    "\n"
+}
+
+START_LINE = {
+    PUSH(FENCE) ~
+    HORIZONTAL_WHITESPACE * ~
+    ( INFOSTRING ~ HORIZONTAL_WHITESPACE * ) ? ~
+    "\n"
+}
+
+CONTENT_LINE = {
+    !PEEK ~
+    ( !"\n" ~ ANY ) * ~
+    "\n"
+}
+
+END_LINE = {
+    POP ~
+    HORIZONTAL_WHITESPACE * ~
+    ( "\n" | EOI )
+}
+
+FENCE = { "---" ~ "-" * }
+
+INFOSTRING = {
+    ( XID_START | "_" ) ~
+    ( XID_CONTINUE | "-" | "." ) *
+}
+
+HORIZONTAL_WHITESPACE = { " " | "\t" }
+
+
+RESERVED = {
+    PATTERN_WHITE_SPACE * ~
+    FENCE
+}
