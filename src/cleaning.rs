@@ -14,15 +14,31 @@ use crate::{CleaningMode, Edition};
 ///
 /// TODO: handle frontmatter
 #[allow(clippy::let_and_return)]
-pub fn clean(input: &Charseq, edition: Edition, cleaning: CleaningMode) -> Charseq {
+pub fn clean(input: &Charseq, edition: Edition, cleaning: CleaningMode) -> CleaningOutcome {
     use CleaningMode::*;
+    use CleaningOutcome::*;
     let cleaned = input.chars();
     let cleaned = remove_bom(cleaned);
     let mut cleaned = replace_crlf(cleaned);
     if matches!(cleaning, CleanShebang | CleanShebangAndFrontmatter) {
         cleaned = clean_shebang(cleaned, edition);
     }
-    cleaned
+    Accepts(cleaned)
+}
+
+pub enum CleaningOutcome {
+    /// Cleaning succeeded.
+    Accepts(Charseq),
+
+    /// Cleaning rejected the input.
+    ///
+    /// The string is an explanation.
+    Rejects(String),
+
+    /// The input demonstrated a problem in the reimplementation.
+    ///
+    /// The string is an error message.
+    ModelError(String),
 }
 
 /// Apply the transformations we make to input text before tokenisation inside a declarative macro.

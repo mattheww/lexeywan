@@ -9,7 +9,7 @@
 
 use std::fmt::Debug;
 
-use crate::cleaning;
+use crate::cleaning::{self, CleaningOutcome};
 use crate::combination;
 use crate::comparison::{compare, Comparison, Verdict};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
@@ -205,7 +205,19 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
             println!("rustc: internal error in harness: {message}");
         }
     }
-    let cleaned = cleaning::clean(&input.into(), edition, cleaning);
+    let cleaned = match cleaning::clean(&input.into(), edition, cleaning) {
+        CleaningOutcome::Accepts(charseq) => charseq,
+        CleaningOutcome::Rejects(reason) => {
+            println!("lex_via_peg: rejected during cleaning");
+            println!("  error: {reason}");
+            return;
+        }
+        CleaningOutcome::ModelError(message) => {
+            println!("lex_via_peg: reported a bug during cleaning");
+            println!("  error: {message}");
+            return;
+        }
+    };
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(pretokens, mut tokens) => {
             if lowering == Lowering::LowerDocComments {
@@ -276,7 +288,19 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
 
 fn show_coarse(input: &str, edition: Edition, cleaning: CleaningMode, lowering: Lowering) {
     println!("Lexing «{}»", escape_for_display(input));
-    let cleaned = cleaning::clean(&input.into(), edition, cleaning);
+    let cleaned = match cleaning::clean(&input.into(), edition, cleaning) {
+        CleaningOutcome::Accepts(charseq) => charseq,
+        CleaningOutcome::Rejects(reason) => {
+            println!("lex_via_peg: rejected during cleaning");
+            println!("  error: {reason}");
+            return;
+        }
+        CleaningOutcome::ModelError(message) => {
+            println!("lex_via_peg: reported a bug during cleaning");
+            println!("  error: {message}");
+            return;
+        }
+    };
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(_, mut tokens) => {
             if lowering == Lowering::LowerDocComments {

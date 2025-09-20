@@ -4,7 +4,7 @@
 //! characters was matched, but they don't track everything we might be interested in. See
 //! `regular_tokens` for defails.
 
-use crate::cleaning;
+use crate::cleaning::{self, CleaningOutcome};
 use crate::combination;
 use crate::comparison::Verdict;
 use crate::doc_lowering::lower_doc_comments;
@@ -39,7 +39,11 @@ pub fn regularised_from_peg(
     lowering: Lowering,
 ) -> Verdict<Forest<RegularToken>> {
     use lex_via_peg::Analysis::*;
-    let cleaned = cleaning::clean(&input.into(), edition, cleaning);
+    let cleaned = match cleaning::clean(&input.into(), edition, cleaning) {
+        CleaningOutcome::Accepts(charseq) => charseq,
+        CleaningOutcome::Rejects(reason) => return Verdict::Rejects(vec![reason]),
+        CleaningOutcome::ModelError(message) => return Verdict::ModelError(vec![message]),
+    };
     match lex_via_peg::analyse(&cleaned, edition) {
         Accepts(_, mut fine_tokens) => {
             if lowering == Lowering::LowerDocComments {
