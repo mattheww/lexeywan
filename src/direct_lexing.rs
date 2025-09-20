@@ -35,10 +35,11 @@ pub fn regularised_from_rustc(
 pub fn regularised_from_peg(
     input: &str,
     edition: Edition,
+    cleaning: CleaningMode,
     lowering: Lowering,
 ) -> Verdict<Forest<RegularToken>> {
     use lex_via_peg::Analysis::*;
-    let cleaned = cleaning::clean(&input.into(), edition);
+    let cleaned = cleaning::clean(&input.into(), edition, cleaning);
     match lex_via_peg::analyse(&cleaned, edition) {
         Accepts(_, mut fine_tokens) => {
             if lowering == Lowering::LowerDocComments {

@@ -155,7 +155,7 @@ fn show_comparison(
     show_failures_only: bool,
 ) -> Comparison {
     let rustc = regularised_from_rustc(input, edition, cleaning, lowering);
-    let lex_via_peg = regularised_from_peg(input, edition, lowering);
+    let lex_via_peg = regularised_from_peg(input, edition, cleaning, lowering);
     report_verdict(input, details_mode, show_failures_only, rustc, lex_via_peg)
 }
 
@@ -205,7 +205,7 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
             println!("rustc: internal error in harness: {message}");
         }
     }
-    let cleaned = cleaning::clean(&input.into(), edition);
+    let cleaned = cleaning::clean(&input.into(), edition, cleaning);
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(pretokens, mut tokens) => {
             if lowering == Lowering::LowerDocComments {
@@ -276,7 +276,7 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
 
 fn show_coarse(input: &str, edition: Edition, cleaning: CleaningMode, lowering: Lowering) {
     println!("Lexing «{}»", escape_for_display(input));
-    let cleaned = cleaning::clean(&input.into(), edition);
+    let cleaned = cleaning::clean(&input.into(), edition, cleaning);
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(_, mut tokens) => {
             if lowering == Lowering::LowerDocComments {

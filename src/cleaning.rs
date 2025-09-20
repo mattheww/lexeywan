@@ -6,19 +6,28 @@
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::{FineToken, FineTokenData};
 use crate::lex_via_peg::first_nonwhitespace_token;
-use crate::Edition;
+use crate::{CleaningMode, Edition};
 
 /// Apply the transformations we make to input text before tokenisation.
+///
+/// Honours the requested cleaning mode.
+///
+/// TODO: handle frontmatter
 #[allow(clippy::let_and_return)]
-pub fn clean(input: &Charseq, edition: Edition) -> Charseq {
+pub fn clean(input: &Charseq, edition: Edition, cleaning: CleaningMode) -> Charseq {
+    use CleaningMode::*;
     let cleaned = input.chars();
     let cleaned = remove_bom(cleaned);
-    let cleaned = replace_crlf(cleaned);
-    let cleaned = clean_shebang(cleaned, edition);
+    let mut cleaned = replace_crlf(cleaned);
+    if matches!(cleaning, CleanShebang | CleanShebangAndFrontmatter) {
+        cleaned = clean_shebang(cleaned, edition);
+    }
     cleaned
 }
 
 /// Apply the transformations we make to input text before tokenisation inside a declarative macro.
+///
+/// This always behaves like cleaning mode NoCleaning.
 #[allow(clippy::let_and_return)]
 pub fn clean_for_macro_input(input: &Charseq, _edition: Edition) -> Charseq {
     let cleaned = input.chars();

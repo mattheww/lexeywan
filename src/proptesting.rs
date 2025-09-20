@@ -68,7 +68,7 @@ fn check_lexing(
     // See the history of this function for how to use `Unsupported`
 
     let rustc = regularised_from_rustc(input, edition, cleaning, lowering);
-    let lex_via_peg = regularised_from_peg(input, edition, lowering);
+    let lex_via_peg = regularised_from_peg(input, edition, cleaning, lowering);
     match compare(&rustc, &lex_via_peg) {
         Comparison::Agree => ComparisonStatus::Pass,
         Comparison::Differ => ComparisonStatus::Fail("rustc and lex_via_peg disagree".into()),
