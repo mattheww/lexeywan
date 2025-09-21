@@ -34,8 +34,8 @@ pub fn stringified_via_declarative_macros(
 ///
 /// Unconditionally lowers doc-comments.
 ///
-/// Doesn't run the parts of cleaning that apply to files as a whole (byte order mark removal and
-/// shebang removal).
+/// Doesn't run the parts of cleaning that apply to files as a whole (byte order mark removal,
+/// shebang removal, and frontmatter removal).
 ///
 /// Models stringify!().
 pub fn stringified_via_peg(input: &str, edition: Edition) -> Verdict<Forest<Charseq>> {
