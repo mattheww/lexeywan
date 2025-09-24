@@ -15,13 +15,17 @@ the comparable implementation uses the [Pest] library to generate the correspond
 
 ### Rust language version
 
-This document describes Rust version 1.90.
+This document describes Rust version 1.90
+and the following unstable features
+(as they behave in the nightly version of rustc identified below):
+
+- [rfc3503] (frontmatter)
 
 That means it describes raw lifetimes/labels and the additional reservations in the 2024 edition, but not
 
 - [rfc3349] (*Mixed UTF-8 literals*)
-- [rfc3503] (frontmatter)
 - [pr131656] (allowing more numeric suffixes beginning with `e`)
+
 
 Other statements in this document are intended to be true as of September 2025.
 

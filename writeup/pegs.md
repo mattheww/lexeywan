@@ -43,7 +43,7 @@ is equivalent to
 ```
 matches any single character except <b>'</b>.
 
-See [Grammar for raw string literals](raw_strings.md) for a discussion of extensions used to model raw string literals.
+See [Grammar for raw string literals](raw_strings.md) for a discussion of extensions used to model raw string literals and frontmatter fences.
 
 
 [Pest]: https://pest.rs/book/grammars/syntax.html
