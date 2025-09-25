@@ -57,18 +57,17 @@ See [Grammar for raw string literals](raw_strings.md) for a discussion of extens
 
 The following named terminals are available in all grammars in this document.
 
-
-#### Sets of characters
-
-These specify sets of Unicode characters:
-
 ##### Grammar
 ```
+EOI
 ANY
 PATTERN_WHITE_SPACE
 XID_START
 XID_CONTINUE
 ```
+
+`EOI` matches only when the sequence remaining to be matched is empty,
+without consuming any characters
 
 `ANY` matches any Unicode [character].
 
