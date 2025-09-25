@@ -46,7 +46,7 @@ In the comparable implementation, "2015" is used to refer to the common behaviou
 
 This description aims to accept input exactly if `rustc`'s lexer would.
 
-Specifically, it aims to model what's accepted as input to a function-like macro
+In particular, the description of tokenisation aims to model what's accepted as input to a function-like macro
 (a procedural macro or a by-example macro using the `tt` fragment specifier).
 
 It's not attempting to accurately model `rustc`'s "reasons" for rejecting input,
