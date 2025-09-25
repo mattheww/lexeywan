@@ -7,6 +7,7 @@
 
 - [Overview](./overview.md)
 - [Definitions](./definitions.md)
+  - [Parsing Expression Grammars](./pegs.md)
 - [Before tokenising](./before_tokenising.md)
 - [Tokenising](./tokenising.md)
   - [Pretokens](./pretokens.md)
@@ -25,7 +26,6 @@
 
 # Appendices
 
-- [Parsing Expression Grammar notation](./pegs.md)
 - [Complete pretokenisation grammar](./complete_pretoken_grammar.md)
 
 # Discussion
