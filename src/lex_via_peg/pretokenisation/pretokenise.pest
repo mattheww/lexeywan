@@ -124,18 +124,15 @@ DQ_CONTENT = {
         !"\"" ~ ANY
     ) *
 }
-
 // ANCHOR_END: double_quoted_literals
 
-// ANCHOR: raw_double_quoted_literals_top
+// ANCHOR: raw_double_quoted_literals
 Raw_double_quoted_literal_2015 = { RAW_DQ_PREFIX_2015 ~ RAW_DQ_REMAINDER }
 Raw_double_quoted_literal_2021 = { RAW_DQ_PREFIX_2021 ~ RAW_DQ_REMAINDER }
 
 RAW_DQ_PREFIX_2015 = { "r" | "br" }
 RAW_DQ_PREFIX_2021 = { "r" | "br" | "cr" }
-// ANCHOR_END: raw_double_quoted_literals_top
 
-// ANCHOR: raw_double_quoted_literals_stack
 RAW_DQ_REMAINDER = {
     PUSH(HASHES) ~
     "\"" ~ RAW_DQ_CONTENT ~ "\"" ~
@@ -146,7 +143,7 @@ RAW_DQ_CONTENT = {
     ( !("\"" ~ PEEK) ~ ANY ) *
 }
 HASHES = { "#" {0, 255} }
-// ANCHOR_END: raw_double_quoted_literals_stack
+// ANCHOR_END: raw_double_quoted_literals
 
 // ANCHOR: unterminated_literal
 Unterminated_literal_2015 = { "r\"" | "br\"" | "b'" }

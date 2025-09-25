@@ -40,18 +40,7 @@
 
 ##### Grammar
 ```
-{{#include pretokenise_anchored.pest:raw_double_quoted_literals_top}}
-
-RAW_DQ_REMAINDER = {
-    HASHES¹ ~
-    "\"" ~ RAW_DQ_CONTENT ~ "\"" ~
-    HASHES² ~
-    SUFFIX ?
-}
-RAW_DQ_CONTENT = {
-    ( !("\"" ~ HASHES²) ~ ANY ) *
-}
-HASHES = { "#" {0, 255} }
+{{#include pretokenise_anchored.pest:raw_double_quoted_literals}}
 ```
 
 These definitions require an extension to the Parsing Expression Grammar formalism:

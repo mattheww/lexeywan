@@ -19,7 +19,16 @@ and is used in the comparable implementation.
 
 It looks like this:
 ```
-{{#include pretokenise_anchored.pest:raw_double_quoted_literals_stack}}
+RAW_DQ_REMAINDER = {
+    PUSH(HASHES) ~
+    "\"" ~ RAW_DQ_CONTENT ~ "\"" ~
+    POP ~
+    SUFFIX ?
+}
+RAW_DQ_CONTENT = {
+    ( !("\"" ~ PEEK) ~ ANY ) *
+}
+HASHES = { "#" {0, 255} }
 ```
 
 The notion of matching an expression is extended to include a _context stack_ (a stack of strings):

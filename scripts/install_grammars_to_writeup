@@ -6,5 +6,10 @@ SRC=src/lex_via_peg/pretokenisation/pretokenise.pest
 ANCHORED=writeup/pretokenise_anchored.pest
 CLEANED=writeup/pretokenise.pest
 
-cp $SRC $ANCHORED
+sed \
+    -e 's!PUSH(HASHES)!HASHES¹!' \
+    -e 's!PEEK!HASHES²!' \
+    -e 's!POP!HASHES²!' \
+    < $SRC > $ANCHORED
+
 sed -e '\!^//!d' < $SRC > $CLEANED
