@@ -26,6 +26,7 @@
 
 # Appendices
 
+- [Frontmatter grammar](./frontmatter_grammar.md)
 - [Complete pretokenisation grammar](./complete_pretoken_grammar.md)
 
 # Discussion
