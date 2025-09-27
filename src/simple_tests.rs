@@ -2,13 +2,14 @@
 //!
 //! These subcommands are:
 //!  `test`
+//!  `identcheck`
 
 use std::io::Write as _;
 
 use crate::comparison::{compare, Comparison};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
-use crate::{CleaningMode, Edition, Lowering, ALL_EDITIONS};
+use crate::{CleaningMode, Edition, Lowering, ALL_EDITIONS, LATEST_EDITION};
 
 /// Implements the `test` (default) CLI command.
 pub fn run_test_subcommand(inputs: &[&str]) {
@@ -79,4 +80,32 @@ fn compare_via_decl(inputs: &[&str], edition: Edition) -> Comparison {
         }
     }
     Comparison::Agree
+}
+
+/// Implements the `identcheck` CLI command.
+pub fn run_identcheck_subcommand() {
+    // This will report errors if there's a unicode version mismatch.
+    // At present I think CleanShebang is the fastest mode
+    let edition = LATEST_EDITION;
+    let cleaning = CleaningMode::CleanShebang;
+    let lowering = Lowering::NoLowering;
+    println!("Checking all characters as XID_Start and XID_Continue");
+    let mut passes = 0;
+    let mut failures = 0;
+    let mut model_errors = 0;
+    for c in char::MIN..=char::MAX {
+        for input in [format!("{c}"), format!("a{c}")] {
+            let rustc = regularised_from_rustc(&input, edition, cleaning, lowering);
+            let lex_via_peg = regularised_from_peg(&input, edition, cleaning, lowering);
+            match compare(&rustc, &lex_via_peg) {
+                Comparison::Agree => passes += 1,
+                Comparison::Differ => failures += 1,
+                Comparison::ModelErrors => model_errors += 1,
+            }
+        }
+    }
+    println!("\n{passes} passed, {failures} failed");
+    if model_errors != 0 {
+        println!("*** {model_errors} model errors ***");
+    }
 }

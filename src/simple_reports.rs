@@ -5,11 +5,11 @@
 //!  `decl-compare`
 //!  `inspect`
 //!  `coarse`
-//!  `identcheck`
 
 use std::fmt::Debug;
 
 use crate::cleaning::{self, CleaningOutcome};
+use crate::combination;
 use crate::comparison::{compare, Comparison, Verdict};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
@@ -22,7 +22,6 @@ use crate::tree_construction;
 use crate::tree_flattening::flatten;
 use crate::trees::Forest;
 use crate::utils::escape_for_display;
-use crate::{combination, LATEST_EDITION};
 use crate::{CleaningMode, Edition, Lowering};
 
 /// Implements the `compare` CLI command.
@@ -104,16 +103,6 @@ pub fn run_coarse_subcommand(
         show_coarse(input, edition, cleaning, lowering);
         println!();
     }
-}
-
-/// Implements the `identcheck` CLI command.
-pub fn run_identcheck_subcommand() {
-    // At present I think CleanShebang is the fastest mode
-    show_identcheck(
-        LATEST_EDITION,
-        CleaningMode::CleanShebang,
-        Lowering::NoLowering,
-    );
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -415,32 +404,4 @@ fn report_verdict<TOKEN: Eq + Debug>(
         }
     }
     comparison
-}
-
-fn show_identcheck(edition: Edition, cleaning: CleaningMode, lowering: Lowering) {
-    // This will report errors if there's a unicode version mismatch.
-    println!("Checking all characters as XID_Start and XID_Continue");
-    let mut passes = 0;
-    let mut failures = 0;
-    let mut model_errors = 0;
-    for c in char::MIN..=char::MAX {
-        for input in [format!("{c}"), format!("a{c}")] {
-            match show_comparison(
-                &input,
-                edition,
-                cleaning,
-                lowering,
-                DetailsMode::Never,
-                true,
-            ) {
-                Comparison::Agree => passes += 1,
-                Comparison::Differ => failures += 1,
-                Comparison::ModelErrors => model_errors += 1,
-            }
-        }
-    }
-    println!("\n{passes} passed, {failures} failed");
-    if model_errors != 0 {
-        println!("*** {model_errors} model errors ***");
-    }
 }

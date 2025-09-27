@@ -3,9 +3,9 @@
 use crate::proptesting::{self, Verbosity};
 use crate::simple_reports::{
     run_coarse_subcommand, run_compare_subcommand, run_decl_compare_subcommand,
-    run_identcheck_subcommand, run_inspect_subcommand, DetailsMode,
+    run_inspect_subcommand, DetailsMode,
 };
-use crate::simple_tests::run_test_subcommand;
+use crate::simple_tests::{run_identcheck_subcommand, run_test_subcommand};
 use crate::{testcases, CleaningMode, Edition, Lowering, LATEST_EDITION};
 
 const USAGE: &str = "\
