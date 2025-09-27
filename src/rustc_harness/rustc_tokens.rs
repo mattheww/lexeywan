@@ -80,7 +80,7 @@ pub enum RustcLiteralData {
     /// String-like literal with a suffix
     ForbiddenSuffix(String),
 
-    /// A token that represented an ill-formed literal.
+    /// A token that represented a malformed literal.
     ///
     /// This shouldn't appear unless analyse() reported an error.
     Error,
