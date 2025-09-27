@@ -15,6 +15,7 @@ mod proptesting;
 mod regular_tokens;
 mod rustc_harness;
 mod simple_reports;
+mod simple_tests;
 mod testcases;
 mod tokens_common;
 mod tree_construction;
@@ -22,7 +23,7 @@ mod tree_flattening;
 mod trees;
 mod utils;
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq, std::fmt::Debug)]
 enum Edition {
     /// Rust 2015 and Rust 2018
     E2015,
@@ -32,9 +33,10 @@ enum Edition {
     E2024,
 }
 
+const ALL_EDITIONS: &[Edition] = [Edition::E2015, Edition::E2021, Edition::E2024].as_slice();
 const LATEST_EDITION: Edition = Edition::E2024;
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq, std::fmt::Debug)]
 enum Lowering {
     /// Omit the "Convert doc-comments to attributes" pass
     NoLowering,
@@ -42,7 +44,7 @@ enum Lowering {
     LowerDocComments,
 }
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq, std::fmt::Debug)]
 enum CleaningMode {
     /// Strip neither shebang nor frontmatter
     NoCleaning,

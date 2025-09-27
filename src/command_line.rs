@@ -5,13 +5,15 @@ use crate::simple_reports::{
     run_coarse_subcommand, run_compare_subcommand, run_decl_compare_subcommand,
     run_identcheck_subcommand, run_inspect_subcommand, DetailsMode,
 };
+use crate::simple_tests::run_test_subcommand;
 use crate::{testcases, CleaningMode, Edition, Lowering, LATEST_EDITION};
 
 const USAGE: &str = "\
 Usage: lexeywan [<subcommand>] [...options]
 
 Subcommands:
- *compare       [suite-opts] [comparison-opts] [dialect-opts]
+ *test          [suite-opts]
+  compare       [suite-opts] [comparison-opts] [dialect-opts]
   decl-compare  [suite-opts] [comparison-opts] [--edition=2015|2021|*2024]
   inspect       [suite-opts] [dialect-opts]
   coarse        [suite-opts] [dialect-opts]
@@ -139,6 +141,9 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
     }
 
     enum Action {
+        Test {
+            inputs: &'static [&'static str],
+        },
         Compare {
             inputs: &'static [&'static str],
             show_failures_only: bool,
@@ -175,6 +180,11 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             lowering: Lowering,
         },
     }
+    fn test_action(args: &mut pico_args::Arguments) -> Result<Action, pico_args::Error> {
+        Ok(Action::Test {
+            inputs: requested_inputs(args),
+        })
+    }
     fn compare_action(args: &mut pico_args::Arguments) -> Result<Action, pico_args::Error> {
         let show_failures_only = args.contains("--failures-only");
         Ok(Action::Compare {
@@ -196,6 +206,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         })
     }
     let action = match args.subcommand()?.as_deref() {
+        Some("test") => test_action(&mut args)?,
         Some("compare") => compare_action(&mut args)?,
         Some("decl-compare") => decl_compare_action(&mut args)?,
         Some("inspect") => Action::Inspect {
@@ -245,7 +256,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
                 lowering: requested_lowering(&mut args),
             }
         }
-        None => compare_action(&mut args)?,
+        None => test_action(&mut args)?,
         _ => {
             return Err(pico_args::Error::ArgumentParsingFailed {
                 cause: "unknown subcommand".into(),
@@ -260,6 +271,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
     }
 
     match action {
+        Action::Test { inputs } => run_test_subcommand(inputs),
         Action::Compare {
             inputs,
             show_failures_only,

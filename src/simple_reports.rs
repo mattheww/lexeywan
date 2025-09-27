@@ -25,7 +25,7 @@ use crate::utils::escape_for_display;
 use crate::{combination, LATEST_EDITION};
 use crate::{CleaningMode, Edition, Lowering};
 
-/// Implements the `compare` (default) CLI command.
+/// Implements the `compare` CLI command.
 pub fn run_compare_subcommand(
     inputs: &[&str],
     edition: Edition,

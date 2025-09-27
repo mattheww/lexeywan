@@ -1,0 +1,82 @@
+//! Implementation of the test-like cli subcommands.
+//!
+//! These subcommands are:
+//!  `test`
+
+use std::io::Write as _;
+
+use crate::comparison::{compare, Comparison};
+use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
+use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
+use crate::{CleaningMode, Edition, Lowering, ALL_EDITIONS};
+
+/// Implements the `test` (default) CLI command.
+pub fn run_test_subcommand(inputs: &[&str]) {
+    use {CleaningMode::*, Lowering::*};
+    let mut any_failed = false;
+    let start = |label| {
+        print!("{label:48} ...");
+        std::io::stdout().flush().expect("failed to flush stdout");
+    };
+    let mut finish = |comparison| match comparison {
+        Comparison::Agree => {
+            println!(" ok");
+        }
+        Comparison::Differ => {
+            println!(" failed");
+            any_failed = true;
+        }
+        Comparison::ModelErrors => {
+            println!(" model error");
+            any_failed = true;
+        }
+    };
+
+    let comparison_runs = [
+        (NoLowering, NoCleaning),
+        (NoLowering, CleanShebang),
+        (NoLowering, CleanShebangAndFrontmatter),
+        (LowerDocComments, CleanShebang),
+    ]
+    .as_slice();
+    for edition in ALL_EDITIONS.iter().copied() {
+        for (lowering, cleaning) in comparison_runs.iter().copied() {
+            start(format!("{edition:?} / {lowering:?} / {cleaning:?}"));
+            finish(compare_directly(inputs, edition, cleaning, lowering));
+        }
+        start(format!("{edition:?} / via declarative macros"));
+        finish(compare_via_decl(inputs, edition));
+    }
+    if any_failed {
+        println!("*** failed ***");
+    }
+}
+
+fn compare_directly(
+    inputs: &[&str],
+    edition: Edition,
+    cleaning: CleaningMode,
+    lowering: Lowering,
+) -> Comparison {
+    for input in inputs {
+        let rustc = regularised_from_rustc(input, edition, cleaning, lowering);
+        let lex_via_peg = regularised_from_peg(input, edition, cleaning, lowering);
+        let comparison = compare(&rustc, &lex_via_peg);
+        if !matches!(comparison, Comparison::Agree) {
+            return comparison;
+        }
+    }
+    Comparison::Agree
+}
+
+fn compare_via_decl(inputs: &[&str], edition: Edition) -> Comparison {
+    for input in inputs {
+        let rustc = stringified_via_declarative_macros(input, edition);
+        let lex_via_peg = stringified_via_peg(input, edition);
+        let comparison = compare(&rustc, &lex_via_peg);
+        if !matches!(comparison, Comparison::Agree) {
+            return comparison;
+        }
+    }
+    Comparison::Agree
+}
