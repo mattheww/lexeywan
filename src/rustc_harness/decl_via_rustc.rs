@@ -11,8 +11,9 @@
 //! This module uses `run_compiler()` to process the source file as far as name resolution and macro
 //! expansion (which take place together).
 //!
-//! This way of handling things means that CRLF-conversion is observable, but BOM-removal and
-//! shebang-removal aren't (because the input doesn't end up at the start of the file).
+//! This way of handling things means that CRLF-conversion is observable, but BOM-removal,
+//! shebang-removal and frontmatter-removal aren't (because the input doesn't end up at the start of
+//! the file).
 //!
 //! If rustc emits any error messages (or panics), we treat the input as rejected.
 

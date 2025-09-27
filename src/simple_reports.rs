@@ -9,7 +9,7 @@
 
 use std::fmt::Debug;
 
-use crate::cleaning;
+use crate::cleaning::{self, CleaningOutcome};
 use crate::combination;
 use crate::comparison::{compare, Comparison, Verdict};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
@@ -23,12 +23,13 @@ use crate::tree_construction;
 use crate::tree_flattening::flatten;
 use crate::trees::Forest;
 use crate::utils::escape_for_display;
-use crate::{Edition, Lowering};
+use crate::{CleaningMode, Edition, Lowering};
 
 /// Implements the `compare` (default) CLI command.
 pub fn run_compare_subcommand(
     inputs: &[&str],
     edition: Edition,
+    cleaning: CleaningMode,
     lowering: Lowering,
     details_mode: DetailsMode,
     show_failures_only: bool,
@@ -37,7 +38,14 @@ pub fn run_compare_subcommand(
     let mut failures = 0;
     let mut model_errors = 0;
     for input in inputs {
-        match show_comparison(input, edition, lowering, details_mode, show_failures_only) {
+        match show_comparison(
+            input,
+            edition,
+            cleaning,
+            lowering,
+            details_mode,
+            show_failures_only,
+        ) {
             Comparison::Agree => passes += 1,
             Comparison::Differ => failures += 1,
             Comparison::ModelErrors => model_errors += 1,
@@ -73,24 +81,35 @@ pub fn run_decl_compare_subcommand(
 }
 
 /// Implements the `inspect` CLI command.
-pub fn run_inspect_subcommand(inputs: &[&str], edition: Edition, lowering: Lowering) {
+pub fn run_inspect_subcommand(
+    inputs: &[&str],
+    edition: Edition,
+    cleaning: CleaningMode,
+    lowering: Lowering,
+) {
     for input in inputs {
-        show_inspect(input, edition, lowering);
+        show_inspect(input, edition, cleaning, lowering);
         println!();
     }
 }
 
 /// Implements the `coarse` CLI command.
-pub fn run_coarse_subcommand(inputs: &[&str], edition: Edition, lowering: Lowering) {
+pub fn run_coarse_subcommand(
+    inputs: &[&str],
+    edition: Edition,
+    cleaning: CleaningMode,
+    lowering: Lowering,
+) {
     for input in inputs {
-        show_coarse(input, edition, lowering);
+        show_coarse(input, edition, cleaning, lowering);
         println!();
     }
 }
 
 /// Implements the `identcheck` CLI command.
 pub fn run_identcheck_subcommand(edition: Edition) {
-    show_identcheck(edition, Lowering::NoLowering);
+    // At present I think CleanShebang is the fastest mode
+    show_identcheck(edition, CleaningMode::CleanShebang, Lowering::NoLowering);
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -130,12 +149,13 @@ fn single_model_symbol<T: Eq>(reg: &Verdict<T>) -> char {
 fn show_comparison(
     input: &str,
     edition: Edition,
+    cleaning: CleaningMode,
     lowering: Lowering,
     details_mode: DetailsMode,
     show_failures_only: bool,
 ) -> Comparison {
-    let rustc = regularised_from_rustc(input, edition, lowering);
-    let lex_via_peg = regularised_from_peg(input, edition, lowering);
+    let rustc = regularised_from_rustc(input, edition, cleaning, lowering);
+    let lex_via_peg = regularised_from_peg(input, edition, cleaning, lowering);
     report_verdict(input, details_mode, show_failures_only, rustc, lex_via_peg)
 }
 
@@ -157,9 +177,9 @@ fn show_decl_compare(
 }
 
 /// Lexes with both rustc and lex_via_peg, and prints the results.
-fn show_inspect(input: &str, edition: Edition, lowering: Lowering) {
+fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering: Lowering) {
     println!("Lexing «{}»", escape_for_display(input));
-    match lex_via_rustc::analyse(input, edition, lowering) {
+    match lex_via_rustc::analyse(input, edition, cleaning, lowering) {
         lex_via_rustc::Analysis::Accepts(tokens) => {
             println!("rustc: accepted");
             for item in flatten(&tokens) {
@@ -181,8 +201,23 @@ fn show_inspect(input: &str, edition: Edition, lowering: Lowering) {
         lex_via_rustc::Analysis::CompilerError => {
             println!("rustc: internal compiler error");
         }
+        lex_via_rustc::Analysis::HarnessError(message) => {
+            println!("rustc: internal error in harness: {message}");
+        }
     }
-    let cleaned = cleaning::clean(&input.into(), edition);
+    let cleaned = match cleaning::clean(&input.into(), edition, cleaning) {
+        CleaningOutcome::Accepts(charseq) => charseq,
+        CleaningOutcome::Rejects(reason) => {
+            println!("lex_via_peg: rejected during cleaning");
+            println!("  error: {reason}");
+            return;
+        }
+        CleaningOutcome::ModelError(message) => {
+            println!("lex_via_peg: reported a bug during cleaning");
+            println!("  error: {message}");
+            return;
+        }
+    };
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(pretokens, mut tokens) => {
             if lowering == Lowering::LowerDocComments {
@@ -251,9 +286,21 @@ fn show_inspect(input: &str, edition: Edition, lowering: Lowering) {
     }
 }
 
-fn show_coarse(input: &str, edition: Edition, lowering: Lowering) {
+fn show_coarse(input: &str, edition: Edition, cleaning: CleaningMode, lowering: Lowering) {
     println!("Lexing «{}»", escape_for_display(input));
-    let cleaned = cleaning::clean(&input.into(), edition);
+    let cleaned = match cleaning::clean(&input.into(), edition, cleaning) {
+        CleaningOutcome::Accepts(charseq) => charseq,
+        CleaningOutcome::Rejects(reason) => {
+            println!("lex_via_peg: rejected during cleaning");
+            println!("  error: {reason}");
+            return;
+        }
+        CleaningOutcome::ModelError(message) => {
+            println!("lex_via_peg: reported a bug during cleaning");
+            println!("  error: {message}");
+            return;
+        }
+    };
     match lex_via_peg::analyse(&cleaned, edition) {
         lex_via_peg::Analysis::Accepts(_, mut tokens) => {
             if lowering == Lowering::LowerDocComments {
@@ -366,7 +413,7 @@ fn report_verdict<TOKEN: Eq + Debug>(
     comparison
 }
 
-fn show_identcheck(edition: Edition, lowering: Lowering) {
+fn show_identcheck(edition: Edition, cleaning: CleaningMode, lowering: Lowering) {
     // This will report errors if there's a unicode version mismatch.
     println!("Checking all characters as XID_Start and XID_Continue");
     let mut passes = 0;
@@ -374,7 +421,14 @@ fn show_identcheck(edition: Edition, lowering: Lowering) {
     let mut model_errors = 0;
     for c in char::MIN..=char::MAX {
         for input in [format!("{c}"), format!("a{c}")] {
-            match show_comparison(&input, edition, lowering, DetailsMode::Never, true) {
+            match show_comparison(
+                &input,
+                edition,
+                cleaning,
+                lowering,
+                DetailsMode::Never,
+                true,
+            ) {
                 Comparison::Agree => passes += 1,
                 Comparison::Differ => failures += 1,
                 Comparison::ModelErrors => model_errors += 1,

@@ -4,7 +4,7 @@
 //! characters was matched, but they don't track everything we might be interested in. See
 //! `regular_tokens` for defails.
 
-use crate::cleaning;
+use crate::cleaning::{self, CleaningOutcome};
 use crate::combination;
 use crate::comparison::Verdict;
 use crate::doc_lowering::lower_doc_comments;
@@ -13,19 +13,21 @@ use crate::regular_tokens::{regularise_from_coarse, regularise_from_rustc, Regul
 use crate::rustc_harness::lex_via_rustc;
 use crate::tree_construction;
 use crate::trees::Forest;
-use crate::{Edition, Lowering};
+use crate::{CleaningMode, Edition, Lowering};
 
 /// Runs rustc's lexical analysis and returns the regularised result.
 pub fn regularised_from_rustc(
     input: &str,
     edition: Edition,
+    cleaning: CleaningMode,
     lowering: Lowering,
 ) -> Verdict<Forest<RegularToken>> {
     use lex_via_rustc::Analysis::*;
-    match lex_via_rustc::analyse(input, edition, lowering) {
+    match lex_via_rustc::analyse(input, edition, cleaning, lowering) {
         Accepts(tokens) => Verdict::Accepts(regularise_from_rustc(tokens)),
         Rejects(_, messages) => Verdict::Rejects(messages),
         CompilerError => Verdict::ModelError(vec!["rustc compiler error".into()]),
+        HarnessError(message) => Verdict::ModelError(vec![message]),
     }
 }
 
@@ -33,10 +35,15 @@ pub fn regularised_from_rustc(
 pub fn regularised_from_peg(
     input: &str,
     edition: Edition,
+    cleaning: CleaningMode,
     lowering: Lowering,
 ) -> Verdict<Forest<RegularToken>> {
     use lex_via_peg::Analysis::*;
-    let cleaned = cleaning::clean(&input.into(), edition);
+    let cleaned = match cleaning::clean(&input.into(), edition, cleaning) {
+        CleaningOutcome::Accepts(charseq) => charseq,
+        CleaningOutcome::Rejects(reason) => return Verdict::Rejects(vec![reason]),
+        CleaningOutcome::ModelError(message) => return Verdict::ModelError(vec![message]),
+    };
     match lex_via_peg::analyse(&cleaned, edition) {
         Accepts(_, mut fine_tokens) => {
             if lowering == Lowering::LowerDocComments {

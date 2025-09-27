@@ -9,6 +9,7 @@ mod decl_lexing;
 mod direct_lexing;
 mod doc_lowering;
 mod fine_tokens;
+mod frontmatter;
 mod lex_via_peg;
 mod proptesting;
 mod regular_tokens;
@@ -37,6 +38,16 @@ enum Lowering {
     NoLowering,
     /// Include the "Convert doc-comments to attributes" pass
     LowerDocComments,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq)]
+enum CleaningMode {
+    /// Strip neither shebang nor frontmatter
+    NoCleaning,
+    /// Strip the shebang but not frontmatter
+    CleanShebang,
+    /// Strip both shebang and frontmatter
+    CleanShebangAndFrontmatter,
 }
 
 fn main() -> impl std::process::Termination {

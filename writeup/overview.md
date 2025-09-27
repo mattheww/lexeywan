@@ -7,6 +7,7 @@ The following processes might be considered to be part of Rust's lexer:
   - Byte order mark removal
   - CRLF normalisation
   - Shebang removal
+  - Frontmatter removal
 - [Tokenise]: interpret the characters as ("fine-grained") tokens
 - [Lower doc-comments]: convert doc-comments into attributes
 - Build trees: organise tokens into delimited groups

@@ -13,3 +13,16 @@ sed \
     < $SRC > $ANCHORED
 
 sed -e '\!^//!d' < $SRC > $CLEANED
+
+
+SRC=src/frontmatter.pest
+SIMPLIFIED=writeup/frontmatter_simplified.pest
+UNCHANGED=writeup/frontmatter.pest
+
+sed \
+    -e 's!PUSH(FENCE)!FENCE¹!' \
+    -e 's!PEEK!FENCE²!' \
+    -e 's!POP!FENCE²!' \
+    < $SRC > $SIMPLIFIED
+
+cp $SRC $UNCHANGED

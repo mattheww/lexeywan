@@ -8,7 +8,7 @@ use proptest::{
 use crate::comparison::{compare, Comparison};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::utils::escape_for_display;
-use crate::{Edition, Lowering};
+use crate::{CleaningMode, Edition, Lowering};
 
 pub use self::strategies::DEFAULT_STRATEGY;
 use self::strategies::SIMPLE_STRATEGIES;
@@ -21,6 +21,7 @@ pub fn run_proptests(
     count: u32,
     verbosity: Verbosity,
     edition: Edition,
+    cleaning: CleaningMode,
     lowering: Lowering,
 ) {
     println!("Running property tests with strategy {strategy_name} for {count} iterations");
@@ -32,7 +33,7 @@ pub fn run_proptests(
     });
     let strategy = &named_strategy(strategy_name).expect("unknown strategy");
     let result = runner.run(strategy, |input| {
-        match check_lexing(&input, edition, lowering) {
+        match check_lexing(&input, edition, cleaning, lowering) {
             ComparisonStatus::Pass => Ok(()),
             ComparisonStatus::Fail(msg) => Err(TestCaseError::Fail(msg.into())),
             ComparisonStatus::Unsupported(msg) => Err(TestCaseError::Reject(msg.into())),
@@ -58,11 +59,16 @@ pub fn run_proptests(
 /// This is the "test" function given to proptest.
 ///
 /// Returns Unsupported for input that may trigger known problems.
-fn check_lexing(input: &str, edition: Edition, lowering: Lowering) -> ComparisonStatus {
+fn check_lexing(
+    input: &str,
+    edition: Edition,
+    cleaning: CleaningMode,
+    lowering: Lowering,
+) -> ComparisonStatus {
     // See the history of this function for how to use `Unsupported`
 
-    let rustc = regularised_from_rustc(input, edition, lowering);
-    let lex_via_peg = regularised_from_peg(input, edition, lowering);
+    let rustc = regularised_from_rustc(input, edition, cleaning, lowering);
+    let lex_via_peg = regularised_from_peg(input, edition, cleaning, lowering);
     match compare(&rustc, &lex_via_peg) {
         Comparison::Agree => ComparisonStatus::Pass,
         Comparison::Differ => ComparisonStatus::Fail("rustc and lex_via_peg disagree".into()),

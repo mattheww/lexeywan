@@ -5,20 +5,55 @@
 
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::{FineToken, FineTokenData};
+use crate::frontmatter::{find_frontmatter, FrontmatterOutcome};
 use crate::lex_via_peg::first_nonwhitespace_token;
-use crate::Edition;
+use crate::{CleaningMode, Edition};
 
 /// Apply the transformations we make to input text before tokenisation.
-#[allow(clippy::let_and_return)]
-pub fn clean(input: &Charseq, edition: Edition) -> Charseq {
+///
+/// Honours the requested cleaning mode.
+pub fn clean(input: &Charseq, edition: Edition, cleaning: CleaningMode) -> CleaningOutcome {
+    use CleaningMode::*;
+    use CleaningOutcome::*;
     let cleaned = input.chars();
     let cleaned = remove_bom(cleaned);
-    let cleaned = replace_crlf(cleaned);
-    let cleaned = clean_shebang(cleaned, edition);
-    cleaned
+    let mut cleaned = replace_crlf(cleaned);
+    if matches!(cleaning, CleanShebang | CleanShebangAndFrontmatter) {
+        cleaned = clean_shebang(cleaned, edition);
+    }
+    if matches!(cleaning, CleanShebangAndFrontmatter) {
+        match find_frontmatter(cleaned.chars()) {
+            FrontmatterOutcome::NotFound => {}
+            FrontmatterOutcome::Found(range) => {
+                cleaned.remove_range(range);
+            }
+            FrontmatterOutcome::Reserved => return Rejects("malformed frontmatter".into()),
+            FrontmatterOutcome::ModelError(message) => {
+                return ModelError(format!("frontmatter processing failed: {message}"))
+            }
+        }
+    }
+    Accepts(cleaned)
+}
+
+pub enum CleaningOutcome {
+    /// Cleaning succeeded.
+    Accepts(Charseq),
+
+    /// Cleaning rejected the input.
+    ///
+    /// The string is an explanation.
+    Rejects(String),
+
+    /// The input demonstrated a problem in the reimplementation.
+    ///
+    /// The string is an error message.
+    ModelError(String),
 }
 
 /// Apply the transformations we make to input text before tokenisation inside a declarative macro.
+///
+/// This always behaves like cleaning mode NoCleaning.
 #[allow(clippy::let_and_return)]
 pub fn clean_for_macro_input(input: &Charseq, _edition: Edition) -> Charseq {
     let cleaned = input.chars();

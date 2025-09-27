@@ -4,6 +4,9 @@ This document's description of tokenising takes a sequence of characters as inpu
 
 That sequence of characters is derived from an input sequence of bytes by peforming the steps listed below in order.
 
+It is also possible for one of the steps below to determine that the input should be rejected,
+in which case tokenising does not take place.
+
 > Normally the input sequence of bytes is the contents of a single source file.
 
 
@@ -43,6 +46,43 @@ If shebang removal is performed:
 
 > Note: The check for <b>[</b> prevents an inner attribute at the start of the input being removed.
 > See [#70528] and [#71487] for history.
+
+
+## Frontmatter removal
+
+> Stability: As of Rust 1.90 frontmatter removal is unstable.
+> Under stable rustc 1.90, and under nightly rustc without the `frontmatter` feature flag,
+> input which would undergo frontmatter removal is rejected.
+
+If the `FRONTMATTER` nonterminal defined in the frontmatter grammar matches at the start of the remaining sequence,
+the characters consumed by that match are removed from the sequence.
+
+Otherwise, if the `RESERVED` nonterminal defined in the frontmatter grammar matches at the start of the remaining sequence,
+the input is rejected.
+
+The frontmatter grammar is the following [Parsing Expression Grammar](pegs.md):
+
+```
+{{#include frontmatter_simplified.pest}}
+```
+
+These definitions require an extension to the Parsing Expression Grammar formalism:
+each of the expressions marked as `FENCE²` fails unless the text it matches is the same as the text matched by the (only) successful match using the expression marked as `FENCE¹`.
+
+> See [Grammar for raw string literals](raw_strings.md) for a discussion of alternatives to this extension.
+
+> Note: If there are any `WHITESPACE_ONLY_LINE`s, rustc emits a single whitespace token to represent them.
+> But I think that token isn't observable by Rust programs, so it isn't modelled here.
+
+
+[UTF-8]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G31703
+[encoding scheme]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G28070
+
+[finding the first non-whitespace token]: tokenising.md#find-first-nw-token
+
+[#70528]: https://github.com/rust-lang/rust/issues/70528
+[#71487]: https://github.com/rust-lang/rust/pull/71487
+
 
 [UTF-8]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G31703
 [encoding scheme]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G28070
