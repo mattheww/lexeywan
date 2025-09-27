@@ -10,6 +10,7 @@ use std::fmt::Debug;
 
 use crate::cleaning::{self, CleaningOutcome};
 use crate::combination;
+use crate::command_line::SubcommandStatus;
 use crate::comparison::{compare, Comparison, Verdict};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
@@ -32,7 +33,7 @@ pub fn run_compare_subcommand(
     lowering: Lowering,
     details_mode: DetailsMode,
     show_failures_only: bool,
-) {
+) -> SubcommandStatus {
     let mut passes = 0;
     let mut failures = 0;
     let mut model_errors = 0;
@@ -54,6 +55,11 @@ pub fn run_compare_subcommand(
     if model_errors != 0 {
         println!("*** {model_errors} model errors ***");
     }
+    if failures == 0 && model_errors == 0 {
+        SubcommandStatus::Normal
+    } else {
+        SubcommandStatus::ChecksFailed
+    }
 }
 
 /// Implements the `decl-compare` CLI command.
@@ -62,7 +68,7 @@ pub fn run_decl_compare_subcommand(
     edition: Edition,
     details_mode: DetailsMode,
     show_failures_only: bool,
-) {
+) -> SubcommandStatus {
     let mut passes = 0;
     let mut failures = 0;
     let mut model_errors = 0;
@@ -77,6 +83,11 @@ pub fn run_decl_compare_subcommand(
     if model_errors != 0 {
         println!("*** {model_errors} model errors ***");
     }
+    if failures == 0 && model_errors == 0 {
+        SubcommandStatus::Normal
+    } else {
+        SubcommandStatus::ChecksFailed
+    }
 }
 
 /// Implements the `inspect` CLI command.
@@ -85,11 +96,12 @@ pub fn run_inspect_subcommand(
     edition: Edition,
     cleaning: CleaningMode,
     lowering: Lowering,
-) {
+) -> SubcommandStatus {
     for input in inputs {
         show_inspect(input, edition, cleaning, lowering);
         println!();
     }
+    SubcommandStatus::Normal
 }
 
 /// Implements the `coarse` CLI command.
@@ -98,11 +110,12 @@ pub fn run_coarse_subcommand(
     edition: Edition,
     cleaning: CleaningMode,
     lowering: Lowering,
-) {
+) -> SubcommandStatus {
     for input in inputs {
         show_coarse(input, edition, cleaning, lowering);
         println!();
     }
+    SubcommandStatus::Normal
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]

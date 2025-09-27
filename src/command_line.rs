@@ -42,7 +42,10 @@ const DEFAULT_PROPTEST_COUNT: u32 = 5000;
 
 pub fn run_cli() -> impl std::process::Termination {
     match run_cli_impl() {
-        Ok(_) => std::process::ExitCode::from(0),
+        Ok(status) => std::process::ExitCode::from(match status {
+            SubcommandStatus::Normal => 0,
+            SubcommandStatus::ChecksFailed => 3,
+        }),
         Err(pico_args::Error::ArgumentParsingFailed { cause }) => {
             eprint!("{USAGE}{cause}\n");
             std::process::ExitCode::from(2)
@@ -53,12 +56,18 @@ pub fn run_cli() -> impl std::process::Termination {
         }
     }
 }
-fn run_cli_impl() -> Result<(), pico_args::Error> {
+
+pub enum SubcommandStatus {
+    Normal,
+    ChecksFailed,
+}
+
+fn run_cli_impl() -> Result<SubcommandStatus, pico_args::Error> {
     let mut args = pico_args::Arguments::from_env();
 
     if args.contains("--help") {
         print!("{USAGE}");
-        return Ok(());
+        return Ok(SubcommandStatus::Normal);
     }
 
     fn requested_edition(args: &mut pico_args::Arguments) -> Result<Edition, pico_args::Error> {
@@ -270,7 +279,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         });
     }
 
-    match action {
+    Ok(match action {
         Action::Test { inputs } => run_test_subcommand(inputs),
         Action::Compare {
             inputs,
@@ -321,7 +330,5 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             cleaning,
             lowering,
         ),
-    }
-
-    Ok(())
+    })
 }

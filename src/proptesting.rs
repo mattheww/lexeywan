@@ -5,9 +5,12 @@ use proptest::{
     test_runner::{Config, TestCaseError, TestError, TestRunner},
 };
 
-use crate::comparison::{compare, Comparison};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::utils::escape_for_display;
+use crate::{
+    command_line::SubcommandStatus,
+    comparison::{compare, Comparison},
+};
 use crate::{CleaningMode, Edition, Lowering};
 
 pub use self::strategies::DEFAULT_STRATEGY;
@@ -23,7 +26,7 @@ pub fn run_proptests(
     edition: Edition,
     cleaning: CleaningMode,
     lowering: Lowering,
-) {
+) -> SubcommandStatus {
     println!("Running property tests with strategy {strategy_name} for {count} iterations");
     let mut runner = TestRunner::new(Config {
         cases: count,
@@ -40,16 +43,21 @@ pub fn run_proptests(
         }
     });
     match result {
-        Ok(_) => println!("No discrepancies found"),
+        Ok(_) => {
+            println!("No discrepancies found");
+            SubcommandStatus::Normal
+        }
         Err(TestError::Fail(reason, value)) => {
             println!(
                 "Found minimal failing case: {}: {}",
                 escape_for_display(&value),
                 reason
             );
+            SubcommandStatus::ChecksFailed
         }
         Err(TestError::Abort(reason)) => {
             println!("Proptest aborted: {reason}");
+            SubcommandStatus::ChecksFailed
         }
     }
 }

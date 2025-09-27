@@ -6,13 +6,14 @@
 
 use std::io::Write as _;
 
+use crate::command_line::SubcommandStatus;
 use crate::comparison::{compare, Comparison};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::{CleaningMode, Edition, Lowering, ALL_EDITIONS, LATEST_EDITION};
 
 /// Implements the `test` (default) CLI command.
-pub fn run_test_subcommand(inputs: &[&str]) {
+pub fn run_test_subcommand(inputs: &[&str]) -> SubcommandStatus {
     use {CleaningMode::*, Lowering::*};
     let mut any_failed = false;
     let start = |label| {
@@ -50,6 +51,9 @@ pub fn run_test_subcommand(inputs: &[&str]) {
     }
     if any_failed {
         println!("*** failed ***");
+        SubcommandStatus::ChecksFailed
+    } else {
+        SubcommandStatus::Normal
     }
 }
 
@@ -83,7 +87,7 @@ fn compare_via_decl(inputs: &[&str], edition: Edition) -> Comparison {
 }
 
 /// Implements the `identcheck` CLI command.
-pub fn run_identcheck_subcommand() {
+pub fn run_identcheck_subcommand() -> SubcommandStatus {
     // This will report errors if there's a unicode version mismatch.
     // At present I think CleanShebang is the fastest mode
     let edition = LATEST_EDITION;
@@ -107,5 +111,10 @@ pub fn run_identcheck_subcommand() {
     println!("\n{passes} passed, {failures} failed");
     if model_errors != 0 {
         println!("*** {model_errors} model errors ***");
+    }
+    if failures == 0 && model_errors == 0 {
+        SubcommandStatus::Normal
+    } else {
+        SubcommandStatus::ChecksFailed
     }
 }
