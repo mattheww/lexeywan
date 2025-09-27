@@ -74,7 +74,7 @@ the attribute's value is **none**.
 The table says "(may be **none**)" in these cases.
 
 If for any input the above rules don't result in a unique well-defined attribute value,
-it's a bug in this specification.
+it's a bug in this writeup.
 
 In other cases the attributes table entry defines the attribute value explicitly,
 depending on the characters consumed by the pretoken nonterminal or on which subexpression of the pretoken nonterminal matched.
