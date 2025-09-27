@@ -5,17 +5,14 @@ use crate::simple_reports::{
     run_coarse_subcommand, run_compare_subcommand, run_decl_compare_subcommand,
     run_identcheck_subcommand, run_inspect_subcommand, DetailsMode,
 };
-use crate::{testcases, CleaningMode, Edition, Lowering};
+use crate::{testcases, CleaningMode, Edition, Lowering, LATEST_EDITION};
 
 const USAGE: &str = "\
-Usage: lexeywan [global-opts] [<subcommand>] [...options]
-
-global-opts:
-  --edition=2015|2021|*2024
+Usage: lexeywan [<subcommand>] [...options]
 
 Subcommands:
  *compare       [suite-opts] [comparison-opts] [dialect-opts]
-  decl-compare  [suite-opts] [comparison-opts]
+  decl-compare  [suite-opts] [comparison-opts] [--edition=2015|2021|*2024]
   inspect       [suite-opts] [dialect-opts]
   coarse        [suite-opts] [dialect-opts]
   identcheck
@@ -27,6 +24,7 @@ suite-opts (specify at most one):
   --xfail: run the tests which are expected to to fail
 
 dialect-opts:
+  --edition=2015|2021|*2024
   --cleaning=none|*shebang|shebang-and-frontmatter
   --lower-doc-comments
 
@@ -61,20 +59,24 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         return Ok(());
     }
 
-    let edition = match args
-        .opt_value_from_str::<_, String>("--edition")?
-        .as_deref()
-    {
-        Some("2015") => Edition::E2015,
-        Some("2021") => Edition::E2021,
-        Some("2024") => Edition::E2024,
-        None => Edition::E2024,
-        _ => {
-            return Err(pico_args::Error::ArgumentParsingFailed {
-                cause: "unknown edition".into(),
-            })
-        }
-    };
+    fn requested_edition(args: &mut pico_args::Arguments) -> Result<Edition, pico_args::Error> {
+        Ok(
+            match args
+                .opt_value_from_str::<_, String>("--edition")?
+                .as_deref()
+            {
+                Some("2015") => Edition::E2015,
+                Some("2021") => Edition::E2021,
+                Some("2024") => Edition::E2024,
+                None => LATEST_EDITION,
+                _ => {
+                    return Err(pico_args::Error::ArgumentParsingFailed {
+                        cause: "unknown edition".into(),
+                    })
+                }
+            },
+        )
+    }
 
     fn requested_cleaning_mode(
         args: &mut pico_args::Arguments,
@@ -141,6 +143,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs: &'static [&'static str],
             show_failures_only: bool,
             details_mode: DetailsMode,
+            edition: Edition,
             cleaning: CleaningMode,
             lowering: Lowering,
         },
@@ -148,14 +151,17 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs: &'static [&'static str],
             show_failures_only: bool,
             details_mode: DetailsMode,
+            edition: Edition,
         },
         Inspect {
             inputs: &'static [&'static str],
+            edition: Edition,
             cleaning: CleaningMode,
             lowering: Lowering,
         },
         Coarse {
             inputs: &'static [&'static str],
+            edition: Edition,
             cleaning: CleaningMode,
             lowering: Lowering,
         },
@@ -164,6 +170,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             strategy_name: String,
             count: u32,
             verbosity: Verbosity,
+            edition: Edition,
             cleaning: CleaningMode,
             lowering: Lowering,
         },
@@ -174,6 +181,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs: requested_inputs(args),
             show_failures_only,
             details_mode: requested_details_mode(args)?,
+            edition: requested_edition(args)?,
             cleaning: requested_cleaning_mode(args)?,
             lowering: requested_lowering(args),
         })
@@ -184,6 +192,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs: requested_inputs(args),
             show_failures_only,
             details_mode: requested_details_mode(args)?,
+            edition: requested_edition(args)?,
         })
     }
     let action = match args.subcommand()?.as_deref() {
@@ -191,11 +200,13 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         Some("decl-compare") => decl_compare_action(&mut args)?,
         Some("inspect") => Action::Inspect {
             inputs: requested_inputs(&mut args),
+            edition: requested_edition(&mut args)?,
             cleaning: requested_cleaning_mode(&mut args)?,
             lowering: requested_lowering(&mut args),
         },
         Some("coarse") => Action::Coarse {
             inputs: requested_inputs(&mut args),
+            edition: requested_edition(&mut args)?,
             cleaning: requested_cleaning_mode(&mut args)?,
             lowering: requested_lowering(&mut args),
         },
@@ -229,6 +240,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
                 strategy_name,
                 count,
                 verbosity,
+                edition: requested_edition(&mut args)?,
                 cleaning: requested_cleaning_mode(&mut args)?,
                 lowering: requested_lowering(&mut args),
             }
@@ -251,6 +263,7 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
         Action::Compare {
             inputs,
             show_failures_only,
+            edition,
             details_mode,
             cleaning,
             lowering,
@@ -266,22 +279,26 @@ fn run_cli_impl() -> Result<(), pico_args::Error> {
             inputs,
             show_failures_only,
             details_mode,
+            edition,
         } => run_decl_compare_subcommand(inputs, edition, details_mode, show_failures_only),
         Action::Inspect {
             inputs,
+            edition,
             cleaning,
             lowering,
         } => run_inspect_subcommand(inputs, edition, cleaning, lowering),
         Action::Coarse {
             inputs,
+            edition,
             cleaning,
             lowering,
         } => run_coarse_subcommand(inputs, edition, cleaning, lowering),
-        Action::IdentCheck => run_identcheck_subcommand(edition),
+        Action::IdentCheck => run_identcheck_subcommand(),
         Action::PropTest {
             strategy_name,
             count,
             verbosity,
+            edition,
             cleaning,
             lowering,
         } => proptesting::run_proptests(

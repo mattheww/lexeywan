@@ -10,7 +10,6 @@
 use std::fmt::Debug;
 
 use crate::cleaning::{self, CleaningOutcome};
-use crate::combination;
 use crate::comparison::{compare, Comparison, Verdict};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
@@ -23,6 +22,7 @@ use crate::tree_construction;
 use crate::tree_flattening::flatten;
 use crate::trees::Forest;
 use crate::utils::escape_for_display;
+use crate::{combination, LATEST_EDITION};
 use crate::{CleaningMode, Edition, Lowering};
 
 /// Implements the `compare` (default) CLI command.
@@ -107,9 +107,13 @@ pub fn run_coarse_subcommand(
 }
 
 /// Implements the `identcheck` CLI command.
-pub fn run_identcheck_subcommand(edition: Edition) {
+pub fn run_identcheck_subcommand() {
     // At present I think CleanShebang is the fastest mode
-    show_identcheck(edition, CleaningMode::CleanShebang, Lowering::NoLowering);
+    show_identcheck(
+        LATEST_EDITION,
+        CleaningMode::CleanShebang,
+        Lowering::NoLowering,
+    );
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]

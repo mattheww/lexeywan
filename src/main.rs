@@ -32,6 +32,8 @@ enum Edition {
     E2024,
 }
 
+const LATEST_EDITION: Edition = Edition::E2024;
+
 #[derive(Copy, Clone, PartialEq, Eq)]
 enum Lowering {
     /// Omit the "Convert doc-comments to attributes" pass
