@@ -28,6 +28,7 @@
 
 - [Frontmatter grammar](./frontmatter_grammar.md)
 - [Complete pretokenisation grammar](./complete_pretoken_grammar.md)
+- [Reimplementation CLI](./reimplementation_cli.md)
 
 # Discussion
 

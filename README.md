@@ -18,13 +18,11 @@ See also the [rendered description][1].
 
 ## Running the tests
 
-To see what's available from the CLI:
+See [Reimplementation command-line interface] for what's available from the CLI:
 
-```
-cargo run -- --help
-```
+[Reimplementation command-line interface]: https://mjw.woodcraft.me.uk/2025-lexeywan//reimplementation_cli.html
 
-Note the provided `rust-toolchain.toml` will cause this to install the required nightly version of `rustc`.
+Note the provided `rust-toolchain.toml` will cause `cargo run` to install the required nightly version of `rustc`.
 
 
 ## Building the description
