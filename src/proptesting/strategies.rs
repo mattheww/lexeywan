@@ -29,10 +29,6 @@ pub const SIMPLE_STRATEGIES: &[(&str, &str)] = [
 ]
 .as_slice();
 
-pub(crate) fn any_char() -> BoxedStrategy<String> {
-    proptest::char::any().prop_map(|c| c.to_string()).boxed()
-}
-
 /// Strategy returning sequences made from a mix of some of the simple strategies.
 pub(crate) fn mix() -> BoxedStrategy<String> {
     // These are shortened from the simple strategies above

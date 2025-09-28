@@ -93,7 +93,7 @@ enum ComparisonStatus {
 
 /// Returns a list of the names of the available strategies.
 pub fn strategy_names() -> Vec<&'static str> {
-    let mut names = vec!["any-char", "mix"];
+    let mut names = vec!["mix"];
     names.extend(SIMPLE_STRATEGIES.iter().map(|(name, _)| name).copied());
     names
 }
@@ -105,9 +105,6 @@ fn named_strategy(name: &str) -> Option<BoxedStrategy<String>> {
         .map(|(_, strategy)| strategy.boxed());
     if strategy.is_some() {
         return strategy;
-    }
-    if name == "any-char" {
-        return Some(strategies::any_char());
     }
     if name == "mix" {
         return Some(strategies::mix());
