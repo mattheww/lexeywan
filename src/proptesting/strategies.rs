@@ -23,7 +23,7 @@ pub const SIMPLE_STRATEGIES: &[(&str, &str)] = [
     ("crs",                    r#"[\\/*!"'#rbcx\r\n ]{1,10}"#),
     ("numeric-literal",        r#"[01][-+._012389abcdefghoxABCDEYZHOX·]{1,16}"#),
     ("numeric-literal-narrow", r#"[01][-+._019aeE·]{1,12}"#),
-    ("shebang",                r#"([!#\na/*]|\[!?attrlike\]){1,12}"#),
+    ("shebang",                r#"([!#\na/*🦀]|\[!?attrlike\]){1,12}"#),
     ("frontmatter",            r#"(---|[-._a2🦀 \r\n\x0c]){1,20}"#),
     ("delimiters",             r#"[\\[\\](){} a]{1,12}"#),
 ]
