@@ -79,7 +79,7 @@ fn check_lexing(
     let lex_via_peg = regularised_from_peg(input, edition, cleaning, lowering);
     match compare(&rustc, &lex_via_peg) {
         Comparison::Agree => ComparisonStatus::Pass,
-        Comparison::Differ => ComparisonStatus::Fail("rustc and lex_via_peg disagree".into()),
+        Comparison::Differ => ComparisonStatus::Fail(format!("disagreement for «{input}»")),
         Comparison::ModelErrors => ComparisonStatus::Fail("model error".into()),
     }
 }
