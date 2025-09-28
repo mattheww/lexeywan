@@ -1,7 +1,9 @@
 //! Transformations we make to input text before tokenisation.
 //!
-//! See "Processing that happens before tokenising" for the behaviour we're
-//! imitating.
+//! See "Processing that happens before tokenising" for the behaviour we're imitating.
+//!
+//! Note the reimplementation doesn't model the "Decoding" step (it isn't interesting, and it's more
+//! convenient to have the testcases supplied as `str`).
 
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::{FineToken, FineTokenData};
