@@ -14,7 +14,7 @@ pub const SIMPLE_STRATEGIES: &[(&str, &str)] = [
     ("line-comment",           r#"[/! a\n]{1,10}"#),
     ("punctuation",            r#"[-!#$%&*+,./:;<=>?@^_|~ ]{1,8}"#),
     ("identifier",             "[_#ra1£·áΩ🦀\x07\u{FFFF}. ]{1,12}"),
-    ("lifetime",               "['#ra1£·🦀]{1,8}"),
+    ("lifetime",               "['#ra1£·🦀 ]{1,8}"),
     ("string-literal",         r#"[\\\n#'"rbcx _]{1,12}"#),
     ("unicode-escape",         r#""\\u\{.{0,8}[} ]""#),
     ("hashed-raw",             r#"(r|br|cr)#[\\\n#"rx _]{1,10}"#),
