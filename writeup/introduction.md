@@ -4,11 +4,10 @@ This document contains a description of `rustc`'s lexer,
 which is aiming to be both correct and verifiable.
 
 It's accompanied by a reimplementation of the lexer in Rust based on that description
-(called the "comparable implementation" below),
 and a framework for comparing its output to `rustc`'s.
 
 One component of the description is a [Parsing Expression Grammar](complete_pretoken_grammar.md);
-the comparable implementation uses the [Pest] library to generate the corresponding parser.
+the reimplementation uses the [Pest] library to generate the corresponding parser.
 
 
 ## Scope
@@ -29,7 +28,7 @@ That means it describes raw lifetimes/labels and the additional reservations in 
 
 Other statements in this document are intended to be true as of September 2025.
 
-The comparable implementation is intended to be compiled against (and compared against)\
+The reimplementation is intended to be compiled against (and compared against)\
 `rustc 1.92.0-nightly (caccb4d03 2025-09-24)`
 
 
@@ -43,7 +42,7 @@ This document describes the editions supported by Rust 1.90:
 
 There are no differences in lexing behaviour between the 2015 and 2018 editions.
 
-In the comparable implementation, "2015" is used to refer to the common behaviour of Rust 2015 and Rust 2018.
+In the reimplementation, "2015" is used to refer to the common behaviour of Rust 2015 and Rust 2018.
 
 
 ### Accepted input
@@ -80,7 +79,7 @@ In particular, this representation may be unsuitable for direct use by a descrip
 - there's a single "kind" of token for all punctuation;
 - sequences of punctuation such as `::` aren't glued together to make a single token.
 
-(The comparable implementation includes code to make compound punctuation tokens so they can be compared with `rustc`'s, and to organise them into delimited trees, but those processes aren't described here.)
+(The reimplementation includes code to make compound punctuation tokens so they can be compared with `rustc`'s, and to organise them into delimited trees, but those processes aren't described here.)
 
 
 ### Licence

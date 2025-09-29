@@ -9,7 +9,7 @@ Parsing Expression Grammars are described informally in §2 of [Ford 2004][peg-p
 ### Grammar notation
 
 The notation used in this document is the [variant used by][pest-grammar] the [Pest] Rust library,
-so that it's easy to keep in sync with the comparable implementation.
+so that it's easy to keep in sync with the reimplementation.
 
 In particular:
 

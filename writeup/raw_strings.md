@@ -17,7 +17,7 @@ along similar lines to the stack extension described below
 ### Pest's stack extension
 
 Pest provides a [stack extension][pest-stack] which is a good fit for this requirement,
-and is used in the comparable implementation.
+and is used in the reimplementation.
 
 It looks like this:
 ```
