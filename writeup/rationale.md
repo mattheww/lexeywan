@@ -4,6 +4,7 @@
 
 [Pretokenising and reprocessing](#pretokenising-and-reprocessing)\
 [Using a Parsing Expression Grammar](#using-a-parsing-expression-grammar)\
+[Modelling lifetimes and labels](#modelling-lifetimes-and-labels)\
 [Producing tokens with attributes](#producing-tokens-with-attributes)
 
 
@@ -125,6 +126,20 @@ It often peeks ahead for a few characters, and it tries to avoid backtracking.
 
 This is a close fit for the behaviour modelled by PEGs,
 so there's good reason to suppose that it will be easy to update this model for future versions of Rust.
+
+
+### Modelling lifetimes and labels
+
+Like the Reference, this model has a separate kind of token for lifetime-or-label.
+
+It would be nice to be able to treat them as two fine-grained tokens (`'` followed by an identifier),
+like they are treated in procedural macro input,
+but I think it's impractical.
+
+The main difficulty is dealing with cases like `'r"abc"`.
+Rust accepts that as a lifetime-or-label `'r` followed by a string literal `"abc"`.
+A model which treats `'` as a complete token would analyse this as `'` followed by a raw string literal `r"abc"`.
+This problem can occur with any prefix (including a reserved prefix).
 
 
 ### Producing tokens with attributes

@@ -58,6 +58,10 @@ Recall that the `IDENT` nonterminal is defined as follows:
 
 > Note: The `!"'"` at the end of the expression makes sure that forms like `'aaa'bbb` are not accepted.
 
+> See [Modelling lifetimes and labels] for a discussion of why this model doesn't simply treat `'` as punctuation.
+
+[Modelling lifetimes and labels]: rationale.md#modelling-lifetimes-and-labels
+
 
 #### Raw identifier { .rule }
 
