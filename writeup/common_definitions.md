@@ -2,6 +2,8 @@
 
 Some grammar definitions which are needed on the following pages appear below.
 
+See also [special terminals].
+
 
 #### Identifier-like forms
 
@@ -12,3 +14,4 @@ Some grammar definitions which are needed on the following pages appear below.
 ```
 
 [character]:definitions.md#character
+[special terminals]:pegs.md#special-terminals
