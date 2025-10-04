@@ -381,6 +381,7 @@ pub const LONGLIST: &[&str] = [
     r##" r"xxx"_a "##,
     r##" r"xxx"__ "##,
     r##" r"xxx"_ "##,
+    r##" r"xxx"_" "##,
     r##" r#"xxx"#_a "##,
     r##" r#"xxx"#__ "##,
     r##" r#"xxx"#_ "##,
