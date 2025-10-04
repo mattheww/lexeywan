@@ -81,6 +81,23 @@ each of the expressions marked as `HASHES²` fails unless the text it matches is
 > Note: `Reserved_literal_2021` catches both reserved forms and unterminated `b'` literals.
 
 
+#### Reserved single-quoted literal { .rule }
+
+##### Grammar
+```
+{{#include pretokenise_anchored.pest:reserved_single_quoted_literal}}
+```
+
+##### Pretoken kind
+`Reserved`
+
+##### Attributes
+(none)
+
+> Note: This reservation is to catch forms like `'aaa'bbb`,
+> so this definition must come before `Lifetime_or_label`.
+
+
 #### Reserved guard (Rust 2024) { .rule }
 
 ##### Grammar

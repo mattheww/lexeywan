@@ -56,7 +56,7 @@ Recall that the `IDENT` nonterminal is defined as follows:
 |:----------------|:-------------|
 | <var>name</var> | from `IDENT` |
 
-> Note: The `!"'"` at the end of the expression makes sure that forms like `'aaa'bbb` are not accepted.
+> Note: The `Reserved_single_quoted_literal` definitions make sure that forms like `'aaa'bbb` are not accepted.
 
 > See [Modelling lifetimes and labels] for a discussion of why this model doesn't simply treat `'` as punctuation.
 

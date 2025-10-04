@@ -8,6 +8,7 @@ PRETOKEN_2015 = {
     Double_quoted_literal_2015 |
     Raw_double_quoted_literal_2015 |
     Unterminated_literal_2015 |
+    Reserved_single_quoted_literal_2015 |
     Float_literal |
     Reserved_float |
     Integer_literal |
@@ -27,6 +28,7 @@ PRETOKEN_2021 = {
     Double_quoted_literal_2021 |
     Raw_double_quoted_literal_2021 |
     Reserved_literal_2021 |
+    Reserved_single_quoted_literal_2021 |
     Float_literal |
     Reserved_float |
     Integer_literal |
@@ -48,6 +50,7 @@ PRETOKEN_2024 = {
     Double_quoted_literal_2021 |
     Raw_double_quoted_literal_2021 |
     Reserved_literal_2021 |
+    Reserved_single_quoted_literal_2021 |
     Reserved_guard_2024 |
     Float_literal |
     Reserved_float |
@@ -150,6 +153,12 @@ Unterminated_literal_2015 = { "r\"" | "br\"" | "b'" }
 Reserved_literal_2021 = { IDENT ~ ( "\"" | "'" ) }
 // ANCHOR_END: unterminated_literal
 
+// ANCHOR: reserved_single_quoted_literal
+Reserved_single_quoted_literal_2015 = { "'" ~ IDENT ~ "'" }
+Reserved_single_quoted_literal_2021 = { "'" ~ "r#" ? ~ IDENT ~ "'" }
+// ANCHOR_END: reserved_single_quoted_literal
+
+
 // ANCHOR: reserved_guard
 Reserved_guard_2024 = { "##" | "#\"" }
 // ANCHOR_END: reserved_guard
@@ -223,7 +232,7 @@ SUFFIX_NO_E = { !("e"|"E") ~ SUFFIX }
 
 
 // ANCHOR: raw_lifetime_or_label_2021
-Raw_lifetime_or_label_2021 = { "'r#" ~ IDENT ~ !"'" }
+Raw_lifetime_or_label_2021 = { "'r#" ~ IDENT }
 // ANCHOR_END: raw_lifetime_or_label_2021
 
 // ANCHOR: reserved_lifetime_or_label_prefix_2021
@@ -231,7 +240,7 @@ Reserved_lifetime_or_label_prefix_2021 = { "'" ~ IDENT ~ "#" }
 // ANCHOR_END: reserved_lifetime_or_label_prefix_2021
 
 // ANCHOR: lifetime_or_label
-Lifetime_or_label = { "'" ~ IDENT ~ !"'" }
+Lifetime_or_label = { "'" ~ IDENT }
 // ANCHOR_END: lifetime_or_label
 
 // ANCHOR: raw_identifier

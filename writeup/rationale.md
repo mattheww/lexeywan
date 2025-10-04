@@ -109,7 +109,8 @@ There are two cases where the Reference currently describes the lexer's behaviou
 - for (possibly raw) lifetime-or-label, to prevent `'ab'c'` being analysed as `'ab` followed by `'c`
 - for floating-point literals, to make sure that `1.a` is analysed as `1` `.` `a` rather than `1.` `a`
 
-These are easily modelled using PEG predicates.
+These are easily modelled using PEG predicates
+(though this writeup prefers a reserved form for the former).
 
 
 #### Handling raw strings

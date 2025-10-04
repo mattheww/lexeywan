@@ -175,6 +175,9 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
             })
         }
         Rule::Unterminated_literal_2015 | Rule::Reserved_literal_2021 => Ok(PretokenData::Reserved),
+        Rule::Reserved_single_quoted_literal_2015 | Rule::Reserved_single_quoted_literal_2021 => {
+            Ok(PretokenData::Reserved)
+        }
         Rule::Reserved_guard_2024 => Ok(PretokenData::Reserved),
         Rule::Float_literal => {
             let mut body = None;
