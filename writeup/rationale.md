@@ -2,10 +2,24 @@
 
 ##### Table of contents
 
+[Separating lexing from parsing](#separating-lexing-from-parsing)\
 [Pretokenising and reprocessing](#pretokenising-and-reprocessing)\
 [Using a Parsing Expression Grammar](#using-a-parsing-expression-grammar)\
 [Modelling lifetimes and labels](#modelling-lifetimes-and-labels)\
 [Producing tokens with attributes](#producing-tokens-with-attributes)
+
+
+### Separating lexing from parsing
+
+This model assumes that we want to define a process of tokenisation,
+turning a sequence of characters into a sequence of tokens,
+and that there would be a separate grammar using those tokens as its terminals.
+
+The alternative is to use a single "scannerless" grammar,
+which combines lexical analysis and parsing into a single process.
+
+Rust's parser is not easy to model,
+and I think it's likely that the best formalism for describing Rust's parser wouldn't also be a good formalism for describing its lexer.
 
 
 ### Pretokenising and reprocessing
