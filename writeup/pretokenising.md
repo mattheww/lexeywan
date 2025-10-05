@@ -7,11 +7,11 @@ Pretokenisation is described by a [Parsing Expression Grammar](pegs.md) which de
 
 The grammar defines an _edition nonterminal_ for each Rust edition:
 
-| Edition | Edition nonterminal |
-|---------|---------------------|
-| 2015    | `PRETOKEN_2015`     |
-| 2021    | `PRETOKEN_2021`     |
-| 2024    | `PRETOKEN_2024`     |
+| Edition      | Edition nonterminal |
+|--------------|---------------------|
+| 2015 or 2018 | `PRETOKEN_2015`     |
+| 2021         | `PRETOKEN_2021`     |
+| 2024         | `PRETOKEN_2024`     |
 
 Each edition nonterminal is defined as a choice expression, each of whose subexpressions is a single nonterminal (a _pretoken nonterminal_).
 
