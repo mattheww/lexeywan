@@ -11,8 +11,8 @@ Each pretoken has a *kind*, and possibly also some attributes, as described in t
 | `LineComment`            | <var>comment content</var>                                       |
 | `BlockComment`           | <var>comment content</var>                                       |
 | `Punctuation`            | <var>mark</var>                                                  |
-| `Identifier`             | <var>identifier</var>                                            |
-| `RawIdentifier`          | <var>identifier</var>                                            |
+| `Ident`                  | <var>identifier</var>                                            |
+| `RawIdent`               | <var>identifier</var>                                            |
 | `LifetimeOrLabel`        | <var>name</var>                                                  |
 | `RawLifetimeOrLabel`     | <var>name</var>                                                  |
 | `SingleQuotedLiteral`    | <var>prefix</var>, <var>literal content</var>, <var>suffix</var> |

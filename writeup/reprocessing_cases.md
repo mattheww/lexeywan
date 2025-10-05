@@ -5,8 +5,8 @@
 [`LineComment`](#linecomment)\
 [`BlockComment`](#blockcomment)\
 [`Punctuation`](#punctuation)\
-[`Identifier`](#identifier)\
-[`RawIdentifier`](#rawidentifier)\
+[`Ident`](#ident)\
+[`RawIdent`](#rawident)\
 [`LifetimeOrLabel`](#lifetimeorlabel)\
 [`RawLifetimeOrLabel`](#rawlifetimeorlabel)\
 [`SingleQuotedLiteral`](#singlequotedliteral)\
@@ -117,22 +117,22 @@ A `Punctuation` pretoken is always accepted.
 <var>mark</var>: copied
 
 
-#### `Identifier` { .rcase }
+#### `Ident` { .rcase }
 
 Fine-grained token kind produced:
-`Identifier`
+`Ident`
 
-An `Identifier` pretoken is always accepted.
+An `Ident` pretoken is always accepted.
 
 
 ##### Attributes
 <var>represented identifier</var>: NFC-normalised form of the pretoken's <var>identifier</var>
 
 
-#### `RawIdentifier` { .rcase }
+#### `RawIdent` { .rcase }
 
 Fine-grained token kind produced:
-`RawIdentifier`
+`RawIdent`
 
 
 ##### Attributes

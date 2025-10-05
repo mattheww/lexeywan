@@ -261,7 +261,7 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
                 name: extracted(name, "missing name")?,
             })
         }
-        Rule::Raw_identifier => {
+        Rule::Raw_ident => {
             let mut identifier = None;
             for sub in pair.into_inner() {
                 match sub.as_rule() {
@@ -271,12 +271,12 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
                     _ => {}
                 }
             }
-            Ok(PretokenData::RawIdentifier {
+            Ok(PretokenData::RawIdent {
                 identifier: extracted(identifier, "missing identifier")?,
             })
         }
         Rule::Reserved_prefix_2015 | Rule::Reserved_prefix_2021 => Ok(PretokenData::Reserved),
-        Rule::Identifier => Ok(PretokenData::Identifier {
+        Rule::Ident => Ok(PretokenData::Ident {
             identifier: pair.as_str().into(),
         }),
         Rule::Punctuation => {

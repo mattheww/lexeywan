@@ -29,10 +29,10 @@ pub enum PretokenData {
     Punctuation {
         mark: char,
     },
-    Identifier {
+    Ident {
         identifier: Charseq,
     },
-    RawIdentifier {
+    RawIdent {
         identifier: Charseq,
     },
     LifetimeOrLabel {

@@ -72,7 +72,7 @@ fn lowered(
             // The name is always ascii so we don't have to worry about normalisation
             stringified: name.into(),
         },
-        data: FineTokenData::Identifier {
+        data: FineTokenData::Ident {
             represented_identifier: name.into(),
         },
     };

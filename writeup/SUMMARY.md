@@ -16,7 +16,7 @@
     - [Whitespace and comment pretokens](./whitespace_and_comment_pretokens.md)
     - [String and byte literal pretokens](./string_and_byte_literal_pretokens.md)
     - [Numeric literal pretokens](./numeric_literal_pretokens.md)
-    - [Identifier pretokens](./identifier_pretokens.md)
+    - [Identifier-like pretokens](./identifier_pretokens.md)
     - [Punctuation pretokens](./punctuation_pretokens.md)
   - [Fine-grained tokens](./fine_grained_tokens.md)
   - [Reprocessing](./reprocessing.md)

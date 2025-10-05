@@ -13,9 +13,9 @@ PRETOKEN_2015 = {
     Reserved_float |
     Integer_literal |
     Lifetime_or_label |
-    Raw_identifier |
+    Raw_ident |
     Reserved_prefix_2015 |
-    Identifier |
+    Ident |
     Punctuation
 }
 
@@ -35,9 +35,9 @@ PRETOKEN_2021 = {
     Raw_lifetime_or_label_2021 |
     Reserved_lifetime_or_label_prefix_2021 |
     Lifetime_or_label |
-    Raw_identifier |
+    Raw_ident |
     Reserved_prefix_2021 |
-    Identifier |
+    Ident |
     Punctuation
 }
 
@@ -58,9 +58,9 @@ PRETOKEN_2024 = {
     Raw_lifetime_or_label_2021 |
     Reserved_lifetime_or_label_prefix_2021 |
     Lifetime_or_label |
-    Raw_identifier |
+    Raw_ident |
     Reserved_prefix_2021 |
-    Identifier |
+    Ident |
     Punctuation
 }
 // ANCHOR_END: pretokens
@@ -243,18 +243,18 @@ Reserved_lifetime_or_label_prefix_2021 = { "'" ~ IDENT ~ "#" }
 Lifetime_or_label = { "'" ~ IDENT }
 // ANCHOR_END: lifetime_or_label
 
-// ANCHOR: raw_identifier
-Raw_identifier = { "r#" ~ IDENT }
-// ANCHOR_END: raw_identifier
+// ANCHOR: raw_ident
+Raw_ident = { "r#" ~ IDENT }
+// ANCHOR_END: raw_ident
 
 // ANCHOR: reserved_prefix
 Reserved_prefix_2015 = { "r#" | "br#" }
 Reserved_prefix_2021 = { IDENT ~ "#" }
 // ANCHOR_END: reserved_prefix
 
-// ANCHOR: identifier
-Identifier = { IDENT }
-// ANCHOR_END: identifier
+// ANCHOR: ident
+Ident = { IDENT }
+// ANCHOR_END: ident
 
 
 // ANCHOR: punctuation

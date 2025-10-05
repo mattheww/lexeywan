@@ -31,8 +31,8 @@ pub fn reprocess(pretoken: &Pretoken) -> Result<FineToken, Error> {
         PretokenData::LineComment { comment_content } => lex_line_comment(comment_content)?,
         PretokenData::BlockComment { comment_content } => lex_block_comment(comment_content)?,
         PretokenData::Punctuation { mark } => FineTokenData::Punctuation { mark: *mark },
-        PretokenData::Identifier { identifier } => lex_nonraw_identifier(identifier)?,
-        PretokenData::RawIdentifier { identifier } => lex_raw_identifier(identifier)?,
+        PretokenData::Ident { identifier } => lex_nonraw_ident(identifier)?,
+        PretokenData::RawIdent { identifier } => lex_raw_ident(identifier)?,
         PretokenData::LifetimeOrLabel { name } => {
             FineTokenData::LifetimeOrLabel { name: name.clone() }
         }
@@ -124,21 +124,21 @@ fn lex_block_comment(comment_content: &Charseq) -> Result<FineTokenData, Error> 
     })
 }
 
-/// Validates and interprets a non-raw identifier.
-fn lex_nonraw_identifier(identifier: &Charseq) -> Result<FineTokenData, Error> {
-    Ok(FineTokenData::Identifier {
+/// Validates and interprets a non-raw ident.
+fn lex_nonraw_ident(identifier: &Charseq) -> Result<FineTokenData, Error> {
+    Ok(FineTokenData::Ident {
         represented_identifier: identifier.nfc(),
     })
 }
 
-/// Validates and interprets a `r#...` raw identifier.
-fn lex_raw_identifier(identifier: &Charseq) -> Result<FineTokenData, Error> {
+/// Validates and interprets a `r#...` raw ident.
+fn lex_raw_ident(identifier: &Charseq) -> Result<FineTokenData, Error> {
     let represented_identifier = identifier.nfc();
     let s = represented_identifier.to_string();
     if s == "_" || s == "crate" || s == "self" || s == "super" || s == "Self" {
-        return Err(rejected("forbidden raw identifier"));
+        return Err(rejected("forbidden raw ident"));
     }
-    Ok(FineTokenData::RawIdentifier {
+    Ok(FineTokenData::RawIdent {
         represented_identifier,
     })
 }

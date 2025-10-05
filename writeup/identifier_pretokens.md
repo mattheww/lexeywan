@@ -1,4 +1,9 @@
-### Identifier, lifetime, and label pretokens
+### Ident, lifetime, and label pretokens
+
+This writeup uses the term <dfn>ident</dfn> to refer to a token that lexically has the form of an identifier,
+including keywords and lone underscore.
+
+> Note: the procedural macros system uses the name `Ident` to refer to what this writeup calls `Ident` and `RawIdent`.
 
 Recall that the `IDENT` nonterminal is defined as follows:
 
@@ -63,15 +68,15 @@ Recall that the `IDENT` nonterminal is defined as follows:
 [Modelling lifetimes and labels]: rationale.md#modelling-lifetimes-and-labels
 
 
-#### Raw identifier { .rule }
+#### Raw ident { .rule }
 
 ##### Grammar
 ```
-{{#include pretokenise_anchored.pest:raw_identifier}}
+{{#include pretokenise_anchored.pest:raw_ident}}
 ```
 
 ##### Pretoken kind
-`RawIdentifier`
+`RawIdent`
 
 ##### Attributes
 |                       |              |
@@ -96,15 +101,15 @@ Recall that the `IDENT` nonterminal is defined as follows:
 > Tokens added in future which match these reserved forms wouldn't necessarily be forms of identifier.
 
 
-#### (Non-raw) identifier { .rule }
+#### (Non-raw) ident { .rule }
 
 ##### Grammar
 ```
-{{#include pretokenise_anchored.pest:identifier}}
+{{#include pretokenise_anchored.pest:ident}}
 ```
 
 ##### Pretoken kind
-`Identifier`
+`Ident`
 
 ##### Attributes
 |                       |              |

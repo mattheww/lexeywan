@@ -10,8 +10,8 @@ Each fine-grained token has a <dfn>kind</dfn>, and possibly also some attributes
 | `LineComment`          | <var>style</var>, <var>body</var>                     |
 | `BlockComment`         | <var>style</var>, <var>body</var>                     |
 | `Punctuation`          | <var>mark</var>                                       |
-| `Identifier`           | <var>represented identifier</var>                     |
-| `RawIdentifier`        | <var>represented identifier</var>                     |
+| `Ident`                | <var>represented identifier</var>                     |
+| `RawIdent`             | <var>represented identifier</var>                     |
 | `LifetimeOrLabel`      | <var>name</var>                                       |
 | `RawLifetimeOrLabel`   | <var>name</var>                                       |
 | `CharacterLiteral`     | <var>represented character</var>, <var>suffix</var>   |
@@ -47,7 +47,7 @@ These attributes have the following types:
 
 At this stage:
 
-- Both <b>_</b> and keywords are treated as instances of `Identifier`.
+- Both <b>_</b> and keywords are treated as instances of `Ident`.
 - There are explicit tokens representing whitespace and comments.
 - Single-character tokens are used for all punctuation.
 - A lifetime (or label) is represented as a single token

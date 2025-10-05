@@ -38,10 +38,10 @@ pub enum FineTokenData {
     Punctuation {
         mark: char,
     },
-    Identifier {
+    Ident {
         represented_identifier: Charseq,
     },
-    RawIdentifier {
+    RawIdent {
         represented_identifier: Charseq,
     },
     LifetimeOrLabel {

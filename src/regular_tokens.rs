@@ -57,7 +57,7 @@ pub enum RegularTokenData {
     Punctuation {
         marks: Charseq,
     },
-    Identifier {
+    Ident {
         represented_identifier: Charseq,
         style: IdentifierStyle,
     },
@@ -151,7 +151,7 @@ pub fn regularise_from_rustc(forest: Forest<RustcToken>) -> Forest<RegularToken>
             RustcTokenData::Punctuation { marks } => RegularTokenData::Punctuation {
                 marks: marks.into(),
             },
-            RustcTokenData::Ident { style, identifier } => RegularTokenData::Identifier {
+            RustcTokenData::Ident { style, identifier } => RegularTokenData::Ident {
                 represented_identifier: identifier.into(),
                 style: style.into(),
             },
@@ -273,15 +273,15 @@ fn from_coarse_token_data(token_data: CoarseTokenData) -> RegularTokenData {
             body,
         },
         CoarseTokenData::Punctuation { marks } => RegularTokenData::Punctuation { marks },
-        CoarseTokenData::Identifier {
+        CoarseTokenData::Ident {
             represented_identifier,
-        } => RegularTokenData::Identifier {
+        } => RegularTokenData::Ident {
             represented_identifier,
             style: IdentifierStyle::NonRaw,
         },
-        CoarseTokenData::RawIdentifier {
+        CoarseTokenData::RawIdent {
             represented_identifier,
-        } => RegularTokenData::Identifier {
+        } => RegularTokenData::Ident {
             represented_identifier,
             style: IdentifierStyle::Raw,
         },

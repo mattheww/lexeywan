@@ -51,10 +51,10 @@ pub enum CoarseTokenData {
     Punctuation {
         marks: Charseq,
     },
-    Identifier {
+    Ident {
         represented_identifier: Charseq,
     },
-    RawIdentifier {
+    RawIdent {
         represented_identifier: Charseq,
     },
     LifetimeOrLabel {
@@ -349,14 +349,14 @@ impl TryFrom<FineTokenData> for CoarseTokenData {
             FineTokenData::Punctuation { mark } => {
                 Ok(CoarseTokenData::Punctuation { marks: mark.into() })
             }
-            FineTokenData::Identifier {
+            FineTokenData::Ident {
                 represented_identifier,
-            } => Ok(CoarseTokenData::Identifier {
+            } => Ok(CoarseTokenData::Ident {
                 represented_identifier,
             }),
-            FineTokenData::RawIdentifier {
+            FineTokenData::RawIdent {
                 represented_identifier,
-            } => Ok(CoarseTokenData::RawIdentifier {
+            } => Ok(CoarseTokenData::RawIdent {
                 represented_identifier,
             }),
             FineTokenData::LifetimeOrLabel { name } => {
