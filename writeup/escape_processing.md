@@ -54,9 +54,14 @@ The escape sequence consists of <b>\u{</b>,
 followed by a hexadecimal digit,
 followed by a sequence of characters each of which is a hexadecimal digit or <b>_</b>,
 followed by <b>}</b>,
-with the restriction that there are no more than six hexadecimal digits in the entire escape sequence
+with the following restrictions:
 
-The escaped value is the character whose [Unicode scalar value] is the result of interpreting the hexadecimal digits contained in the escape sequence as a hexadecimal integer, as if by [`u32::from_str_radix`] with radix 16.
+ - there are no more than six hexadecimal digits in the entire escape sequence; and
+ - the result of interpreting the hexadecimal digits contained in the escape sequence as a hexadecimal integer,
+   as if by [`u32::from_str_radix`] with radix 16,
+   is a [Unicode scalar value].
+
+The escaped value is the character with that Unicode scalar value.
 
 
 #### String continuation escapes
