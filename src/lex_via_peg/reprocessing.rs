@@ -143,7 +143,7 @@ fn lex_raw_identifier(identifier: &Charseq) -> Result<FineTokenData, Error> {
     })
 }
 
-/// Validates and interprets a `r#...` raw identifier.
+/// Validates and interprets a `r#...` raw lifetime or label.
 fn lex_raw_lifetime_or_label(name: &Charseq) -> Result<FineTokenData, Error> {
     let s = name.to_string();
     if s == "_" || s == "crate" || s == "self" || s == "super" || s == "Self" {
