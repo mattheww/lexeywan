@@ -174,7 +174,7 @@ so that the description of numeric literal expressions doesn't have to.
 For identifiers, many parts of the spec will need a notion of equivalence
 (both for handling raw identifiers and for dealing with NFC normalisation),
 and some restrictions depend on the normalised form (see [ASCII identifiers]).
-I think it's best for the lexer to handle this by defining the <var>represented identifier</var>.
+I think it's best for the lexer to handle this by defining the <var>represented ident</var>.
 
 This document treats the lexer's "output" as a stream of tokens which have concrete attributes,
 but of course it would be equivalent (and I think more usual for a spec) to treat each attribute as an independent defined term,

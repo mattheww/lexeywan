@@ -41,7 +41,7 @@ pub enum RustcTokenData {
     },
     Ident {
         style: RustcIdentIsRaw,
-        identifier: String,
+        ident: String,
     },
     Lifetime {
         style: RustcIdentIsRaw,
@@ -198,7 +198,7 @@ fn token_from_ast_token(token: &Token, source_map: &SourceMap) -> RustcToken {
         TokenKind::CloseBracket => RustcTokenData::Punctuation { marks: "]" },
         TokenKind::Ident(symbol, style) => RustcTokenData::Ident {
             style: style.into(),
-            identifier: symbol.to_string(),
+            ident: symbol.to_string(),
         },
         TokenKind::Lifetime(symbol, style) => RustcTokenData::Lifetime {
             style: style.into(),

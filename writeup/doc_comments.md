@@ -9,7 +9,7 @@ except that each `LineComment` or `BlockComment` token whose <var>style</var> is
 - `Whitespace`
 - `Punctuation` with <var>mark</var> <b>!</b> (omitted if the comment token's <var>style</var> is **outer doc**)
 - `Punctuation` with <var>mark</var> <b>[</b>
-- `Ident` with <var>represented identifier</var> <b>doc</b>
+- `Ident` with <var>represented ident</var> <b>doc</b>
 - `Punctuation` with <var>mark</var> <b>=</b>
 - `Whitespace`
 - `RawStringLiteral` with the comment token's <var>body</var> as the <var>represented string</var> and empty <var>suffix</var>

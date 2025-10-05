@@ -34,7 +34,7 @@ Here's a partial list:
 | represented character      | Reference (recent)               |
 | represented bytes          | Reference (recent)               |
 | represented string         | Reference (recent)               |
-| represented identifier     | New                              |
+| represented ident          | New                              |
 | style (of a comment)       | rustc internal                   |
 | body (of a comment)        | Reference                        |
 
@@ -104,7 +104,7 @@ The list in the Reference is:
 - Item names in external blocks
 
 I believe this restriction is applied after NFC-normalisation,
-so it's best thought of as a restriction on the <var>represented identifier</var>.
+so it's best thought of as a restriction on the <var>represented ident</var>.
 
 
 #### Represented bytes for C strings

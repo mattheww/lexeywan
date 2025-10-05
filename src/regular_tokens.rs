@@ -58,7 +58,7 @@ pub enum RegularTokenData {
         marks: Charseq,
     },
     Ident {
-        represented_identifier: Charseq,
+        represented_ident: Charseq,
         style: IdentifierStyle,
     },
     LifetimeOrLabel {
@@ -151,8 +151,8 @@ pub fn regularise_from_rustc(forest: Forest<RustcToken>) -> Forest<RegularToken>
             RustcTokenData::Punctuation { marks } => RegularTokenData::Punctuation {
                 marks: marks.into(),
             },
-            RustcTokenData::Ident { style, identifier } => RegularTokenData::Ident {
-                represented_identifier: identifier.into(),
+            RustcTokenData::Ident { style, ident } => RegularTokenData::Ident {
+                represented_ident: ident.into(),
                 style: style.into(),
             },
             RustcTokenData::Lifetime {
@@ -273,16 +273,12 @@ fn from_coarse_token_data(token_data: CoarseTokenData) -> RegularTokenData {
             body,
         },
         CoarseTokenData::Punctuation { marks } => RegularTokenData::Punctuation { marks },
-        CoarseTokenData::Ident {
-            represented_identifier,
-        } => RegularTokenData::Ident {
-            represented_identifier,
+        CoarseTokenData::Ident { represented_ident } => RegularTokenData::Ident {
+            represented_ident,
             style: IdentifierStyle::NonRaw,
         },
-        CoarseTokenData::RawIdent {
-            represented_identifier,
-        } => RegularTokenData::Ident {
-            represented_identifier,
+        CoarseTokenData::RawIdent { represented_ident } => RegularTokenData::Ident {
+            represented_ident,
             style: IdentifierStyle::Raw,
         },
         CoarseTokenData::LifetimeOrLabel { name } => RegularTokenData::LifetimeOrLabel {

@@ -39,10 +39,10 @@ pub enum FineTokenData {
         mark: char,
     },
     Ident {
-        represented_identifier: Charseq,
+        represented_ident: Charseq,
     },
     RawIdent {
-        represented_identifier: Charseq,
+        represented_ident: Charseq,
     },
     LifetimeOrLabel {
         name: Charseq,

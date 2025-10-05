@@ -30,10 +30,10 @@ pub enum PretokenData {
         mark: char,
     },
     Ident {
-        identifier: Charseq,
+        ident: Charseq,
     },
     RawIdent {
-        identifier: Charseq,
+        ident: Charseq,
     },
     LifetimeOrLabel {
         name: Charseq,

@@ -64,14 +64,10 @@ fn stringify(token: &CoarseToken) -> Charseq {
     use crate::combination::CoarseTokenData::*;
     match &token.origin {
         crate::tokens_common::Origin::Natural { extent } => match &token.data {
-            Ident {
-                represented_identifier,
-            } => represented_identifier.clone(),
-            RawIdent {
-                represented_identifier,
-            } => ['r', '#']
+            Ident { represented_ident } => represented_ident.clone(),
+            RawIdent { represented_ident } => ['r', '#']
                 .iter()
-                .chain(represented_identifier.chars())
+                .chain(represented_ident.chars())
                 .copied()
                 .collect(),
             _ => extent.clone(),

@@ -81,7 +81,7 @@ Recall that the `IDENT` nonterminal is defined as follows:
 ##### Attributes
 |                       |              |
 |:----------------------|:-------------|
-| <var>identifier</var> | from `IDENT` |
+| <var>ident</var> | from `IDENT` |
 
 
 #### Reserved prefix { .rule }
@@ -114,7 +114,7 @@ Recall that the `IDENT` nonterminal is defined as follows:
 ##### Attributes
 |                       |              |
 |:----------------------|:-------------|
-| <var>identifier</var> | from `IDENT` |
+| <var>ident</var> | from `IDENT` |
 
 > Note: The Reference adds the following when discussing identifiers:
 > "Zero width non-joiner (ZWNJ U+200C) and zero width joiner (ZWJ U+200D) characters are not allowed in identifiers."

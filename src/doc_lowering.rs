@@ -73,7 +73,7 @@ fn lowered(
             stringified: name.into(),
         },
         data: FineTokenData::Ident {
-            represented_identifier: name.into(),
+            represented_ident: name.into(),
         },
     };
     let rawstring = |represented_string, stringified| FineToken {

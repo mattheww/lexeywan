@@ -10,8 +10,8 @@ Each fine-grained token has a <dfn>kind</dfn>, and possibly also some attributes
 | `LineComment`          | <var>style</var>, <var>body</var>                     |
 | `BlockComment`         | <var>style</var>, <var>body</var>                     |
 | `Punctuation`          | <var>mark</var>                                       |
-| `Ident`                | <var>represented identifier</var>                     |
-| `RawIdent`             | <var>represented identifier</var>                     |
+| `Ident`                | <var>represented ident</var>                          |
+| `RawIdent`             | <var>represented ident</var>                          |
 | `LifetimeOrLabel`      | <var>name</var>                                       |
 | `RawLifetimeOrLabel`   | <var>name</var>                                       |
 | `CharacterLiteral`     | <var>represented character</var>, <var>suffix</var>   |
@@ -27,20 +27,20 @@ Each fine-grained token has a <dfn>kind</dfn>, and possibly also some attributes
 
 These attributes have the following types:
 
-| Attribute                         | Type                                                   |
-|:----------------------------------|:-------------------------------------------------------|
-| <var>base</var>                   | **binary** / **octal** / **decimal** / **hexadecimal** |
-| <var>body</var>                   | sequence of characters                                 |
-| <var>digits</var>                 | sequence of characters                                 |
-| <var>mark</var>                   | single character                                       |
-| <var>name</var>                   | sequence of characters                                 |
-| <var>represented byte</var>       | single byte                                            |
-| <var>represented bytes</var>      | sequence of bytes                                      |
-| <var>represented character</var>  | single character                                       |
-| <var>represented identifier</var> | sequence of characters                                 |
-| <var>represented string</var>     | sequence of characters                                 |
-| <var>style</var>                  | **non-doc** / **inner doc** / **outer doc**            |
-| <var>suffix</var>                 | sequence of characters                                 |
+| Attribute                        | Type                                                   |
+|:---------------------------------|:-------------------------------------------------------|
+| <var>base</var>                  | **binary** / **octal** / **decimal** / **hexadecimal** |
+| <var>body</var>                  | sequence of characters                                 |
+| <var>digits</var>                | sequence of characters                                 |
+| <var>mark</var>                  | single character                                       |
+| <var>name</var>                  | sequence of characters                                 |
+| <var>represented byte</var>      | single byte                                            |
+| <var>represented bytes</var>     | sequence of bytes                                      |
+| <var>represented character</var> | single character                                       |
+| <var>represented ident</var>     | sequence of characters                                 |
+| <var>represented string</var>    | sequence of characters                                 |
+| <var>style</var>                 | **non-doc** / **inner doc** / **outer doc**            |
+| <var>suffix</var>                | sequence of characters                                 |
 
 
 ### Notes:

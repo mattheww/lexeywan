@@ -126,7 +126,7 @@ An `Ident` pretoken is always accepted.
 
 
 ##### Attributes
-<var>represented identifier</var>: NFC-normalised form of the pretoken's <var>identifier</var>
+<var>represented ident</var>: NFC-normalised form of the pretoken's <var>ident</var>
 
 
 #### `RawIdent` { .rcase }
@@ -136,9 +136,9 @@ Fine-grained token kind produced:
 
 
 ##### Attributes
-<var>represented identifier</var>: NFC-normalised form of the pretoken's <var>identifier</var>
+<var>represented ident</var>: NFC-normalised form of the pretoken's <var>ident</var>
 
-The pretoken is rejected if (and only if) the <var>represented identifier</var> is one of the following sequences of characters:
+The pretoken is rejected if (and only if) the <var>represented ident</var> is one of the following sequences of characters:
 
 - <b>_</b>
 - <b>crate</b>
