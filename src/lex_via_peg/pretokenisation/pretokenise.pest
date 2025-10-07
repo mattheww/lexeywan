@@ -108,13 +108,10 @@ Unterminated_block_comment = { "/*" }
 
 
 // ANCHOR: single_quoted_literals
-Character_literal = {
-    "'" ~ SQ_CONTENT ~ "'" ~
-    SUFFIX ?
-}
+Character_literal = { SQ_REMAINDER }
+Byte_literal = { "b" ~ SQ_REMAINDER }
 
-Byte_literal = {
-    "b" ~
+SQ_REMAINDER = {
     "'" ~ SQ_CONTENT ~ "'" ~
     SUFFIX ?
 }

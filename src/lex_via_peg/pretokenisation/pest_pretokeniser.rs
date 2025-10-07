@@ -111,7 +111,7 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
         Rule::Character_literal => {
             let mut literal_content = None;
             let mut suffix = None;
-            for sub in pair.into_inner() {
+            for sub in pair.into_inner().flatten() {
                 match sub.as_rule() {
                     Rule::SQ_CONTENT => {
                         literal_content = Some(sub.as_str());
@@ -128,7 +128,7 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
         Rule::Byte_literal => {
             let mut literal_content = None;
             let mut suffix = None;
-            for sub in pair.into_inner() {
+            for sub in pair.into_inner().flatten() {
                 match sub.as_rule() {
                     Rule::SQ_CONTENT => {
                         literal_content = Some(sub.as_str());
