@@ -37,21 +37,38 @@ pub fn reprocess(pretoken: &Pretoken) -> Result<FineToken, Error> {
             FineTokenData::LifetimeOrLabel { name: name.clone() }
         }
         PretokenData::RawLifetimeOrLabel { name } => lex_raw_lifetime_or_label(name)?,
-        PretokenData::SingleQuotedLiteral {
-            prefix,
+        PretokenData::CharacterLiteral {
             literal_content,
             suffix,
-        } => lex_single_quote_literal(prefix, literal_content, suffix)?,
-        PretokenData::DoubleQuotedLiteral {
-            prefix,
+        } => lex_character_literal(literal_content, suffix)?,
+        PretokenData::ByteLiteral {
             literal_content,
             suffix,
-        } => lex_nonraw_double_quote_literal(prefix, literal_content, suffix)?,
-        PretokenData::RawDoubleQuotedLiteral {
-            prefix,
+        } => lex_byte_literal(literal_content, suffix)?,
+        PretokenData::StringLiteral {
             literal_content,
             suffix,
-        } => lex_raw_double_quote_literal(prefix, literal_content, suffix)?,
+        } => lex_string_literal(literal_content, suffix)?,
+        PretokenData::ByteStringLiteral {
+            literal_content,
+            suffix,
+        } => lex_byte_string_literal(literal_content, suffix)?,
+        PretokenData::CStringLiteral {
+            literal_content,
+            suffix,
+        } => lex_c_string_literal(literal_content, suffix)?,
+        PretokenData::RawStringLiteral {
+            literal_content,
+            suffix,
+        } => lex_raw_string_literal(literal_content, suffix)?,
+        PretokenData::RawByteStringLiteral {
+            literal_content,
+            suffix,
+        } => lex_raw_byte_string_literal(literal_content, suffix)?,
+        PretokenData::RawCStringLiteral {
+            literal_content,
+            suffix,
+        } => lex_raw_c_string_literal(literal_content, suffix)?,
         PretokenData::IntegerLiteral {
             base,
             digits,
@@ -150,9 +167,8 @@ fn lex_raw_lifetime_or_label(name: &Charseq) -> Result<FineTokenData, Error> {
     Ok(FineTokenData::RawLifetimeOrLabel { name: name.clone() })
 }
 
-/// Validates and interprets a single-quoted (character or byte) literal.
-fn lex_single_quote_literal(
-    prefix: &Charseq,
+/// Validates and interprets a character literal.
+fn lex_character_literal(
     literal_content: &Charseq,
     suffix: &Option<Charseq>,
 ) -> Result<FineTokenData, Error> {
@@ -160,22 +176,14 @@ fn lex_single_quote_literal(
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
     }
-    match *prefix.chars() {
-        [] => Ok(FineTokenData::CharacterLiteral {
-            represented_character: unescape_single_quoted_character(literal_content)?,
-            suffix: suffix.clone(),
-        }),
-        ['b'] => Ok(FineTokenData::ByteLiteral {
-            represented_byte: unescape_single_quoted_byte(literal_content)?,
-            suffix,
-        }),
-        _ => Err(model_error("impossible prefix")),
-    }
+    Ok(FineTokenData::CharacterLiteral {
+        represented_character: unescape_single_quoted_character(literal_content)?,
+        suffix: suffix.clone(),
+    })
 }
 
-/// Validates and interprets a non-raw double-quoted (string, byte, or C-string) literal.
-fn lex_nonraw_double_quote_literal(
-    prefix: &Charseq,
+/// Validates and interprets a byte literal.
+fn lex_byte_literal(
     literal_content: &Charseq,
     suffix: &Option<Charseq>,
 ) -> Result<FineTokenData, Error> {
@@ -183,26 +191,14 @@ fn lex_nonraw_double_quote_literal(
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
     }
-    match *prefix.chars() {
-        [] => Ok(FineTokenData::StringLiteral {
-            represented_string: unescape_double_quoted_string(literal_content)?,
-            suffix,
-        }),
-        ['b'] => Ok(FineTokenData::ByteStringLiteral {
-            represented_bytes: unescape_double_quoted_byte_string(literal_content)?,
-            suffix,
-        }),
-        ['c'] => Ok(FineTokenData::CStringLiteral {
-            represented_bytes: unescape_c_string(literal_content)?,
-            suffix,
-        }),
-        _ => Err(model_error("impossible prefix")),
-    }
+    Ok(FineTokenData::ByteLiteral {
+        represented_byte: unescape_single_quoted_byte(literal_content)?,
+        suffix,
+    })
 }
 
-/// Validates and interprets a raw double-quoted (string, byte, or C-string) literal.
-fn lex_raw_double_quote_literal(
-    prefix: &Charseq,
+/// Validates and interprets a string literal.
+fn lex_string_literal(
     literal_content: &Charseq,
     suffix: &Option<Charseq>,
 ) -> Result<FineTokenData, Error> {
@@ -210,21 +206,85 @@ fn lex_raw_double_quote_literal(
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
     }
-    match *prefix.chars() {
-        ['r'] => Ok(FineTokenData::RawStringLiteral {
-            represented_string: interpret_raw_string(literal_content)?,
-            suffix,
-        }),
-        ['b', 'r'] => Ok(FineTokenData::RawByteStringLiteral {
-            represented_bytes: interpret_raw_byte_string(literal_content)?,
-            suffix,
-        }),
-        ['c', 'r'] => Ok(FineTokenData::RawCStringLiteral {
-            represented_bytes: interpret_raw_c_string(literal_content)?,
-            suffix,
-        }),
-        _ => Err(model_error("impossible prefix")),
+    Ok(FineTokenData::StringLiteral {
+        represented_string: unescape_double_quoted_string(literal_content)?,
+        suffix,
+    })
+}
+
+/// Validates and interprets a byte-string literal.
+fn lex_byte_string_literal(
+    literal_content: &Charseq,
+    suffix: &Option<Charseq>,
+) -> Result<FineTokenData, Error> {
+    let suffix = suffix.clone().unwrap_or_default();
+    if suffix.chars() == ['_'] {
+        return Err(rejected("underscore literal suffix"));
     }
+    Ok(FineTokenData::ByteStringLiteral {
+        represented_bytes: unescape_double_quoted_byte_string(literal_content)?,
+        suffix,
+    })
+}
+
+/// Validates and interprets a C-string literal.
+fn lex_c_string_literal(
+    literal_content: &Charseq,
+    suffix: &Option<Charseq>,
+) -> Result<FineTokenData, Error> {
+    let suffix = suffix.clone().unwrap_or_default();
+    if suffix.chars() == ['_'] {
+        return Err(rejected("underscore literal suffix"));
+    }
+    Ok(FineTokenData::CStringLiteral {
+        represented_bytes: unescape_c_string(literal_content)?,
+        suffix,
+    })
+}
+
+/// Validates and interprets a raw string literal.
+fn lex_raw_string_literal(
+    literal_content: &Charseq,
+    suffix: &Option<Charseq>,
+) -> Result<FineTokenData, Error> {
+    let suffix = suffix.clone().unwrap_or_default();
+    if suffix.chars() == ['_'] {
+        return Err(rejected("underscore literal suffix"));
+    }
+    Ok(FineTokenData::RawStringLiteral {
+        represented_string: interpret_raw_string(literal_content)?,
+        suffix,
+    })
+}
+
+/// Validates and interprets a raw byte-string literal.
+fn lex_raw_byte_string_literal(
+    literal_content: &Charseq,
+    suffix: &Option<Charseq>,
+) -> Result<FineTokenData, Error> {
+    let suffix = suffix.clone().unwrap_or_default();
+    if suffix.chars() == ['_'] {
+        return Err(rejected("underscore literal suffix"));
+    }
+    Ok(FineTokenData::RawByteStringLiteral {
+        represented_bytes: interpret_raw_byte_string(literal_content)?,
+        suffix,
+    })
+}
+
+/// Validates and interprets a raw C-string literal.
+fn lex_raw_c_string_literal(
+    literal_content: &Charseq,
+    suffix: &Option<Charseq>,
+) -> Result<FineTokenData, Error> {
+    let suffix = suffix.clone().unwrap_or_default();
+    if suffix.chars() == ['_'] {
+        return Err(rejected("underscore literal suffix"));
+    }
+    Ok(FineTokenData::RawCStringLiteral {
+        represented_bytes: interpret_raw_c_string(literal_content)?,
+        suffix,
+    })
 }
 
 /// Validates and interprets an integer literal.

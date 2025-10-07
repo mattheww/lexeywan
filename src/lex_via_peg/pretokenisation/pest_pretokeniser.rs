@@ -108,15 +108,11 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
             })
         }
         Rule::Unterminated_block_comment => Ok(PretokenData::Reserved),
-        Rule::Single_quoted_literal => {
-            let mut prefix = None;
+        Rule::Character_literal => {
             let mut literal_content = None;
             let mut suffix = None;
             for sub in pair.into_inner() {
                 match sub.as_rule() {
-                    Rule::SQ_PREFIX => {
-                        prefix = Some(sub.as_str());
-                    }
                     Rule::SQ_CONTENT => {
                         literal_content = Some(sub.as_str());
                     }
@@ -124,21 +120,33 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
                     _ => {}
                 }
             }
-            Ok(PretokenData::SingleQuotedLiteral {
-                prefix: extracted(prefix, "missing prefix")?,
+            Ok(PretokenData::CharacterLiteral {
                 literal_content: extracted(literal_content, "missing content")?,
                 suffix: suffix.map(Into::into),
             })
         }
-        Rule::Double_quoted_literal_2015 | Rule::Double_quoted_literal_2021 => {
-            let mut prefix = None;
+        Rule::Byte_literal => {
+            let mut literal_content = None;
+            let mut suffix = None;
+            for sub in pair.into_inner() {
+                match sub.as_rule() {
+                    Rule::SQ_CONTENT => {
+                        literal_content = Some(sub.as_str());
+                    }
+                    Rule::SUFFIX => suffix = Some(sub.as_str()),
+                    _ => {}
+                }
+            }
+            Ok(PretokenData::ByteLiteral {
+                literal_content: extracted(literal_content, "missing content")?,
+                suffix: suffix.map(Into::into),
+            })
+        }
+        Rule::String_literal => {
             let mut literal_content = None;
             let mut suffix = None;
             for sub in pair.into_inner().flatten() {
                 match sub.as_rule() {
-                    Rule::DQ_PREFIX_2015 | Rule::DQ_PREFIX_2021 => {
-                        prefix = Some(sub.as_str());
-                    }
                     Rule::DQ_CONTENT => {
                         literal_content = Some(sub.as_str());
                     }
@@ -146,21 +154,50 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
                     _ => {}
                 }
             }
-            Ok(PretokenData::DoubleQuotedLiteral {
-                prefix: extracted(prefix, "missing prefix")?,
+            Ok(PretokenData::StringLiteral {
                 literal_content: extracted(literal_content, "missing content")?,
                 suffix: suffix.map(Into::into),
             })
         }
-        Rule::Raw_double_quoted_literal_2015 | Rule::Raw_double_quoted_literal_2021 => {
-            let mut prefix = None;
+        Rule::Byte_string_literal => {
             let mut literal_content = None;
             let mut suffix = None;
             for sub in pair.into_inner().flatten() {
                 match sub.as_rule() {
-                    Rule::RAW_DQ_PREFIX_2015 | Rule::RAW_DQ_PREFIX_2021 => {
-                        prefix = Some(sub.as_str());
+                    Rule::DQ_CONTENT => {
+                        literal_content = Some(sub.as_str());
                     }
+                    Rule::SUFFIX => suffix = Some(sub.as_str()),
+                    _ => {}
+                }
+            }
+            Ok(PretokenData::ByteStringLiteral {
+                literal_content: extracted(literal_content, "missing content")?,
+                suffix: suffix.map(Into::into),
+            })
+        }
+        Rule::C_string_literal => {
+            let mut literal_content = None;
+            let mut suffix = None;
+            for sub in pair.into_inner().flatten() {
+                match sub.as_rule() {
+                    Rule::DQ_CONTENT => {
+                        literal_content = Some(sub.as_str());
+                    }
+                    Rule::SUFFIX => suffix = Some(sub.as_str()),
+                    _ => {}
+                }
+            }
+            Ok(PretokenData::CStringLiteral {
+                literal_content: extracted(literal_content, "missing content")?,
+                suffix: suffix.map(Into::into),
+            })
+        }
+        Rule::Raw_string_literal => {
+            let mut literal_content = None;
+            let mut suffix = None;
+            for sub in pair.into_inner().flatten() {
+                match sub.as_rule() {
                     Rule::RAW_DQ_CONTENT => {
                         literal_content = Some(sub.as_str());
                     }
@@ -168,8 +205,41 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
                     _ => {}
                 }
             }
-            Ok(PretokenData::RawDoubleQuotedLiteral {
-                prefix: extracted(prefix, "missing prefix")?,
+            Ok(PretokenData::RawStringLiteral {
+                literal_content: extracted(literal_content, "missing content")?,
+                suffix: suffix.map(Into::into),
+            })
+        }
+        Rule::Raw_byte_string_literal => {
+            let mut literal_content = None;
+            let mut suffix = None;
+            for sub in pair.into_inner().flatten() {
+                match sub.as_rule() {
+                    Rule::RAW_DQ_CONTENT => {
+                        literal_content = Some(sub.as_str());
+                    }
+                    Rule::SUFFIX => suffix = Some(sub.as_str()),
+                    _ => {}
+                }
+            }
+            Ok(PretokenData::RawByteStringLiteral {
+                literal_content: extracted(literal_content, "missing content")?,
+                suffix: suffix.map(Into::into),
+            })
+        }
+        Rule::Raw_c_string_literal => {
+            let mut literal_content = None;
+            let mut suffix = None;
+            for sub in pair.into_inner().flatten() {
+                match sub.as_rule() {
+                    Rule::RAW_DQ_CONTENT => {
+                        literal_content = Some(sub.as_str());
+                    }
+                    Rule::SUFFIX => suffix = Some(sub.as_str()),
+                    _ => {}
+                }
+            }
+            Ok(PretokenData::RawCStringLiteral {
                 literal_content: extracted(literal_content, "missing content")?,
                 suffix: suffix.map(Into::into),
             })

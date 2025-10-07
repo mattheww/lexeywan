@@ -4,9 +4,12 @@ PRETOKEN_2015 = {
     Line_comment |
     Block_comment |
     Unterminated_block_comment |
-    Single_quoted_literal |
-    Double_quoted_literal_2015 |
-    Raw_double_quoted_literal_2015 |
+    Character_literal |
+    Byte_literal |
+    String_literal |
+    Byte_string_literal |
+    Raw_string_literal |
+    Raw_byte_string_literal |
     Unterminated_literal_2015 |
     Reserved_single_quoted_literal_2015 |
     Float_literal |
@@ -24,9 +27,14 @@ PRETOKEN_2021 = {
     Line_comment |
     Block_comment |
     Unterminated_block_comment |
-    Single_quoted_literal |
-    Double_quoted_literal_2021 |
-    Raw_double_quoted_literal_2021 |
+    Character_literal |
+    Byte_literal |
+    String_literal |
+    Byte_string_literal |
+    C_string_literal |
+    Raw_string_literal |
+    Raw_byte_string_literal |
+    Raw_c_string_literal |
     Reserved_literal_2021 |
     Reserved_single_quoted_literal_2021 |
     Float_literal |
@@ -46,9 +54,14 @@ PRETOKEN_2024 = {
     Line_comment |
     Block_comment |
     Unterminated_block_comment |
-    Single_quoted_literal |
-    Double_quoted_literal_2021 |
-    Raw_double_quoted_literal_2021 |
+    Character_literal |
+    Byte_literal |
+    String_literal |
+    Byte_string_literal |
+    C_string_literal |
+    Raw_string_literal |
+    Raw_byte_string_literal |
+    Raw_c_string_literal |
     Reserved_literal_2021 |
     Reserved_single_quoted_literal_2021 |
     Reserved_guard_2024 |
@@ -95,13 +108,16 @@ Unterminated_block_comment = { "/*" }
 
 
 // ANCHOR: single_quoted_literals
-Single_quoted_literal = {
-    SQ_PREFIX ~
+Character_literal = {
     "'" ~ SQ_CONTENT ~ "'" ~
     SUFFIX ?
 }
 
-SQ_PREFIX = { "b" ? }
+Byte_literal = {
+    "b" ~
+    "'" ~ SQ_CONTENT ~ "'" ~
+    SUFFIX ?
+}
 
 SQ_CONTENT = {
     "\\" ~ ANY ~ ( !"'" ~ ANY ) * |
@@ -111,11 +127,9 @@ SQ_CONTENT = {
 
 
 // ANCHOR: double_quoted_literals
-Double_quoted_literal_2015 = { DQ_PREFIX_2015 ~ DQ_REMAINDER }
-Double_quoted_literal_2021 = { DQ_PREFIX_2021 ~ DQ_REMAINDER }
-
-DQ_PREFIX_2015 = { "b" ? }
-DQ_PREFIX_2021 = { ( "b" | "c" ) ? }
+String_literal = { DQ_REMAINDER }
+Byte_string_literal = { "b" ~ DQ_REMAINDER }
+C_string_literal = { "c" ~ DQ_REMAINDER }
 
 DQ_REMAINDER = {
     "\"" ~ DQ_CONTENT ~ "\"" ~
@@ -130,11 +144,9 @@ DQ_CONTENT = {
 // ANCHOR_END: double_quoted_literals
 
 // ANCHOR: raw_double_quoted_literals
-Raw_double_quoted_literal_2015 = { RAW_DQ_PREFIX_2015 ~ RAW_DQ_REMAINDER }
-Raw_double_quoted_literal_2021 = { RAW_DQ_PREFIX_2021 ~ RAW_DQ_REMAINDER }
-
-RAW_DQ_PREFIX_2015 = { "r" | "br" }
-RAW_DQ_PREFIX_2021 = { "r" | "br" | "cr" }
+Raw_string_literal = { "r" ~ RAW_DQ_REMAINDER }
+Raw_byte_string_literal = { "br" ~ RAW_DQ_REMAINDER }
+Raw_c_string_literal = { "cr" ~ RAW_DQ_REMAINDER }
 
 RAW_DQ_REMAINDER = {
     PUSH(HASHES) ~

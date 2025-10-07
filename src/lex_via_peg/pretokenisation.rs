@@ -41,18 +41,35 @@ pub enum PretokenData {
     RawLifetimeOrLabel {
         name: Charseq,
     },
-    SingleQuotedLiteral {
-        prefix: Charseq,
+    CharacterLiteral {
         literal_content: Charseq,
         suffix: Option<Charseq>,
     },
-    DoubleQuotedLiteral {
-        prefix: Charseq,
+    ByteLiteral {
         literal_content: Charseq,
         suffix: Option<Charseq>,
     },
-    RawDoubleQuotedLiteral {
-        prefix: Charseq,
+    StringLiteral {
+        literal_content: Charseq,
+        suffix: Option<Charseq>,
+    },
+    ByteStringLiteral {
+        literal_content: Charseq,
+        suffix: Option<Charseq>,
+    },
+    CStringLiteral {
+        literal_content: Charseq,
+        suffix: Option<Charseq>,
+    },
+    RawStringLiteral {
+        literal_content: Charseq,
+        suffix: Option<Charseq>,
+    },
+    RawByteStringLiteral {
+        literal_content: Charseq,
+        suffix: Option<Charseq>,
+    },
+    RawCStringLiteral {
         literal_content: Charseq,
         suffix: Option<Charseq>,
     },
