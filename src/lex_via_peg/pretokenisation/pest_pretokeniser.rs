@@ -248,7 +248,7 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
         Rule::Reserved_single_quoted_literal_2015 | Rule::Reserved_single_quoted_literal_2021 => {
             Ok(PretokenData::Reserved)
         }
-        Rule::Reserved_guard_2024 => Ok(PretokenData::Reserved),
+        Rule::Reserved_guard => Ok(PretokenData::Reserved),
         Rule::Float_literal => {
             let mut body = None;
             let mut suffix = None;
@@ -302,7 +302,7 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
                 suffix: suffix.map(Into::into),
             })
         }
-        Rule::Raw_lifetime_or_label_2021 => {
+        Rule::Raw_lifetime_or_label => {
             let mut name = None;
             for sub in pair.into_inner() {
                 match sub.as_rule() {
@@ -316,7 +316,7 @@ fn interpret_pest_pair(pair: Pair<Rule>) -> Result<PretokenData, &'static str> {
                 name: extracted(name, "missing name")?,
             })
         }
-        Rule::Reserved_lifetime_or_label_prefix_2021 => Ok(PretokenData::Reserved),
+        Rule::Reserved_lifetime_or_label_prefix => Ok(PretokenData::Reserved),
         Rule::Lifetime_or_label => {
             let mut name = None;
             for sub in pair.into_inner() {

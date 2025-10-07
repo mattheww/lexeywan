@@ -40,8 +40,8 @@ PRETOKEN_2021 = {
     Float_literal |
     Reserved_float |
     Integer_literal |
-    Raw_lifetime_or_label_2021 |
-    Reserved_lifetime_or_label_prefix_2021 |
+    Raw_lifetime_or_label |
+    Reserved_lifetime_or_label_prefix |
     Lifetime_or_label |
     Raw_ident |
     Reserved_prefix_2021 |
@@ -64,12 +64,12 @@ PRETOKEN_2024 = {
     Raw_c_string_literal |
     Reserved_literal_2021 |
     Reserved_single_quoted_literal_2021 |
-    Reserved_guard_2024 |
+    Reserved_guard |
     Float_literal |
     Reserved_float |
     Integer_literal |
-    Raw_lifetime_or_label_2021 |
-    Reserved_lifetime_or_label_prefix_2021 |
+    Raw_lifetime_or_label |
+    Reserved_lifetime_or_label_prefix |
     Lifetime_or_label |
     Raw_ident |
     Reserved_prefix_2021 |
@@ -169,7 +169,7 @@ Reserved_single_quoted_literal_2021 = { "'" ~ "r#" ? ~ IDENT ~ "'" }
 
 
 // ANCHOR: reserved_guard
-Reserved_guard_2024 = { "##" | "#\"" }
+Reserved_guard = { "##" | "#\"" }
 // ANCHOR_END: reserved_guard
 
 // ANCHOR: numeric_common
@@ -241,11 +241,11 @@ SUFFIX_NO_E = { !("e"|"E") ~ SUFFIX }
 
 
 // ANCHOR: raw_lifetime_or_label_2021
-Raw_lifetime_or_label_2021 = { "'r#" ~ IDENT }
+Raw_lifetime_or_label = { "'r#" ~ IDENT }
 // ANCHOR_END: raw_lifetime_or_label_2021
 
 // ANCHOR: reserved_lifetime_or_label_prefix_2021
-Reserved_lifetime_or_label_prefix_2021 = { "'" ~ IDENT ~ "#" }
+Reserved_lifetime_or_label_prefix = { "'" ~ IDENT ~ "#" }
 // ANCHOR_END: reserved_lifetime_or_label_prefix_2021
 
 // ANCHOR: lifetime_or_label
