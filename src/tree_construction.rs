@@ -1,4 +1,4 @@
-//! Converts a sequence of ["fine-grained"][FineToken] tokens into trees.
+//! Converts a sequence of tokens into trees.
 
 use crate::trees::{Forest, GroupKind, Tree};
 
