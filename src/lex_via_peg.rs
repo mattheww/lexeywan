@@ -1,5 +1,7 @@
 //! Reimplementation of rustc's lexical analysis.
 
+use std::iter;
+
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::FineToken;
 use crate::utils::escape_for_display;
@@ -166,33 +168,25 @@ pub fn lex_as_single_token(input: &[char], edition: Edition) -> Option<FineToken
 ///
 /// It may instead report a problem with lex_via_peg's model or implementation.
 fn tokenise(input: &[char], edition: Edition) -> impl Iterator<Item = Outcome> + use<'_> {
-    Tokeniser {
-        edition,
-        input,
-        index: 0,
-    }
-}
-
-struct Tokeniser<'a> {
-    edition: Edition,
-    input: &'a [char],
-    index: usize,
-}
-
-impl<'a> Iterator for Tokeniser<'a> {
-    type Item = Outcome;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let rest = &self.input[self.index..];
+    let mut index = 0;
+    let mut has_failed = false;
+    iter::from_fn(move || {
+        if has_failed {
+            return None;
+        }
+        let rest = &input[index..];
         if rest.is_empty() {
             return None;
         }
-        let outcome = token_matching::match_once(self.edition, rest);
-        if let Outcome::Matched(match_data) = &outcome {
-            self.index += match_data.extent.len();
+        let outcome = token_matching::match_once(edition, rest);
+        match &outcome {
+            Outcome::Matched(match_data) => {
+                index += match_data.extent.len();
+            }
+            _ => has_failed = true,
         }
         Some(outcome)
-    }
+    })
 }
 
 /// Returns the first non-whitespace token in the input.
