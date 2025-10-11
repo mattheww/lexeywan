@@ -3,7 +3,6 @@
 ##### Table of contents
 
 [Separating lexing from parsing](#separating-lexing-from-parsing)\
-[Pretokenising and reprocessing](#pretokenising-and-reprocessing)\
 [Using a Parsing Expression Grammar](#using-a-parsing-expression-grammar)\
 [Modelling lifetimes and labels](#modelling-lifetimes-and-labels)\
 [Producing tokens with attributes](#producing-tokens-with-attributes)
@@ -22,15 +21,15 @@ Rust's parser is not easy to model,
 and I think it's likely that the best formalism for describing Rust's parser wouldn't also be a good formalism for describing its lexer.
 
 
-### Pretokenising and reprocessing
+### Rejecting matches
 
-The split into pretokenisation and reprocessing is primarily a way to make the grammar simpler.
+The separate 'processing' step which can reject matches is primarily a way to make the grammar simpler.
 
 The main advantage is dealing with character, byte, and string literals,
 where we have to reject invalid escape sequences at lexing time.
 
 In this model, the lexer finds the extent of the token using simple grammar definitions,
-and then checks whether the escape sequences are valid in a separate "reprocessing" operation.
+and then checks whether the escape sequences are valid in a separate "processing" operation.
 So the grammar "knows" that a backslash character indicates an escape sequence, but doesn't model escapes in any further detail.
 
 In contrast the Reference gives grammar productions which try to describe the available escape sequences in each kind of string-like literal,
@@ -52,7 +51,7 @@ For example, if we didn't accept `_` as a suffix in the main string-literal gram
 we'd have to have another `Reserved_something` definition to prevent the `_` being accepted as a separate token.
 
 Given the choice to use locally greedy matching (see below),
-I think an operation which rejects pretokens after parsing them is necessary to deal with a case like `0b123`,
+I think an operation which rejects tokens after parsing them is necessary to deal with a case like `0b123`,
 to avoid analysing it as `0b1` followed by `23`.
 
 
@@ -106,15 +105,15 @@ Generative grammars don't inherently have prioritisation, but parsing expression
 
 There are a number of forms which are errors at lexing time, even though in principle they could be analysed as multiple tokens.
 
-Many cases can be handled in reprocessing, as described above.
+Many cases can be handled in processing, as described above.
 
-Other cases can be handled naturally using a PEG, by writing medium-priority rules rules to match them, for example:
+Other cases can be handled naturally using a PEG, by writing medium-priority rules to match them, for example:
 
 - the [rfc3101] "reserved prefixes" (in Rust 2021 and newer): `k#abc`,  `f"..."`, or `f'...'`
 - unterminated block comments such as `/* abc`
 - forms that look like floating-point literals with a base indicator, such as `0b1.0`
 
-In this model, these additional rules produce `Reserved` pretokens, which are rejected at reprocessing time.
+In this model, these additional rules cause the input to be rejected at processing time.
 
 
 #### Lookahead
@@ -175,10 +174,6 @@ For identifiers, many parts of the spec will need a notion of equivalence
 (both for handling raw identifiers and for dealing with NFC normalisation),
 and some restrictions depend on the normalised form (see [ASCII identifiers]).
 I think it's best for the lexer to handle this by defining the <var>represented ident</var>.
-
-This document treats the lexer's "output" as a stream of tokens which have concrete attributes,
-but of course it would be equivalent (and I think more usual for a spec) to treat each attribute as an independent defined term,
-and write things like "the <dfn>represented character</dfn> of a character literal token is…".
 
 
 [rfc0879]: https://rust-lang.github.io/rfcs/0879-small-base-lexing.html

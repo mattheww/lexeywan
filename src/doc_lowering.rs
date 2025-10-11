@@ -109,7 +109,7 @@ fn stringified_as_raw_literal(represented_string: &Charseq, edition: Edition) ->
         iter::once('r')
             .chain(iter::repeat_n('#', hash_count))
             .chain(iter::once('"'))
-            .chain(represented_string.iter().copied())
+            .chain(represented_string.iter())
             .chain(iter::once('"'))
             .chain(iter::repeat_n('#', hash_count))
             .collect()

@@ -1,6 +1,6 @@
 ## Fine-grained tokens
 
-Reprocessing produces <dfn>fine-grained tokens</dfn>.
+Tokenising produces <dfn>fine-grained tokens</dfn>.
 
 Each fine-grained token has a <dfn>kind</dfn>, and possibly also some attributes, as described in the tables below.
 

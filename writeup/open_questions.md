@@ -3,7 +3,6 @@
 ##### Table of contents
 
 [Terminology](#terminology)\
-[Presenting reprocessing as a separate pass](#reprocessing-as-a-pass)\
 [Raw string literals](#raw-string-literals)\
 [Token kinds and attributes](#token-kinds-and-attributes)\
 [How to indicate captured text](#how-to-indicate-captured-text)\
@@ -20,8 +19,7 @@ Here's a partial list:
 
 | Term                       | Source                           |
 |:---------------------------|:---------------------------------|
-| pretoken                   | New                              |
-| reprocessing               | New                              |
+| processing                 | New                              |
 | fine-grained token         | New                              |
 | compound token             | New                              |
 | literal content            | Reference (recent)               |
@@ -40,26 +38,6 @@ Here's a partial list:
 
 Terms listed as "Reference (recent)" are ones I introduced in PRs merged in January 2024.
 
-
-
-### Presenting reprocessing as a separate pass { #reprocessing-as-a-pass }
-
-This writeup presents pretokenisation and reprocessing in separate sections,
-with separate but similar definitions for a "Pretoken" and a "Fine-grained token".
-
-That's largely because I wanted the option to have further processing between those two stages which might split or join tokens,
-as some [earlier models][CAD97 spec] have done.
-
-But in this version of the model that flexibility isn't used:
-one pretoken always corresponds to one fine-grained token
-(unless the input is rejected).
-
-So it might be possible to drop the distinction between those two types altogether.
-
-In any case I don't think it's necessary to describe reprocessing as a second pass:
-the conditions for rejecting each type of pretoken,
-and the definitions of the things which are currently attributes of fine-grained tokens,
-could be described in the same place as the description of how the pretoken is produced.
 
 
 ### Raw string literals
@@ -123,7 +101,7 @@ Some of the nonterminals in the grammar exist only to identify text to be "captu
 for example `LINE_COMMENT_CONTENT` here:
 
 ```
-{{#include pretokenise_anchored.pest:line_comment}}
+{{#include tokenise_anchored.pest:line_comment}}
 ```
 
 Would it be better to extend the notation to allow annotating part of an expression without separating out a nonterminal?
@@ -132,7 +110,7 @@ Pest's ["Tags" extension][pest-tags] would allow doing this, but it's not a stan
 
 ### Wording for string unescaping
 
-The description of reprocessing for [String literals] and [C-string literals] was originally drafted for the Reference.
+The description of processing for [String literals], [Byte-string literals], and [C-string literals] was originally drafted for the Reference.
 Should there be a more formal definition of unescaping processes than the current "left-to-right order" and
 "contributes" wording?
 
@@ -154,8 +132,9 @@ and points to [#1042][Ref#1042] for more information.
 [#136600] asks whether this is intentional.
 
 
-[String literals]: reprocessing_cases.md#string-literal
-[C-string literals]: reprocessing_cases.md#c-string-literal
+[String literals]: string_and_byte_literal_tokens.md#string-literal
+[Byte-string literals]: string_and_byte_literal_tokens.md#byte-string-literal
+[C-string literals]: string_and_byte_literal_tokens.md#c-string-literal
 
 [string-continuation]: escape_processing.md#string-continuation-escapes
 
@@ -163,7 +142,5 @@ and points to [#1042][Ref#1042] for more information.
 
 [Ref#1042]: https://github.com/rust-lang/reference/pull/1042
 [ref-string-continuation]: https://doc.rust-lang.org/nightly/reference/expressions/literal-expr.html#string-continuation-escapes
-
-[CAD97 spec]: https://github.com/CAD97/rust-lexical-spec
 
 [pest-tags]: https://pest.rs/book/grammars/syntax.html#tags

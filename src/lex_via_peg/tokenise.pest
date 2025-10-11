@@ -1,5 +1,5 @@
-// ANCHOR: pretokens
-PRETOKEN_2015 = {
+// ANCHOR: tokens
+TOKEN_2015 = {
     Whitespace |
     Line_comment |
     Block_comment |
@@ -22,7 +22,7 @@ PRETOKEN_2015 = {
     Punctuation
 }
 
-PRETOKEN_2021 = {
+TOKEN_2021 = {
     Whitespace |
     Line_comment |
     Block_comment |
@@ -49,7 +49,7 @@ PRETOKEN_2021 = {
     Punctuation
 }
 
-PRETOKEN_2024 = {
+TOKEN_2024 = {
     Whitespace |
     Line_comment |
     Block_comment |
@@ -76,16 +76,7 @@ PRETOKEN_2024 = {
     Ident |
     Punctuation
 }
-// ANCHOR_END: pretokens
-
-
-// ANCHOR: ident
-IDENT = { IDENT_START ~ XID_CONTINUE * }
-IDENT_START = { XID_START | "_" }
-// ANCHOR_END: ident
-// ANCHOR: suffix
-SUFFIX = { IDENT }
-// ANCHOR_END: suffix
+// ANCHOR_END: tokens
 
 
 // ANCHOR: whitespace
@@ -107,27 +98,27 @@ Unterminated_block_comment = { "/*" }
 // ANCHOR_END: unterminated_block_comment
 
 
-// ANCHOR: single_quoted_literals
-Character_literal = { SQ_REMAINDER }
-Byte_literal = { "b" ~ SQ_REMAINDER }
-
+// ANCHOR: single_quoted_literals_common
 SQ_REMAINDER = {
     "'" ~ SQ_CONTENT ~ "'" ~
     SUFFIX ?
 }
-
 SQ_CONTENT = {
     "\\" ~ ANY ~ ( !"'" ~ ANY ) * |
     !"'" ~ ANY
 }
-// ANCHOR_END: single_quoted_literals
+// ANCHOR_END: single_quoted_literals_common
+
+// ANCHOR: character_literal
+Character_literal = { SQ_REMAINDER }
+// ANCHOR_END: character_literal
+
+// ANCHOR: byte_literal
+Byte_literal = { "b" ~ SQ_REMAINDER }
+// ANCHOR_END: byte_literal
 
 
-// ANCHOR: double_quoted_literals
-String_literal = { DQ_REMAINDER }
-Byte_string_literal = { "b" ~ DQ_REMAINDER }
-C_string_literal = { "c" ~ DQ_REMAINDER }
-
+// ANCHOR: double_quoted_literals_common
 DQ_REMAINDER = {
     "\"" ~ DQ_CONTENT ~ "\"" ~
     SUFFIX ?
@@ -138,13 +129,24 @@ DQ_CONTENT = {
         !"\"" ~ ANY
     ) *
 }
+// ANCHOR_END: double_quoted_literals_common
+
+// ANCHOR: string_literal
+String_literal = { DQ_REMAINDER }
+// ANCHOR_END: string_literal
+
+// ANCHOR: byte_string_literal
+Byte_string_literal = { "b" ~ DQ_REMAINDER }
+// ANCHOR_END: byte_string_literal
+
+// ANCHOR: c_string_literal
+C_string_literal = { "c" ~ DQ_REMAINDER }
+// ANCHOR_END: c_string_literal
+
+
 // ANCHOR_END: double_quoted_literals
 
-// ANCHOR: raw_double_quoted_literals
-Raw_string_literal = { "r" ~ RAW_DQ_REMAINDER }
-Raw_byte_string_literal = { "br" ~ RAW_DQ_REMAINDER }
-Raw_c_string_literal = { "cr" ~ RAW_DQ_REMAINDER }
-
+// ANCHOR: raw_double_quoted_literals_common
 RAW_DQ_REMAINDER = {
     PUSH(HASHES) ~
     "\"" ~ RAW_DQ_CONTENT ~ "\"" ~
@@ -155,7 +157,20 @@ RAW_DQ_CONTENT = {
     ( !("\"" ~ PEEK) ~ ANY ) *
 }
 HASHES = { "#" {0, 255} }
-// ANCHOR_END: raw_double_quoted_literals
+// ANCHOR_END: raw_double_quoted_literals_common
+
+// ANCHOR: raw_string_literal
+Raw_string_literal = { "r" ~ RAW_DQ_REMAINDER }
+// ANCHOR_END: raw_string_literal
+
+// ANCHOR: raw_byte_string_literal
+Raw_byte_string_literal = { "br" ~ RAW_DQ_REMAINDER }
+// ANCHOR_END: raw_byte_string_literal
+
+// ANCHOR: raw_c_string_literal
+Raw_c_string_literal = { "cr" ~ RAW_DQ_REMAINDER }
+// ANCHOR_END: raw_c_string_literal
+
 
 // ANCHOR: unterminated_literal
 Unterminated_literal_2015 = { "r\"" | "br\"" | "b'" }
@@ -172,10 +187,11 @@ Reserved_single_quoted_literal_2021 = { "'" ~ "r#" ? ~ IDENT ~ "'" }
 Reserved_guard = { "##" | "#\"" }
 // ANCHOR_END: reserved_guard
 
+
 // ANCHOR: numeric_common
 DECIMAL_DIGITS = { ('0'..'9' | "_") * }
 HEXADECIMAL_DIGITS = { ('0'..'9' | 'a' .. 'f' | 'A' .. 'F' | "_") * }
-LOW_BASE_PRETOKEN_DIGITS = { DECIMAL_DIGITS }
+LOW_BASE_TOKEN_DIGITS = { DECIMAL_DIGITS }
 DECIMAL_PART = { '0'..'9' ~ DECIMAL_DIGITS }
 // ANCHOR_END: numeric_common
 
@@ -212,7 +228,7 @@ RESERVED_FLOAT_EMPTY_EXPONENT = {
 }
 RESERVED_FLOAT_BASED = {
     (
-        ("0b" | "0o") ~ LOW_BASE_PRETOKEN_DIGITS |
+        ("0b" | "0o") ~ LOW_BASE_TOKEN_DIGITS |
         "0x" ~ HEXADECIMAL_DIGITS
     )  ~  (
         ("e"|"E") |
@@ -231,8 +247,8 @@ Integer_literal = {
     SUFFIX_NO_E ?
 }
 
-INTEGER_BINARY_LITERAL = { "0b" ~ LOW_BASE_PRETOKEN_DIGITS }
-INTEGER_OCTAL_LITERAL = { "0o" ~ LOW_BASE_PRETOKEN_DIGITS }
+INTEGER_BINARY_LITERAL = { "0b" ~ LOW_BASE_TOKEN_DIGITS }
+INTEGER_OCTAL_LITERAL = { "0o" ~ LOW_BASE_TOKEN_DIGITS }
 INTEGER_HEXADECIMAL_LITERAL = { "0x" ~ HEXADECIMAL_DIGITS }
 INTEGER_DECIMAL_LITERAL = { DECIMAL_PART }
 
@@ -297,4 +313,13 @@ Punctuation = {
     "%"
 }
 // ANCHOR_END: punctuation
+
+
+// ANCHOR: suffix
+SUFFIX = { IDENT }
+// ANCHOR_END: suffix
+// ANCHOR: idents
+IDENT = { IDENT_START ~ XID_CONTINUE * }
+IDENT_START = { XID_START | "_" }
+// ANCHOR_END: idents
 

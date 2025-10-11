@@ -1,6 +1,6 @@
 ### Escape processing
 
-The descriptions of the effect of reprocessing string and character literals make use of several forms of <dfn>escape</dfn>.
+The descriptions of processing string and character literals make use of several forms of <dfn>escape</dfn>.
 
 Each form of escape is characterised by:
 - an <dfn>escape sequence</dfn>: a sequence of characters, which always begins with <b>\\</b>

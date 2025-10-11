@@ -2,7 +2,7 @@
 
 This document's description of tokenising takes a sequence of characters as input.
 
-That sequence of characters is derived from an input sequence of bytes by peforming the steps listed below in order.
+That sequence of characters is derived from an input sequence of bytes by performing the steps listed below in order.
 
 It is also possible for one of the steps below to determine that the input should be rejected,
 in which case tokenising does not take place.

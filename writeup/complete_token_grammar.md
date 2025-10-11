@@ -1,6 +1,6 @@
-### The complete pretokenisation grammar
+## The complete tokenisation grammar
 
-The machine-readable Pest grammar for pretokenisation is presented here for convenience.
+The machine-readable Pest grammar for tokenisation is presented here for convenience.
 
 See [Parsing Expression Grammars](pegs.md) for an explanation of the notation.
 
@@ -9,5 +9,5 @@ This version of the grammar uses Pest's [`PUSH`, `PEEK`, and `POP`](raw_strings.
 `ANY`, `PATTERN_WHITE_SPACE`, `XID_START`, and `XID_CONTINUE` are built in to Pest and so not defined below.
 
 ```
-{{#include pretokenise.pest}}
+{{#include tokenise.pest}}
 ```

@@ -2,7 +2,7 @@
 //!
 //! Handles the conversion of an escape sequence to an escaped value.
 //!
-//! The functions here use reprocessing::Error for convenience, but in principle when they return a
+//! The functions here use processing::Error for convenience, but in principle when they return a
 //! rejection this means only that the input isn't an instance of the relevant form of escape
 //! sequence.
 

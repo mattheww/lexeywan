@@ -282,11 +282,11 @@ fn from_coarse_token_data(token_data: CoarseTokenData) -> RegularTokenData {
             style: IdentifierStyle::Raw,
         },
         CoarseTokenData::LifetimeOrLabel { name } => RegularTokenData::LifetimeOrLabel {
-            symbol: once('\'').chain(name.iter().copied()).collect(),
+            symbol: once('\'').chain(name.iter()).collect(),
             style: IdentifierStyle::NonRaw,
         },
         CoarseTokenData::RawLifetimeOrLabel { name } => RegularTokenData::LifetimeOrLabel {
-            symbol: once('\'').chain(name.iter().copied()).collect(),
+            symbol: once('\'').chain(name.iter()).collect(),
             style: IdentifierStyle::Raw,
         },
         CoarseTokenData::CharacterLiteral {

@@ -7,6 +7,7 @@
 //!  `coarse`
 
 use std::fmt::Debug;
+use std::iter::once;
 
 use crate::cleaning::{self, CleaningOutcome};
 use crate::combination;
@@ -17,6 +18,7 @@ use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::doc_lowering::lower_doc_comments;
 use crate::fine_tokens::FineToken;
 use crate::lex_via_peg;
+use crate::lex_via_peg::MatchData;
 use crate::rustc_harness::lex_via_rustc;
 use crate::tokens_common::Origin;
 use crate::tree_construction;
@@ -125,8 +127,12 @@ pub enum DetailsMode {
     Always,
 }
 
-fn format_pretoken(pretoken: &lex_via_peg::Pretoken) -> String {
-    format!("{:?}, {:?}", pretoken.data, pretoken.extent)
+fn describe_match(match_data: &MatchData) -> impl Iterator<Item = String> + use<'_> {
+    once(format!(
+        "{:?}, {:?}",
+        match_data.token_nonterminal, match_data.extent
+    ))
+    .chain(match_data.describe_submatches().map(|s| format!("  {s}")))
 }
 fn format_token(token: &FineToken) -> String {
     match &token.origin {
@@ -224,69 +230,71 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
             return;
         }
     };
-    match lex_via_peg::analyse(&cleaned, edition) {
-        lex_via_peg::Analysis::Accepts(pretokens, mut tokens) => {
-            if lowering == Lowering::LowerDocComments {
-                tokens = lower_doc_comments(tokens, edition);
-            }
+
+    let analysis = lex_via_peg::analyse(&cleaned, edition);
+    let failure_label = match analysis {
+        lex_via_peg::Analysis::Rejects(..) => "rejected",
+        lex_via_peg::Analysis::ModelError(..) => "reported a bug in its model",
+        _ => "",
+    };
+    match analysis {
+        lex_via_peg::Analysis::Accepts(matches, mut tokens) => {
             match tree_construction::construct_forest(tokens.clone()) {
                 Ok(_) => {
                     println!("lex_via_peg: accepted");
                 }
                 Err(message) => {
-                    println!("lex_via_peg: rejected in step 3 (tree construction)");
+                    println!("lex_via_peg: rejected by tree construction");
                     println!("  error: {message}");
                 }
             }
-            println!("  -- pretokens --");
-            for pretoken in pretokens {
-                println!("  {}", format_pretoken(&pretoken));
+            println!("  -- matches --");
+            for match_data in matches {
+                for s in describe_match(&match_data) {
+                    println!("  {s}",);
+                }
+            }
+            if lowering == Lowering::LowerDocComments {
+                tokens = lower_doc_comments(tokens, edition);
             }
             println!("  -- tokens --");
             for token in tokens.iter() {
                 println!("  {}", format_token(token));
             }
         }
-        lex_via_peg::Analysis::Rejects(lex_via_peg::Reason::Pretokenisation(
-            messages,
-            pretokens,
-            _,
-        )) => {
-            println!("lex_via_peg: rejected in step 1 (pretokenisation)");
-            for message in messages {
-                println!("  error: {message}");
+        lex_via_peg::Analysis::Rejects(reason) | lex_via_peg::Analysis::ModelError(reason) => {
+            let (matches, mut tokens) = match reason {
+                lex_via_peg::Reason::Matching(message, matches, tokens) => {
+                    println!(
+                        "lex_via_peg: {failure_label} when attempting to match the edition nonterminal"
+                    );
+                    println!("  error: {message}");
+                    (matches, tokens)
+                }
+                lex_via_peg::Reason::Processing(message, rejected, matches, tokens) => {
+                    println!(
+                        "lex_via_peg: {failure_label} when processing a match of the edition nonterminal"
+                    );
+                    println!("  error: {message}");
+                    println!("  -- when considering match --");
+                    for s in describe_match(&rejected) {
+                        println!("  {s}");
+                    }
+                    (matches, tokens)
+                }
+            };
+            println!("  -- previous matches --");
+            for match_data in matches {
+                for s in describe_match(&match_data) {
+                    println!("  {s}");
+                }
             }
-            println!("  -- previous pretokens --");
-            for pretoken in pretokens {
-                println!("  {}", format_pretoken(&pretoken));
-            }
-        }
-        lex_via_peg::Analysis::Rejects(lex_via_peg::Reason::Reprocessing(
-            message,
-            rejected,
-            pretokens,
-            mut tokens,
-        )) => {
             if lowering == Lowering::LowerDocComments {
                 tokens = lower_doc_comments(tokens, edition);
-            }
-            println!("lex_via_peg: rejected in step 2 (reprocessing)");
-            println!("  error: {message}");
-            println!("  -- rejected pretoken: --");
-            println!("  {}", format_pretoken(&rejected));
-            println!("  -- previous pretokens --");
-            for pretoken in pretokens {
-                println!("  {}", format_pretoken(&pretoken));
             }
             println!("  -- previous tokens --");
             for token in tokens {
                 println!("  {}", format_token(&token));
-            }
-        }
-        lex_via_peg::Analysis::ModelError(reason) => {
-            println!("lex_via_peg: reported a bug in its model");
-            for s in reason.into_description() {
-                println!("  error: {s}");
             }
         }
     }

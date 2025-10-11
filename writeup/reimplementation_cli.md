@@ -132,13 +132,15 @@ Uses a specified [dialect].
 
 Unlike `compare`, this shows the tokens before regularisation.
 
-For the reimplementation, it shows both pretokens and fine-grained tokens.
+For the reimplementation, it shows details about what the grammar matched,
+and fine-grained tokens.
 
 If rustc rejects the input (and the rejection wasn't a fatal error),
 it reports the tokens rustc would have passed on to the parser.
 
-If the reimplementation rejects the input, reports what has been pretokenised so far;
-if the rejection comes from reprocessing, indicates the rejected pretoken and reports the fine-grained tokens made so far.
+If the reimplementation rejects the input, reports what has been tokenised so far.
+If the rejection comes from processing,
+describes the rejected match and reports any matches and fine-grained tokens from before the rejection.
 
 
 #### `coarse`

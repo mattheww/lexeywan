@@ -96,7 +96,7 @@ fn clean_shebang(mut input: Charseq, edition: Edition) -> Charseq {
     {
         return input;
     }
-    let first_nl = input.iter().position(|c| *c == '\n');
+    let first_nl = input.iter().position(|c| c == '\n');
     match first_nl {
         Some(idx) => input.remove_range(..idx),
         None => input.remove_range(..),

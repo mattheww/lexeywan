@@ -9,7 +9,7 @@ I can think of the following ways to handle this:
 
 ### Ad-hoc extension
 
-This writeup uses an [ad-hoc extension][rdql-pretoken] to the formalism,
+This writeup uses an [ad-hoc extension][rdql-token] to the formalism,
 along similar lines to the stack extension described below
 (but without needing a full stack).
 
@@ -99,5 +99,5 @@ RDQ_255_CONTENT = {
 ```
 
 
-[rdql-pretoken]: string_and_byte_literal_pretokens.html#rdql
+[rdql-token]: string_and_byte_literal_tokens.html#rdql
 [pest-stack]: https://docs.rs/pest/2.8.0/pest/#special-rules

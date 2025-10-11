@@ -10,24 +10,19 @@
   - [Parsing Expression Grammars](./pegs.md)
 - [Before tokenising](./before_tokenising.md)
 - [Tokenising](./tokenising.md)
-  - [Pretokens](./pretokens.md)
-  - [Pretokenising](./pretokenising.md)
-    - [Common definitions](./common_definitions.md)
-    - [Whitespace and comment pretokens](./whitespace_and_comment_pretokens.md)
-    - [String and byte literal pretokens](./string_and_byte_literal_pretokens.md)
-    - [Numeric literal pretokens](./numeric_literal_pretokens.md)
-    - [Identifier-like pretokens](./identifier_pretokens.md)
-    - [Punctuation pretokens](./punctuation_pretokens.md)
   - [Fine-grained tokens](./fine_grained_tokens.md)
-  - [Reprocessing](./reprocessing.md)
+  - [Whitespace and comment tokens](./whitespace_and_comment_tokens.md)
+  - [String and byte literal tokens](./string_and_byte_literal_tokens.md)
     - [Escape processing](./escape_processing.md)
-    - [List of reprocessing cases](./reprocessing_cases.md)
+  - [Numeric literal tokens](./numeric_literal_tokens.md)
+  - [Identifier-like tokens](./identifier_tokens.md)
+  - [Punctuation tokens](./punctuation_tokens.md)
 - [Lowering doc-comments](./doc_comments.md)
 
 # Appendices
 
 - [Frontmatter grammar](./frontmatter_grammar.md)
-- [Complete pretokenisation grammar](./complete_pretoken_grammar.md)
+- [Complete tokenisation grammar](./complete_token_grammar.md)
 - [Reimplementation CLI](./reimplementation_cli.md)
 
 # Discussion

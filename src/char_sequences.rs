@@ -32,13 +32,18 @@ impl Charseq {
     }
 
     /// Returns an iterator over the sequence's characters.
-    pub fn iter(&self) -> impl Iterator<Item = &char> {
-        self.0.iter()
+    pub fn iter(&self) -> impl Iterator<Item = char> + use<'_> {
+        self.0.iter().copied()
+    }
+
+    /// Returns an iterator over the unicode scalar values of the sequence's characters.
+    pub fn scalar_values(&self) -> impl Iterator<Item = u32> + use<'_> {
+        self.iter().map(|c| c as u32)
     }
 
     /// Returns `true` iff the specified character occurs in the sequence.
-    pub fn contains(&self, c: &char) -> bool {
-        self.0.contains(c)
+    pub fn contains(&self, c: char) -> bool {
+        self.0.contains(&c)
     }
 
     /// Returns the sequence as a slice of `char`.
@@ -46,11 +51,11 @@ impl Charseq {
         self.0.as_slice()
     }
 
-    /// Converts to  Unicode Normalisation Form C.
+    /// Converts to Unicode Normalisation Form C.
     ///
     /// Returns a new character sequence.
     pub fn nfc(&self) -> Self {
-        self.iter().copied().nfc().collect()
+        self.iter().nfc().collect()
     }
 
     /// Removes the characters in the specified range from the sequence.

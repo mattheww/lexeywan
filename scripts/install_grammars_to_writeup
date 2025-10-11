@@ -2,9 +2,9 @@
 set -e
 cd $(dirname $0)/..
 
-SRC=src/lex_via_peg/pretokenisation/pretokenise.pest
-ANCHORED=writeup/pretokenise_anchored.pest
-CLEANED=writeup/pretokenise.pest
+SRC=src/lex_via_peg/tokenise.pest
+ANCHORED=writeup/tokenise_anchored.pest
+CLEANED=writeup/tokenise.pest
 
 sed \
     -e 's!PUSH(HASHES)!HASHES¹!' \
