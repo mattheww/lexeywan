@@ -33,16 +33,16 @@ The grammar defines an _edition nonterminal_ for each Rust edition:
 | 2021         | `TOKEN_2021`        |
 | 2024         | `TOKEN_2024`        |
 
-Each edition nonterminal is defined as a choice expression, each of whose subexpressions is a single nonterminal (a <dfn>token nonterminal</dfn>).
+Each edition nonterminal is defined as a choice expression, each of whose subexpressions is a single nonterminal (a <dfn>token-kind nonterminal</dfn>).
 Their full definitions are presented in [Edition and token nonterminals](edition_nonterminals.md) below.
 
-The token nonterminals are distinguished in the grammar as having names in `Title_case`.
+The token-kind nonterminals are distinguished in the grammar as having names in `Title_case`.
 
 The rest of the grammar is presented in the following pages in this section.
 The definitions of some nonterminals are repeated on multiple pages for convenience.
 The full grammar is also available on a [single page](complete_token_grammar.md).
 
-The token nonterminals are presented in an order consistent with their appearance in the edition nonterminals.
+The token-kind nonterminals are presented in an order consistent with their appearance in the edition nonterminals.
 That means they appear in priority order (highest priority first).
 
 ## Extracting fine-grained tokens
@@ -62,14 +62,14 @@ To *extract a fine-grained token from the start of the input*:
 
 ### Processing a match
 
-It follows from the definitions of the edition nonterminals above that a single token nonterminal participates in any successful match.
+It follows from the definitions of the edition nonterminals above that a single token-kind nonterminal participates in any successful match.
 
-For each token nonterminal there is a subsection on the following pages
-which describes how to process a match in which that token nonterminal participated.
+For each token-kind nonterminal there is a subsection on the following pages
+which describes how to process a match in which that token-kind nonterminal participated.
 
 Each of these subsections specifies which matches are rejected.
 For matches which are not rejected,
-a token is produced whose kind is the name of the token nonterminal.
+a token is produced whose kind is the name of the token-kind nonterminal.
 The subsection specifies the token's attributes.
 
 If for any match the subsection doesn't either say that the match is rejected or uniquely specify the value for each attribute needed for the token's kind,

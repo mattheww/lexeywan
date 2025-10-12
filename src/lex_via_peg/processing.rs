@@ -21,7 +21,7 @@ use self::escape_processing::{
 ///
 /// If the match is rejected, distinguishes rejection from "model error".
 pub fn process(match_data: &MatchData) -> Result<FineToken, Error> {
-    let token_data = match match_data.token_nonterminal {
+    let token_data = match match_data.token_kind_nonterminal {
         Nonterminal::Whitespace => process_whitespace(match_data)?,
         Nonterminal::Line_comment => process_line_comment(match_data)?,
         Nonterminal::Block_comment => process_block_comment(match_data)?,
@@ -52,10 +52,10 @@ pub fn process(match_data: &MatchData) -> Result<FineToken, Error> {
         | Nonterminal::Reserved_prefix_2021 => {
             return Err(Error::Rejected(format!(
                 "reserved form: {:?}",
-                match_data.token_nonterminal
+                match_data.token_kind_nonterminal
             )));
         }
-        _ => return Err(model_error("unhandled token nonterminal")),
+        _ => return Err(model_error("unhandled token-kind nonterminal")),
     };
     Ok(FineToken {
         data: token_data,

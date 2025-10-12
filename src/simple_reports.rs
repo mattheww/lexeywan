@@ -130,7 +130,7 @@ pub enum DetailsMode {
 fn describe_match(match_data: &MatchData) -> impl Iterator<Item = String> + use<'_> {
     once(format!(
         "{:?}, {:?}",
-        match_data.token_nonterminal, match_data.extent
+        match_data.token_kind_nonterminal, match_data.extent
     ))
     .chain(match_data.describe_submatches().map(|s| format!("  {s}")))
 }

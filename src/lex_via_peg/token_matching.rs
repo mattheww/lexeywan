@@ -55,9 +55,9 @@ struct TokenParser;
 /// Enumeration of the nonterminals used in the tokenisation grammar.
 ///
 /// This includes:
-/// - the edition nonterminals (named like TOKEN_yyyy)
-/// - the token nonterminals   (named in Title_case)
-/// - subsidiary nonterminals  (named in UPPER_CASE)
+/// - the edition nonterminals    (named like TOKEN_yyyy)
+/// - the token-kind nonterminals (named in Title_case)
+/// - subsidiary nonterminals     (named in UPPER_CASE)
 pub type Nonterminal = Rule;
 
 /// Returns the TOKEN rule to use for the specified Rust edition.
@@ -73,8 +73,8 @@ fn token_rule_for_edition(edition: Edition) -> Nonterminal {
 pub struct MatchData {
     /// The input characters which were consumed by the match.
     pub extent: Charseq,
-    /// The token nonterminal which participated in the match.
-    pub token_nonterminal: Nonterminal,
+    /// The token-kind nonterminal which participated in the match.
+    pub token_kind_nonterminal: Nonterminal,
     /// The subsidiary nonterminals which participated in the match, the characters they consumed,
     /// and their spans inside the full match. Parent matches are listed before their descendents.
     participating: Vec<(Nonterminal, Charseq, SubSpan)>,
@@ -85,7 +85,7 @@ impl std::fmt::Debug for MatchData {
         write!(
             f,
             "{:?} consuming {:?}",
-            self.token_nonterminal, self.extent
+            self.token_kind_nonterminal, self.extent
         )
     }
 }
@@ -98,7 +98,7 @@ impl MatchData {
     fn new(pair: Pair<Nonterminal>) -> Self {
         Self {
             extent: pair.as_str().into(),
-            token_nonterminal: pair.as_rule(),
+            token_kind_nonterminal: pair.as_rule(),
             participating: pair
                 .into_inner()
                 .flatten()

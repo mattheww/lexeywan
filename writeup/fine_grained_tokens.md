@@ -3,7 +3,7 @@
 Tokenising produces <dfn>fine-grained tokens</dfn>.
 
 Each fine-grained token has a <dfn>kind</dfn>,
-which is the name of one of the token nonterminals.
+which is the name of one of the token-kind nonterminals.
 Most kinds of fine-grained token also have <dfn>attributes</dfn>,
 as described in the tables below.
 
@@ -28,7 +28,7 @@ as described in the tables below.
 | `Integer_literal`         | <var>base</var>, <var>digits</var>, <var>suffix</var> |
 | `Float_literal`           | <var>body</var>, <var>suffix</var>                    |
 
-> Note: Some token nonterminals do not appear in this table.
+> Note: Some token-kind nonterminals do not appear in this table.
 > These are the <i>reserved forms</i>, whose matches are always rejected.
 > The names of reserved forms begin with `Reserved_` or `Unterminated_`.
 
