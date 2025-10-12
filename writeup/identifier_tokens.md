@@ -1,7 +1,7 @@
 ## Ident, lifetime, and label tokens
 
 This writeup uses the term <dfn>ident</dfn> to refer to a token that lexically has the form of an identifier,
-including keywords and lone underscore.
+including keywords and <b>_</b>.
 
 > Note: the procedural macros system uses the name `Ident` to refer to what this writeup calls `Ident` and `RawIdent`.
 
