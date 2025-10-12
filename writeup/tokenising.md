@@ -33,12 +33,8 @@ The grammar defines an _edition nonterminal_ for each Rust edition:
 | 2021         | `TOKEN_2021`        |
 | 2024         | `TOKEN_2024`        |
 
-Each edition nonterminal is defined as a choice expression, each of whose subexpressions is a single nonterminal (a _token nonterminal_).
-
-##### Grammar
-```
-{{#include tokenise_anchored.pest:tokens}}
-```
+Each edition nonterminal is defined as a choice expression, each of whose subexpressions is a single nonterminal (a <dfn>token nonterminal</dfn>).
+Their full definitions are presented in [Edition and token nonterminals](edition_nonterminals.md) below.
 
 The token nonterminals are distinguished in the grammar as having names in `Title_case`.
 
@@ -48,7 +44,6 @@ The full grammar is also available on a [single page](complete_token_grammar.md)
 
 The token nonterminals are presented in an order consistent with their appearance in the edition nonterminals.
 That means they appear in priority order (highest priority first).
-
 
 ## Extracting fine-grained tokens
 

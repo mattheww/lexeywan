@@ -10,6 +10,7 @@
   - [Parsing Expression Grammars](./pegs.md)
 - [Before tokenising](./before_tokenising.md)
 - [Tokenising](./tokenising.md)
+  - [Edition and token nonterminals](./edition_nonterminals.md)
   - [Fine-grained tokens](./fine_grained_tokens.md)
   - [Whitespace and comment tokens](./whitespace_and_comment_tokens.md)
   - [String and byte literal tokens](./string_and_byte_literal_tokens.md)
