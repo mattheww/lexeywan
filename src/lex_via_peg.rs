@@ -145,7 +145,7 @@ impl Reason {
 
 /// Runs lexical analysis, expecting to find a single token.
 ///
-/// If the complete input is accepted as a single token, retuns that (fine-grained) token.
+/// If the complete input is accepted as a single token, returns that (fine-grained) token.
 ///
 /// Otherwise returns None.
 pub fn lex_as_single_token(input: &[char], edition: Edition) -> Option<FineToken> {
