@@ -90,9 +90,7 @@ impl MatchData {
     /// Returns the characters consumed by the specified subsidiary nonterminal, or None if that
     /// nonterminal did not participate in the match.
     ///
-    /// If that nonterminal participated in the match more than once, reports ModelError unless all
-    /// the matches are nested inside one "outermost" match, in which case that match's characters
-    /// are returned.
+    /// Reports ModelError if that nonterminal participated in the match more than once.
     fn maybe_consumed(&self, nonterminal: Nonterminal) -> Result<Option<&Charseq>, Error> {
         self.get_checked(nonterminal)
             .map_err(|_| Error::ModelError(format!("{nonterminal:?} participated more than once")))
@@ -100,21 +98,36 @@ impl MatchData {
 
     /// Returns the characters consumed by the specified subsidiary nonterminal.
     ///
-    /// Reports ModelError if that nonterminal did not participate in the match.
-    ///
-    /// See maybe_consumed() for the behaviour if the nonterminal participated in the match more
-    /// than once.
+    /// Reports ModelError if that nonterminal did not participate in the match, or participated in
+    /// the match more than once.
     fn consumed(&self, nonterminal: Nonterminal) -> Result<&Charseq, Error> {
         self.maybe_consumed(nonterminal)?.ok_or_else(|| {
             Error::ModelError(format!("{nonterminal:?} did not participate in the match"))
         })
     }
 
+    /// Returns the characters consumed by the outermost match of the specified subsidiary
+    /// nonterminal.
+    ///
+    /// If that nonterminal participated in the match more than once, reports ModelError unless all
+    /// the matches are nested inside one "outermost" match, in which case that match's characters
+    /// are returned.
+    fn outermost_consumed(&self, nonterminal: Nonterminal) -> Result<&Charseq, Error> {
+        self.get_outermost(nonterminal)
+            .map_err(|_| {
+                Error::ModelError(format!(
+                    "{nonterminal:?} participated in the match more than once without proper nesting"
+                ))
+            })?
+            .ok_or_else(|| {
+                Error::ModelError(format!("{nonterminal:?} did not participate in the match"))
+            })
+    }
+
     /// Returns a clone of the characters consumed by the specified subsidiary nonterminal, or an
     /// empty character sequence if that nonterminal did not participate in the match.
     ///
-    /// See maybe_consumed() for the behaviour if the nonterminal participated in the match more
-    /// than once.
+    /// Reports ModelError if that nonterminal participated in the match more than once.
     fn consumed_or_empty(&self, nonterminal: Nonterminal) -> Result<Charseq, Error> {
         self.maybe_consumed(nonterminal)
             .map(|opt| opt.cloned().unwrap_or_default())
@@ -143,7 +156,7 @@ fn process_line_comment(m: &MatchData) -> Result<FineTokenData, Error> {
 }
 
 fn process_block_comment(m: &MatchData) -> Result<FineTokenData, Error> {
-    let comment_content = m.consumed(Nonterminal::BLOCK_COMMENT_CONTENT)?;
+    let comment_content = m.outermost_consumed(Nonterminal::BLOCK_COMMENT_CONTENT)?;
     let (style, body) = match comment_content.chars() {
         ['*', '*', ..] => (CommentStyle::NonDoc, &[] as &[char]),
         ['*', rest @ ..] if !rest.is_empty() => (CommentStyle::OuterDoc, rest),

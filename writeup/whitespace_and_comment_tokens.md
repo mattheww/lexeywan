@@ -70,20 +70,21 @@ The match is rejected if the token's <var>body</var> would include a <kbd>CR</kb
 
 ##### Attributes
 
-The token's <var>style</var> and <var>body</var> are determined from <u>BLOCK_COMMENT_CONTENT</u> as follows:
+The <dfn>comment content</dfn> is the sequence of characters consumed by the first (and so the outermost) instance of `BLOCK_COMMENT_CONTENT` which participated in the match.
 
+The token's <var>style</var> and <var>body</var> are determined from the block comment content as follows:
 
-- if <u>BLOCK_COMMENT_CONTENT</u> begins with `**`:
+- if the comment content begins with `**`:
   - <var>style</var> is **non-doc**
   - <var>body</var> is empty
 
-- otherwise, if <u>BLOCK_COMMENT_CONTENT</u> begins with `*` and contains at least one further character,
+- otherwise, if the comment content begins with `*` and contains at least one further character,
   - <var>style</var> is **outer doc**
-  - <var>body</var> is the characters from <u>BLOCK_COMMENT_CONTENT</u> after that `*`
+  - <var>body</var> is the characters from the comment content after that `*`
 
-- otherwise, if <u>BLOCK_COMMENT_CONTENT</u> begins with `!`,
+- otherwise, if the comment content begins with `!`,
   - <var>style</var> is **inner doc**
-  - <var>body</var> is the characters from <u>BLOCK_COMMENT_CONTENT</u> after that `!`
+  - <var>body</var> is the characters from the comment content after that `!`
 
 - otherwise
   - <var>style</var> is **non-doc**

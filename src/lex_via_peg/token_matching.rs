@@ -110,11 +110,32 @@ impl MatchData {
     /// Returns the characters consumed by the specified subsidiary nonterminal, or None if that
     /// nonterminal did not participate in this match.
     ///
+    /// Reports an error if that nonterminal participated in this match more than once.
+    pub fn get_checked(&self, nonterminal: Nonterminal) -> Result<Option<&Charseq>, ()> {
+        let mut found = None;
+        for (candidate, consumed, _) in self.participating.iter() {
+            if *candidate == nonterminal {
+                match found {
+                    Some(_) => {
+                        return Err(());
+                    }
+                    None => {
+                        found = Some(consumed);
+                    }
+                }
+            }
+        }
+        Ok(found)
+    }
+
+    /// Returns the characters consumed by the outermost match of the specified subsidiary
+    /// nonterminal, or None if that nonterminal did not participate in this match.
+    ///
     /// If that nonterminal participated in this match more than once:
     /// - if all the sub-matches are nested inside one "outermost" sub-match, returns that
     ///   "outermost" sub-match's characters
     /// - otherwise reports an error.
-    pub fn get_checked(&self, nonterminal: Nonterminal) -> Result<Option<&Charseq>, ()> {
+    pub fn get_outermost(&self, nonterminal: Nonterminal) -> Result<Option<&Charseq>, ()> {
         let mut first_found_consumed = None;
         let mut first_found_span = None;
         for (candidate, consumed, span) in self.participating.iter() {

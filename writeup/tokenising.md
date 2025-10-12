@@ -76,15 +76,11 @@ the subsection specifies the kind and attributes of the token that is produced.
 If for any match the subsection doesn't either say that the match is rejected or uniquely specify the produced token's kind and the value for each of that token kind's attributes,
 it's a bug in this writeup.
 
-#### Referring to matched subsequences
+#### Referring to matched characters
 
 In these subsections, notation of the form <u>NTNAME</u> denotes the sequence of characters consumed by the nonterminal named `NTNAME` which participated in the match.
 
-If a nonterminal's expression refers (directly or indirectly) to the same nonterminal,
-this notation denotes the outermost match of that nonterminal
-(this only happens for `BLOCK_COMMENT_CONTENT`).
-
-If this notation is used for a nonterminal which might otherwise participate more than once in the match,
+If this notation is used for a nonterminal which might participate more than once in the match,
 it's a bug in this writeup.
 
 
