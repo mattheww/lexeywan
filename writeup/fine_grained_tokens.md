@@ -43,13 +43,11 @@ These attributes have the following types:
 | <var>suffix</var>                | sequence of characters                                 |
 
 
-### Notes:
-
-At this stage:
-
-- Both <b>_</b> and keywords are treated as instances of `Ident`.
-- There are explicit tokens representing whitespace and comments.
-- Single-character tokens are used for all punctuation.
-- A lifetime (or label) is represented as a single token
-  (which includes the leading <b>'</b>).
+> Note: At this stage
+>
+> - Both <b>_</b> and keywords are treated as instances of `Ident`.
+> - There are explicit tokens representing whitespace and comments.
+> - Single-character tokens are used for all punctuation.
+> - A lifetime (or label) is represented as a single token
+>   (which includes the leading <b>'</b>).
 
