@@ -74,9 +74,10 @@ which describes how to process a match in which that token nonterminal participa
 
 Each of these subsections specifies which matches are rejected.
 For matches which are not rejected,
-the subsection specifies the kind and attributes of the token that is produced.
+a token is produced whose kind is the name of the token nonterminal.
+The subsection specifies the token's attributes.
 
-If for any match the subsection doesn't either say that the match is rejected or uniquely specify the produced token's kind and the value for each of that token kind's attributes,
+If for any match the subsection doesn't either say that the match is rejected or uniquely specify the value for each attribute needed for the token's kind,
 it's a bug in this writeup.
 
 ##### Referring to matched characters
@@ -101,8 +102,8 @@ The process of _finding the first non-whitespace token_ in a character sequence 
 
 For this purpose a <dfn>token representing whitespace</dfn> is any of:
  - a `Whitespace` token
- - a `LineComment` token whose <var>style</var> is **non-doc**
- - a `BlockComment` token whose <var>style</var> is **non-doc**
+ - a `Line_comment` token whose <var>style</var> is **non-doc**
+ - a `Block_comment` token whose <var>style</var> is **non-doc**
 
 
 [extract a fine-grained token from the start of the input]: #extracting-fine-grained-tokens

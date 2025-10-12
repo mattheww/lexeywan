@@ -23,9 +23,6 @@ The following nonterminals are common to the definitions below:
 > Note: The `! "."` subexpression makes sure that forms like `1..2` aren't treated as starting with a float.
 > The `! IDENT_START` subexpression makes sure that forms like `1.some_method()` aren't treated as starting with a float.
 
-##### Token kind produced
-`FloatLiteral`
-
 ##### Attributes
 
 The token's <var>body</var> is <u>FLOAT_BODY_WITH_EXPONENT</u>, <u>FLOAT_BODY_WITHOUT_EXPONENT</u>, or <u>FLOAT_BODY_WITH_FINAL_DOT</u>, whichever one participated in the match.
@@ -65,11 +62,6 @@ All matches are rejected.
 > - `0xy` (which is rejected, not accepted as `0` with suffix `xy`)
 > - `0x·` (which is rejected, not accepted as `0` with suffix `x·`)
 
-
-##### Token kind produced
-`IntegerLiteral`
-
-
 ##### Attributes
 
 The token's <var>base</var> is looked up in the following table,
@@ -98,7 +90,7 @@ The match is rejected if:
 - the token's <var>base</var> would be **octal** and
   its <var>digits</var> would contain any character other than <b>0</b>, <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b>, <b>5</b>, <b>6</b>, <b>7</b>, or <b>_</b>.
 
-> Note: In particular, a match which would make an `IntegerLiteral` with empty <var>digits</var> is rejected.
+> Note: In particular, a match which would make an `Integer_literal` with empty <var>digits</var> is rejected.
 
 
 [rfc0879]: https://github.com/rust-lang/rfcs/pull/0879

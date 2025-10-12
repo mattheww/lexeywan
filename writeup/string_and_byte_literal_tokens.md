@@ -41,10 +41,6 @@ Define a <dfn>represented character</dfn>, derived from <u>SQ_CONTENT</u> as fol
 
 - Otherwise the <var>represented character</var> is the single character that makes up <u>SQ_CONTENT</u>.
 
-
-##### Token kind produced
-`CharacterLiteral`
-
 ##### Attributes
 
 The token's <var>represented character</var> is the represented character.
@@ -86,9 +82,6 @@ the match is rejected.
 
 - Otherwise the represented character is the single character that makes up <u>SQ_CONTENT</u>.
 
-##### Token kind produced
-`ByteLiteral`
-
 ##### Attributes
 
 The token's <var>represented byte</var> is the represented character's [Unicode scalar value].
@@ -120,9 +113,6 @@ The following nonterminals are common to the definitions below:
 ```
 {{#include tokenise_anchored.pest:string_literal}}
 ```
-
-##### Token kind produced
-`StringLiteral`
 
 ##### Attributes
 
@@ -166,9 +156,6 @@ For example, a match of the characters `b"\\x41"` is converted to the characters
 
 > See [Wording for string unescaping]
 
-##### Token kind produced
-`ByteStringLiteral`
-
 ##### Attributes
 
 The token's <var>represented bytes</var> are the sequence of [Unicode scalar values] of the characters in the represented string.
@@ -192,9 +179,6 @@ The match is rejected if:
 ```
 {{#include tokenise_anchored.pest:c_string_literal}}
 ```
-
-##### Token kind produced
-`CStringLiteral`
 
 ##### Attributes
 
@@ -245,10 +229,6 @@ each of the expressions marked as `HASHES²` fails unless the text it matches is
 {{#include tokenise_anchored.pest:raw_string_literal}}
 ```
 
-##### Token kind produced
-`RawStringLiteral`
-
-
 ##### Attributes
 
 The token's <var>represented string</var> is <u>RAW_DQ_CONTENT</u>.
@@ -268,10 +248,6 @@ The match is rejected if:
 ```
 {{#include tokenise_anchored.pest:raw_byte_string_literal}}
 ```
-
-##### Token kind produced
-`RawByteStringLiteral`
-
 
 ##### Attributes
 
@@ -294,9 +270,6 @@ The match is rejected if:
 ```
 {{#include tokenise_anchored.pest:raw_c_string_literal}}
 ```
-
-##### Token kind produced
-`RawCStringLiteral`
 
 ##### Attributes
 

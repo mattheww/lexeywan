@@ -10,9 +10,6 @@
 {{#include tokenise_anchored.pest:whitespace}}
 ```
 
-##### Token kind produced
-`Whitespace`
-
 ##### Attributes
 (none)
 
@@ -27,9 +24,6 @@ No matches are rejected.
 ```
 {{#include tokenise_anchored.pest:line_comment}}
 ```
-
-##### Token kind produced
-`LineComment`
 
 ##### Attributes
 
@@ -64,10 +58,6 @@ The match is rejected if the token's <var>body</var> would include a <kbd>CR</kb
 ```
 {{#include tokenise_anchored.pest:block_comment}}
 ```
-
-##### Token kind produced
-`BlockComment`
-
 > Note: See [Nested block comments] for discussion of the `!"/*"` subexpression.
 
 

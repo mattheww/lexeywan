@@ -2,28 +2,36 @@
 
 Tokenising produces <dfn>fine-grained tokens</dfn>.
 
-Each fine-grained token has a <dfn>kind</dfn>, and possibly also some attributes, as described in the tables below.
+Each fine-grained token has a <dfn>kind</dfn>,
+which is the name of one of the token nonterminals.
+Most kinds of fine-grained token also have <dfn>attributes</dfn>,
+as described in the tables below.
 
-| Kind                   | Attributes                                            |
-|:-----------------------|:------------------------------------------------------|
-| `Whitespace`           |                                                       |
-| `LineComment`          | <var>style</var>, <var>body</var>                     |
-| `BlockComment`         | <var>style</var>, <var>body</var>                     |
-| `Punctuation`          | <var>mark</var>                                       |
-| `Ident`                | <var>represented ident</var>                          |
-| `RawIdent`             | <var>represented ident</var>                          |
-| `LifetimeOrLabel`      | <var>name</var>                                       |
-| `RawLifetimeOrLabel`   | <var>name</var>                                       |
-| `CharacterLiteral`     | <var>represented character</var>, <var>suffix</var>   |
-| `ByteLiteral`          | <var>represented byte</var>, <var>suffix</var>        |
-| `StringLiteral`        | <var>represented string</var>, <var>suffix</var>      |
-| `RawStringLiteral`     | <var>represented string</var>, <var>suffix</var>      |
-| `ByteStringLiteral`    | <var>represented bytes</var>, <var>suffix</var>       |
-| `RawByteStringLiteral` | <var>represented bytes</var>, <var>suffix</var>       |
-| `CStringLiteral`       | <var>represented bytes</var>, <var>suffix</var>       |
-| `RawCStringLiteral`    | <var>represented bytes</var>, <var>suffix</var>       |
-| `IntegerLiteral`       | <var>base</var>, <var>digits</var>, <var>suffix</var> |
-| `FloatLiteral`         | <var>body</var>, <var>suffix</var>                    |
+| Kind                      | Attributes                                            |
+|:--------------------------|:------------------------------------------------------|
+| `Whitespace`              |                                                       |
+| `Line_comment`            | <var>style</var>, <var>body</var>                     |
+| `Block_comment`           | <var>style</var>, <var>body</var>                     |
+| `Punctuation`             | <var>mark</var>                                       |
+| `Ident`                   | <var>represented ident</var>                          |
+| `Raw_ident`               | <var>represented ident</var>                          |
+| `Lifetime_or_label`       | <var>name</var>                                       |
+| `Raw_lifetime_or_label`   | <var>name</var>                                       |
+| `Character_literal`       | <var>represented character</var>, <var>suffix</var>   |
+| `Byte_literal`            | <var>represented byte</var>, <var>suffix</var>        |
+| `String_literal`          | <var>represented string</var>, <var>suffix</var>      |
+| `Raw_string_literal`      | <var>represented string</var>, <var>suffix</var>      |
+| `Byte_string_literal`     | <var>represented bytes</var>, <var>suffix</var>       |
+| `Raw_byte_string_literal` | <var>represented bytes</var>, <var>suffix</var>       |
+| `C_string_literal`        | <var>represented bytes</var>, <var>suffix</var>       |
+| `Raw_c_string_literal`    | <var>represented bytes</var>, <var>suffix</var>       |
+| `Integer_literal`         | <var>base</var>, <var>digits</var>, <var>suffix</var> |
+| `Float_literal`           | <var>body</var>, <var>suffix</var>                    |
+
+> Note: Some token nonterminals do not appear in this table.
+> These are the <i>reserved forms</i>, whose matches are always rejected.
+> The names of reserved forms begin with `Reserved_` or `Unterminated_`.
+
 
 These attributes have the following types:
 

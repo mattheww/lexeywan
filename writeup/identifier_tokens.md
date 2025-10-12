@@ -6,7 +6,7 @@
 This writeup uses the term <dfn>ident</dfn> to refer to a token that lexically has the form of an identifier,
 including keywords and <b>_</b>.
 
-> Note: the procedural macros system uses the name `Ident` to refer to what this writeup calls `Ident` and `RawIdent`.
+> Note: the procedural macros system uses the name `Ident` to refer to what this writeup calls `Ident` and `Raw_ident`.
 
 The following nonterminals are common to the definitions below:
 
@@ -24,10 +24,6 @@ The following nonterminals are common to the definitions below:
 ```
 {{#include tokenise_anchored.pest:raw_lifetime_or_label_2021}}
 ```
-
-##### Token kind produced
-`RawLifetimeOrLabel`
-
 
 ##### Attributes
 
@@ -66,9 +62,6 @@ All matches are rejected.
 {{#include tokenise_anchored.pest:lifetime_or_label}}
 ```
 
-##### Token kind produced
-`LifetimeOrLabel`
-
 > Note: The `Reserved_single_quoted_literal` definitions make sure that forms like `'aaa'bbb` are not accepted.
 
 > See [Modelling lifetimes and labels] for a discussion of why this model doesn't simply treat `'` as punctuation.
@@ -93,9 +86,6 @@ No matches are rejected.
 ```
 {{#include tokenise_anchored.pest:raw_ident}}
 ```
-
-##### Token kind produced
-`RawIdent`
 
 ##### Attributes
 
@@ -133,9 +123,6 @@ All matches are rejected.
 ```
 {{#include tokenise_anchored.pest:ident}}
 ```
-
-##### Token kind produced
-`Ident`
 
 > Note: The Reference adds the following when discussing identifiers:
 > "Zero width non-joiner (ZWNJ U+200C) and zero width joiner (ZWJ U+200D) characters are not allowed in identifiers."
