@@ -30,7 +30,7 @@ Subcommands:
 
 suite-opts (specify at most one):
   --short: run the SHORTLIST rather than the LONGLIST
-  --xfail: run the tests which are expected to to fail
+  --xfail: run the tests which are expected to fail
 
 dialect-opts:
   --edition=2015|2021|*2024
