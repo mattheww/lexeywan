@@ -1,5 +1,8 @@
 ## Numeric literal tokens
 
+##### Table of contents
+<!-- toc -->
+
 The following nonterminals are common to the definitions below:
 
 ##### Grammar

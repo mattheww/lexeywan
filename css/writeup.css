@@ -6,6 +6,10 @@ h2 + h3 {
     margin-top: 1.2em;
 }
 
+#table-of-contents + ul + h3 {
+    margin-top: 1.2em;
+}
+
 h4.processing {
     border: 1px solid var(--fg);
     border-radius: 3px;
@@ -34,6 +38,18 @@ table {
 
 th:empty {
     display: none;
+}
+
+#table-of-contents + ul {
+    margin-top: 0.2em;
+    padding-left: 0;
+    list-style: none;
+    font-size: 0.9em;
+}
+
+#table-of-contents + ul ul {
+    padding-left: 1.5em;
+    list-style: none;
 }
 
 /* we abuse <var> for token attributes */

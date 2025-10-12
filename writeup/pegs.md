@@ -5,6 +5,8 @@ This document relies on two parsing expression grammars
 
 Parsing Expression Grammars are described informally in §2 of [Ford 2004][peg-paper].
 
+##### Table of contents
+<!-- toc -->
 
 ### Grammar notation
 

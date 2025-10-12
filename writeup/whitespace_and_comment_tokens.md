@@ -1,5 +1,8 @@
 ## Whitespace and comment tokens
 
+##### Table of contents
+<!-- toc -->
+
 #### Whitespace { .processing }
 
 ##### Grammar

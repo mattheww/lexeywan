@@ -13,6 +13,10 @@ Note the repository includes a `rust-toolchain.toml` file
 which will cause `cargo run` to install the required nightly version of `rustc`.
 
 
+##### Table of contents
+<!-- toc -->
+
+
 ### Summary usage
 
 ```

@@ -1,13 +1,7 @@
 ## Open questions
 
 ##### Table of contents
-
-[Terminology](#terminology)\
-[Raw string literals](#raw-string-literals)\
-[Token kinds and attributes](#token-kinds-and-attributes)\
-[How to indicate captured text](#how-to-indicate-captured-text)\
-[Wording for string unescaping](#wording-for-string-unescaping)\
-[String continuation escapes](#string-continuation-escapes)
+<!-- toc -->
 
 
 ### Terminology

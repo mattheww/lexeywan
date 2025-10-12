@@ -1,5 +1,8 @@
 ## String and byte literal tokens
 
+##### Table of contents
+<!-- toc -->
+
 ### Single-quoted literals
 
 The following nonterminals are common to the definitions below:

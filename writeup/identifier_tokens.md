@@ -1,5 +1,8 @@
 ## Ident, lifetime, and label tokens
 
+##### Table of contents
+<!-- toc -->
+
 This writeup uses the term <dfn>ident</dfn> to refer to a token that lexically has the form of an identifier,
 including keywords and <b>_</b>.
 

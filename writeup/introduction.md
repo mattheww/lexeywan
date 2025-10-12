@@ -11,6 +11,9 @@ the reimplementation uses the [Pest] library to generate the corresponding parse
 
 [framework]: reimplementation_cli.md
 
+##### Table of contents
+<!-- toc -->
+
 
 ## Scope
 
@@ -47,7 +50,7 @@ There are no differences in lexing behaviour between the 2015 and 2018 editions.
 In the reimplementation, "2015" is used to refer to the common behaviour of Rust 2015 and Rust 2018.
 
 
-### Accepted input
+## Accepted input
 
 This description aims to accept input exactly if `rustc`'s lexer would.
 
@@ -61,7 +64,7 @@ It's not attempting to describe `rustc`'s "recovery" behaviour
 (where input which will be reported as an error provides tokens to later stages of the compiler anyway).
 
 
-#### Size limits
+##### Size limits
 
 This description doesn't attempt to characterise `rustc`'s limits on the size of the input as a whole.
 
@@ -69,7 +72,7 @@ This description doesn't attempt to characterise `rustc`'s limits on the size of
 > But I haven't tried to test this.
 
 
-### Output form
+## Output form
 
 This document only goes as far as describing how to produce a "least common denominator" stream of tokens.
 
@@ -84,7 +87,7 @@ In particular, this representation may be unsuitable for direct use by a descrip
 (The reimplementation includes code to make compound punctuation tokens so they can be compared with `rustc`'s, and to organise them into delimited trees, but those processes aren't described here.)
 
 
-### Licence
+## Licence
 
 This document and the accompanying lexer implementation are released under the terms of both the [MIT license] and the [Apache License (Version 2.0)].
 
@@ -92,7 +95,7 @@ This document and the accompanying lexer implementation are released under the t
 [Apache License (Version 2.0)]: https://github.com/mattheww/lexeywan/blob/main/LICENSE-APACHE
 
 
-### Authorship and source access
+## Authorship and source access
 
 © Matthew Woodcraft 2024,2025
 

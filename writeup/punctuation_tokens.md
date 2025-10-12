@@ -1,5 +1,8 @@
 ## Punctuation tokens
 
+##### Table of contents
+<!-- toc -->
+
 #### Punctuation { .processing }
 
 ##### Grammar

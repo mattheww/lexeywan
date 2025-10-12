@@ -1,5 +1,8 @@
 # Tokenising
 
+##### Table of contents
+<!-- toc -->
+
 This phase of processing takes a character sequence (the *input*), and either:
 
 - produces a sequence of [fine-grained tokens]; or
@@ -76,7 +79,7 @@ the subsection specifies the kind and attributes of the token that is produced.
 If for any match the subsection doesn't either say that the match is rejected or uniquely specify the produced token's kind and the value for each of that token kind's attributes,
 it's a bug in this writeup.
 
-#### Referring to matched characters
+##### Referring to matched characters
 
 In these subsections, notation of the form <u>NTNAME</u> denotes the sequence of characters consumed by the nonterminal named `NTNAME` which participated in the match.
 

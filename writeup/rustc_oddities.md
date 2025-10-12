@@ -1,5 +1,8 @@
 ## Rustc oddities
 
+##### Table of contents
+<!-- toc -->
+
 ### NFC normalisation for lifetime/label { #nfc-lifetime }
 
 Identifiers are normalised to NFC,

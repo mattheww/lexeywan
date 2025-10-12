@@ -1,5 +1,8 @@
 ### Escape processing
 
+##### Table of contents
+<!-- toc -->
+
 The descriptions of processing string and character literals make use of several forms of <dfn>escape</dfn>.
 
 Each form of escape is characterised by:

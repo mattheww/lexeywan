@@ -1,11 +1,7 @@
 ## Rationale for this model
 
 ##### Table of contents
-
-[Separating lexing from parsing](#separating-lexing-from-parsing)\
-[Using a Parsing Expression Grammar](#using-a-parsing-expression-grammar)\
-[Modelling lifetimes and labels](#modelling-lifetimes-and-labels)\
-[Producing tokens with attributes](#producing-tokens-with-attributes)
+<!-- toc -->
 
 
 ### Separating lexing from parsing
@@ -62,7 +58,7 @@ I think a PEG is a good formalism for modelling Rust's lexer
 for several reasons.
 
 
-#### Resolving ambiguities
+##### Resolving ambiguities
 
 The lexical part of Rust's grammar is necessarily full of ambiguities.
 
@@ -101,7 +97,7 @@ the new ambiguities will be resolved naturally because the floating-point litera
 Generative grammars don't inherently have prioritisation, but parsing expression grammars do.
 
 
-#### Ambiguities that must be resolved as errors
+##### Ambiguities that must be resolved as errors
 
 There are a number of forms which are errors at lexing time, even though in principle they could be analysed as multiple tokens.
 
@@ -116,7 +112,7 @@ Other cases can be handled naturally using a PEG, by writing medium-priority rul
 In this model, these additional rules cause the input to be rejected at processing time.
 
 
-#### Lookahead
+##### Lookahead
 
 There are two cases where the Reference currently describes the lexer's behaviour using lookahead:
 - for (possibly raw) lifetime-or-label, to prevent `'ab'c'` being analysed as `'ab` followed by `'c`
@@ -126,14 +122,14 @@ These are easily modelled using PEG predicates
 (though this writeup prefers a reserved form for the former).
 
 
-#### Handling raw strings
+##### Handling raw strings
 
 The biggest weakness of using the PEG formalism is that it can't naturally describe the rule for matching the number of `#` characters in raw string literals.
 
 See [Grammar for raw string literals](raw_strings.md) for discussion.
 
 
-#### Adopting language changes
+##### Adopting language changes
 
 Rustc's lexer is made up of hand-written imperative code, largely using `match` statements.
 It often peeks ahead for a few characters, and it tries to avoid backtracking.
