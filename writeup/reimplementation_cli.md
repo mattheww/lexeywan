@@ -275,7 +275,7 @@ This list includes testcases which are expected to fail or disagree with at leas
 Each subcommand which compares the reimplementation to rustc reports exit status 0 if all comparisons agreed,
 or exit status 3 if any comparison disagreed or any model errors were observed.
 
-For all subcommands, exit status 1 indicates an unhandled error.
+For all subcommands, exit status 101 indicates an unhandled error.
 
 
 [Processing that happens before tokenising]: before_tokenising.md
