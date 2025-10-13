@@ -128,7 +128,7 @@ replacing each escape sequence of any of the following forms with the escape seq
 - [String continuation escapes]
 
 These replacements take place in left-to-right order.
-For example, a match of the characters `"\\x41"` is converted to the characters <b>\\</b> <b>x</b> <b>4</b> <b>1</b>.
+For example, a match against the characters `"\\x41"` is converted to the characters <b>\\</b> <b>x</b> <b>4</b> <b>1</b>.
 
 > See [Wording for string unescaping]
 
@@ -158,7 +158,7 @@ replacing each escape sequence of any of the following forms with the escape seq
 - [String continuation escapes]
 
 These replacements take place in left-to-right order.
-For example, a match of the characters `b"\\x41"` is converted to the characters <b>\\</b> <b>x</b> <b>4</b> <b>1</b>.
+For example, a match against the characters `b"\\x41"` is converted to the characters <b>\\</b> <b>x</b> <b>4</b> <b>1</b>.
 
 > See [Wording for string unescaping]
 
