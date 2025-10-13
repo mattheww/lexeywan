@@ -16,22 +16,19 @@ Here's a partial list:
 | processing                 | New                              |
 | fine-grained token         | New                              |
 | compound token             | New                              |
-| literal content            | Reference (recent)               |
-| simple escape              | Reference (recent)               |
+| literal content            | Reference                        |
+| simple escape              | Reference                        |
 | escape sequence            | Reference                        |
-| escaped value              | Reference (recent)               |
+| escaped value              | Reference                        |
 | string continuation escape | Reference (as `STRING_CONTINUE`) |
-| string representation      | Reference (recent)               |
+| string representation      | Reference                        |
 | represented byte           | New                              |
-| represented character      | Reference (recent)               |
-| represented bytes          | Reference (recent)               |
-| represented string         | Reference (recent)               |
+| represented character      | Reference                        |
+| represented bytes          | Reference                        |
+| represented string         | Reference                        |
 | represented ident          | New                              |
 | style (of a comment)       | rustc internal                   |
 | body (of a comment)        | Reference                        |
-
-Terms listed as "Reference (recent)" are ones I introduced in PRs merged in January 2024.
-
 
 
 ### Raw string literals
