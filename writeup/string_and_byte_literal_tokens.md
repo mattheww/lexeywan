@@ -89,6 +89,7 @@ the match is rejected.
 ##### Attributes
 
 The token's <var>represented byte</var> is the represented character's [Unicode scalar value].
+(This is well defined because the definition above ensures that value is less than 256.)
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
