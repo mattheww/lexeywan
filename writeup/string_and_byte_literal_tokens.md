@@ -22,6 +22,8 @@ The following nonterminals are common to the definitions below:
 {{#include tokenise_anchored.pest:character_literal}}
 ```
 
+##### Definitions
+
 It follows from the grammar that <u>SQ_CONTENT</u> is either a character sequence beginning with <b>\\</b>
 or a single character.
 
@@ -60,6 +62,8 @@ The match is rejected if:
 ```
 {{#include tokenise_anchored.pest:byte_literal}}
 ```
+
+##### Definitions
 
 It follows from the grammar that <u>SQ_CONTENT</u> is either a character sequence beginning with <b>\\</b>
 or a single character.
@@ -144,6 +148,8 @@ The match is rejected if:
 ```
 {{#include tokenise_anchored.pest:byte_string_literal}}
 ```
+
+##### Definitions
 
 Define a <dfn>represented string</dfn> (a sequence of characters) derived from <u>DQ_CONTENT</u> by
 replacing each escape sequence of any of the following forms with the escape sequence's escaped value:
