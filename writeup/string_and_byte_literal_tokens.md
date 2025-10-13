@@ -24,10 +24,13 @@ The following nonterminals are common to the definitions below:
 
 ##### Definitions
 
-It follows from the grammar that <u>SQ_CONTENT</u> is either a character sequence beginning with <b>\\</b>
-or a single character.
-
 Define a <dfn>represented character</dfn>, derived from <u>SQ_CONTENT</u> as follows:
+
+- If <u>SQ_CONTENT</u> is the single character <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>TAB</kbd>,
+  the match is rejected.
+
+- If <u>SQ_CONTENT</u> is any other single character,
+  the represented character is that character.
 
 - If <u>SQ_CONTENT</u> is one of the following forms of escape sequence,
   the represented character is the escape sequence's escaped value:
@@ -35,13 +38,7 @@ Define a <dfn>represented character</dfn>, derived from <u>SQ_CONTENT</u> as fol
   - [7-bit escapes]
   - [Unicode escapes]
 
-- If <u>SQ_CONTENT</u> begins with a <b>\\</b> character which did not introduce one of the above forms of escape,
-  the match is rejected.
-
-- Otherwise, if the single character that makes up <u>SQ_CONTENT</u> is <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>TAB</kbd>,
-  the match is rejected.
-
-- Otherwise the <var>represented character</var> is the single character that makes up <u>SQ_CONTENT</u>.
+- Otherwise the match is rejected
 
 ##### Attributes
 
@@ -65,26 +62,23 @@ The match is rejected if:
 
 ##### Definitions
 
-It follows from the grammar that <u>SQ_CONTENT</u> is either a character sequence beginning with <b>\\</b>
-or a single character.
-
 Define a <dfn>represented character</dfn>, derived from <u>SQ_CONTENT</u> as follows:
+
+- If <u>SQ_CONTENT</u> is the single character <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>TAB</kbd>,
+  the match is rejected.
+
+- If <u>SQ_CONTENT</u> is a single character with [Unicode scalar value] greater than 127,
+  the match is rejected.
+
+- If <u>SQ_CONTENT</u> is any other single character,
+  the represented character is that character.
 
 - If <u>SQ_CONTENT</u> is one of the following forms of escape sequence,
   the represented character is the escape sequence's escaped value:
   - [Simple escapes]
   - [8-bit escapes]
 
-- If <u>SQ_CONTENT</u> begins with a <b>\\</b> character which did not introduce one of the above forms of escape,
-the match is rejected.
-
-- Otherwise, if the single character that makes up <u>SQ_CONTENT</u> is <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>TAB</kbd>,
-the match is rejected.
-
-- Otherwise, if the single character that makes up <u>SQ_CONTENT</u> has a [Unicode scalar value] greater than 127,
-the match is rejected.
-
-- Otherwise the represented character is the single character that makes up <u>SQ_CONTENT</u>.
+- Otherwise the match is rejected
 
 ##### Attributes
 

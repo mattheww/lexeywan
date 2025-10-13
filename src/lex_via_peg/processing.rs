@@ -190,8 +190,13 @@ fn process_byte_literal(m: &MatchData) -> Result<FineTokenData, Error> {
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
     }
+    let represented_character =
+        represented_character_for_byte_literal(m.consumed(Nonterminal::SQ_CONTENT)?)?;
+    let represented_byte: u8 = represented_character
+        .try_into()
+        .map_err(|_| model_error("represented_character_for_byte_literal is out of range"))?;
     Ok(FineTokenData::ByteLiteral {
-        represented_byte: represented_byte_for_byte_literal(m.consumed(Nonterminal::SQ_CONTENT)?)?,
+        represented_byte,
         suffix,
     })
 }
@@ -405,77 +410,30 @@ fn process_punctuation(m: &MatchData) -> Result<FineTokenData, Error> {
 
 /// Validates and interprets the SQ_CONTENT of a '' literal.
 fn represented_character_for_character_literal(sq_content: &Charseq) -> Result<char, Error> {
-    if sq_content.is_empty() {
-        return Err(model_error("impossible SQ_CONTENT: empty"));
+    match sq_content.chars() {
+        ['\''] | ['\\'] => Err(model_error("impossible SQ_CONTENT")),
+        ['\n'] | ['\r'] | ['\t'] => Err(rejected("escape-only char")),
+        [c] => Ok(*c),
+        ['\\', 'x', rest @ ..] => interpret_7_bit_escape(rest),
+        ['\\', 'u', rest @ ..] => interpret_unicode_escape(rest),
+        ['\\', c] => interpret_simple_escape(*c).map_err(|_| rejected("unknown escape")),
+        ['\\', ..] => Err(rejected("unknown escape")),
+        _ => Err(model_error("impossible SQ_CONTENT")),
     }
-    if sq_content[0] == '\\' {
-        let rest = &sq_content[1..];
-        if rest.is_empty() {
-            return Err(model_error("impossible SQ_CONTENT: backslash only"));
-        }
-        if rest[0] == 'x' {
-            return interpret_7_bit_escape(&rest[1..]);
-        }
-        if rest[0] == 'u' {
-            return interpret_unicode_escape(&rest[1..]);
-        }
-        if rest.len() != 1 {
-            return Err(rejected("unknown escape"));
-        }
-        match interpret_simple_escape(rest[0]) {
-            Ok(escaped_value) => return Ok(escaped_value),
-            Err(_) => return Err(rejected("unknown escape")),
-        }
-    }
-    if sq_content.len() != 1 {
-        return Err(model_error("impossible SQ_CONTENT: len != 1"));
-    }
-    let c = sq_content[0];
-    if c == '\'' {
-        return Err(model_error("impossible SQ_CONTENT: '"));
-    }
-    if c == '\n' || c == '\r' || c == '\t' {
-        return Err(rejected("escape-only char"));
-    }
-    Ok(c)
 }
 
-/// Validates and interprets the SQ_CONTENT of a b'' literal.
-fn represented_byte_for_byte_literal(sq_content: &Charseq) -> Result<u8, Error> {
-    if sq_content.is_empty() {
-        return Err(model_error("impossible SQ_CONTENT: empty"));
+/// Validates and interprets the SQ_CONTENT of a b'' literal as a character.
+fn represented_character_for_byte_literal(sq_content: &Charseq) -> Result<char, Error> {
+    match sq_content.chars() {
+        ['\''] | ['\\'] => Err(model_error("impossible SQ_CONTENT")),
+        ['\n'] | ['\r'] | ['\t'] => Err(rejected("escape-only char")),
+        [c] if *c as u32 > 127 => Err(rejected("non-ASCII character in byte literal")),
+        [c] => Ok(*c),
+        ['\\', 'x', rest @ ..] => interpret_8_bit_escape(rest),
+        ['\\', c] => interpret_simple_escape(*c).map_err(|_| rejected("unknown escape")),
+        ['\\', ..] => Err(rejected("unknown escape")),
+        _ => Err(model_error("impossible SQ_CONTENT")),
     }
-    if sq_content[0] == '\\' {
-        let rest = &sq_content[1..];
-        if rest.is_empty() {
-            return Err(model_error("impossible SQ_CONTENT: backslash only"));
-        }
-        if rest[0] == 'x' {
-            return interpret_8_bit_escape_as_byte(&rest[1..]);
-        }
-        if rest.len() != 1 {
-            return Err(rejected("unknown escape"));
-        }
-        match interpret_simple_escape_as_byte(rest[0]) {
-            Ok(b) => return Ok(b),
-            Err(_) => return Err(rejected("unknown escape")),
-        }
-    }
-    if sq_content.len() != 1 {
-        return Err(model_error("impossible SQ_CONTENT: len != 1"));
-    }
-    let c = sq_content[0];
-    if c == '\'' {
-        return Err(model_error("impossible SQ_CONTENT: '"));
-    }
-    if c == '\n' || c == '\r' || c == '\t' {
-        return Err(rejected("escape-only char"));
-    }
-    if c as u32 > 127 {
-        return Err(rejected("non-ASCII character in byte literal"));
-    }
-    let represented_character = c;
-    Ok(represented_character.try_into().unwrap())
 }
 
 /// Validates and interprets the DQ_CONTENT of a "" literal.
