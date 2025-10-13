@@ -171,7 +171,13 @@ pub fn lex_as_single_token(input: &[char], edition: Edition) -> Option<FineToken
 /// analysis would reject the input.
 ///
 /// For this purpose, comment tokens with style `NonDoc` count as whitespace.
+///
+/// Panics if the input is longer than 2^24 characters (this is a sanity check, not part of the model).
 pub fn first_nonwhitespace_token(input: &[char], edition: Edition) -> Option<FineToken> {
+    if input.len() > MAX_INPUT_LENGTH {
+        panic!("input too long");
+    }
+
     use crate::fine_tokens::{CommentStyle, FineTokenData::*};
     let matches = match token_matching::match_tokens(edition, input) {
         Ok(Outcome::Complete(matches)) => matches,
