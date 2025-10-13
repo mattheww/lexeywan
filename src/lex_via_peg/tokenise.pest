@@ -1,4 +1,8 @@
 // ANCHOR: tokens
+TOKENS_2015 = { TOKEN_2015 * }
+TOKENS_2021 = { TOKEN_2021 * }
+TOKENS_2024 = { TOKEN_2024 * }
+
 TOKEN_2015 = {
     Whitespace |
     Line_comment |

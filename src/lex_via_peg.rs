@@ -1,7 +1,5 @@
 //! Reimplementation of rustc's lexical analysis.
 
-use std::iter;
-
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::FineToken;
 use crate::utils::escape_for_display;
@@ -22,6 +20,10 @@ const MAX_INPUT_LENGTH: usize = 0x100_0000;
 /// If the input is rejected, returns an error message and whatever lists of matches or tokens are
 /// available.
 ///
+/// (Strictly to follow the writeup we needn't bother with the processing step if we didn't match
+///  the complete input, but it's helpful when troubleshooting to be able to see the additional
+///  information.)
+///
 /// May instead report a problem with lex_via_peg's model or implementation.
 ///
 /// Panics if the input is longer than 2^24 characters (this is a sanity check, not part of the model).
@@ -36,27 +38,23 @@ pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
         panic!("input too long");
     }
 
-    let mut matches = Vec::new();
+    let (all_matches, was_incomplete) = match token_matching::match_tokens(edition, input.chars()) {
+        Ok(Outcome::Complete(matches)) => (matches, false),
+        Ok(Outcome::Incomplete(matches)) => (matches, true),
+        Err(message) => {
+            return Analysis::ModelError(Reason::Matching(message, Vec::new(), Vec::new()))
+        }
+    };
+
+    // Note that if there's a processing error we only report the matches up to the match that
+    // failed processing.
     let mut tokens = Vec::new();
-    for outcome in tokenise(input.chars(), edition) {
-        use Outcome::*;
-        let match_data = match outcome {
-            Matched(match_data) => match_data,
-            NoMatch => {
-                return Analysis::Rejects(Reason::Matching(
-                    "The edition nonterminal did not match".to_owned(),
-                    matches,
-                    tokens,
-                ))
-            }
-            ModelError(message) => {
-                return Analysis::ModelError(Reason::Matching(message, matches, tokens))
-            }
-        };
+    let mut matches = Vec::new();
+    for match_data in all_matches {
         match processing::process(&match_data) {
             Ok(token) => {
                 matches.push(match_data);
-                tokens.push(token)
+                tokens.push(token);
             }
             Err(processing::Error::Rejected(error_message)) => {
                 return Analysis::Rejects(Reason::Processing(
@@ -77,7 +75,15 @@ pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
         }
     }
 
-    Analysis::Accepts(matches, tokens)
+    if was_incomplete {
+        Analysis::Rejects(Reason::Matching(
+            "The tokens nonterminal did not match the complete input".to_owned(),
+            matches,
+            tokens,
+        ))
+    } else {
+        Analysis::Accepts(matches, tokens)
+    }
 }
 
 /// Result of running lexical analysis on a string.
@@ -94,14 +100,15 @@ pub enum Analysis {
 
 /// Explanation of why and where input was rejected.
 pub enum Reason {
-    /// Rejected when trying to match the edition nonterminal.
+    /// Rejected when trying to match the edition's token nonterminal.
     ///
     /// The string describes the reason for rejection (or a model error).
     ///
-    /// The lists of matches and tokens represent what was lexed successfully first.
+    /// The lists of matches and tokens represent what was lexed successfully before the token
+    /// nonterminal ceased to match.
     Matching(String, Vec<MatchData>, Vec<FineToken>),
 
-    /// Rejected when processing a match of the edition nonterminal.
+    /// Rejected when processing a match of a token-kind nonterminal.
     ///
     /// The string describes the reason for rejection (or a model error).
     ///
@@ -149,58 +156,29 @@ impl Reason {
 ///
 /// Otherwise returns None.
 pub fn lex_as_single_token(input: &[char], edition: Edition) -> Option<FineToken> {
-    let mut iter = tokenise(input, edition);
-    let Some(Outcome::Matched(match_data)) = iter.next() else {
+    let Ok(Outcome::Complete(matches)) = token_matching::match_tokens(edition, input) else {
         return None;
     };
-    let None = iter.next() else {
+    let [match_data] = &matches[..] else {
         return None;
     };
-    processing::process(&match_data).ok()
-}
-
-/// Repeatedly matches the appropriate edition nonterminal against the specified input.
-///
-/// Returns an iterator which yields [`Outcome`]s.
-///
-/// The outcome usually provides a [`MatchData`] or indicates that the input is unacceptable to the
-/// lexer.
-///
-/// It may instead report a problem with lex_via_peg's model or implementation.
-fn tokenise(input: &[char], edition: Edition) -> impl Iterator<Item = Outcome> + use<'_> {
-    let mut index = 0;
-    let mut has_failed = false;
-    iter::from_fn(move || {
-        if has_failed {
-            return None;
-        }
-        let rest = &input[index..];
-        if rest.is_empty() {
-            return None;
-        }
-        let outcome = token_matching::match_once(edition, rest);
-        match &outcome {
-            Outcome::Matched(match_data) => {
-                index += match_data.extent.len();
-            }
-            _ => has_failed = true,
-        }
-        Some(outcome)
-    })
+    processing::process(match_data).ok()
 }
 
 /// Returns the first non-whitespace token in the input.
 ///
-/// Returns None if there are no tokens in the input, or if lexical analysis wouldn't accept the
-/// input.
+/// Returns None if there are no tokens in the input, or if it reaches a point where lexical
+/// analysis would reject the input.
 ///
 /// For this purpose, comment tokens with style `NonDoc` count as whitespace.
 pub fn first_nonwhitespace_token(input: &[char], edition: Edition) -> Option<FineToken> {
     use crate::fine_tokens::{CommentStyle, FineTokenData::*};
-    for outcome in tokenise(input, edition) {
-        let Outcome::Matched(match_data) = outcome else {
-            return None;
-        };
+    let matches = match token_matching::match_tokens(edition, input) {
+        Ok(Outcome::Complete(matches)) => matches,
+        Ok(Outcome::Incomplete(matches)) => matches,
+        Err(_) => return None,
+    };
+    for match_data in matches {
         let Ok(token) = processing::process(&match_data) else {
             return None;
         };

@@ -9,42 +9,55 @@ use pest::{iterators::Pair, Parser, Span};
 use crate::char_sequences::Charseq;
 use crate::Edition;
 
-/// Attempts to find a single token at the start of the input by matching an edition nonterminal.
-pub fn match_once(edition: Edition, input: &[char]) -> Outcome {
-    use Outcome::*;
+/// Matches as much as possible using the specified edition's tokens nonterminal.
+///
+/// Reports an error message if it finds a problem in lex_via_peg's model or implementation.
+pub fn match_tokens(edition: Edition, input: &[char]) -> Result<Outcome, String> {
+    use {Multiplicity::*, Outcome::*};
     let s: String = input.iter().collect();
-    let token_rule = token_rule_for_edition(edition);
-    let Ok(mut token_pairs) = TokenParser::parse(token_rule, &s) else {
-        return NoMatch;
+    let (tokens_rule, token_rule) = token_rules_for_edition(edition);
+    let Ok(tokens_pairs) = TokenParser::parse(tokens_rule, &s) else {
+        return Err("Pest reported no match of the tokens rule".to_owned());
     };
-    let Some(token) = token_pairs.next() else {
-        return ModelError("Pest reported empty response".to_owned());
-    };
-    let None = token_pairs.next() else {
-        return ModelError("Pest reported multiple tokens".to_owned());
-    };
-    let mut subs = token.into_inner();
-    let Some(pair) = subs.next() else {
-        return ModelError("Pest reported empty token".to_owned());
-    };
-    let None = subs.next() else {
-        return ModelError("Pest reported multiple sub-matches for the token rule".to_owned());
-    };
-    Matched(MatchData::new(pair))
+    let tokens_pair = extract_only_item(tokens_pairs).map_err(|m| match m {
+        NoItems => "Pest reported empty response".to_owned(),
+        Multiple => "Pest reported multiple top-level matches".to_owned(),
+    })?;
+    let matched_span = tokens_pair.as_span();
+    let token_pairs = tokens_pair.into_inner();
+
+    let mut matches = Vec::new();
+    for token_pair in token_pairs {
+        if token_pair.as_rule() != token_rule {
+            return Err(format!(
+                "Pest matched {:?} under the tokens rule",
+                token_pair.as_rule()
+            ));
+        }
+        let token_kind_pair = extract_only_item(token_pair.into_inner()).map_err(|m| match m {
+            NoItems => "Pest reported empty match of the token rule".to_owned(),
+            Multiple => "Pest reported multiple tokens under the token rule".to_owned(),
+        })?;
+        matches.push(MatchData::new(token_kind_pair));
+    }
+    Ok(if matched_span.end() == s.len() {
+        Complete(matches)
+    } else {
+        Incomplete(matches)
+    })
 }
 
-/// The result of attempting to match an edition nonterminal.
+/// The result of attempting to match an edition's tokens nonterminal.
 pub enum Outcome {
-    /// The edition's TOKEN nonterminal matched a prefix of the input
-    Matched(MatchData),
-
-    /// The edition's TOKEN nonterminal didn't match at the start of the input
-    NoMatch,
-
-    /// The input demonstrated a problem in lex_via_peg's model or implementation.
+    /// The edition's TOKENS nonterminal matched the complete input.
     ///
-    /// The string is a description of the problem.
-    ModelError(String),
+    /// Each match of a token-kind nonterminal is represented in the MatchData.
+    Complete(Vec<MatchData>),
+
+    /// The edition's TOKENS nonterminal didn't match all the input.
+    ///
+    /// Each match of a token-kind nonterminal is represented in the MatchData.
+    Incomplete(Vec<MatchData>),
 }
 
 #[derive(pest_derive::Parser)]
@@ -55,21 +68,22 @@ struct TokenParser;
 /// Enumeration of the nonterminals used in the tokenisation grammar.
 ///
 /// This includes:
-/// - the edition nonterminals    (named like TOKEN_yyyy)
+/// - the tokens nonterminals     (named like TOKENS_yyyy)
+/// - the token nonterminals      (named like TOKEN_yyyy)
 /// - the token-kind nonterminals (named in Title_case)
 /// - subsidiary nonterminals     (named in UPPER_CASE)
 pub type Nonterminal = Rule;
 
-/// Returns the TOKEN rule to use for the specified Rust edition.
-fn token_rule_for_edition(edition: Edition) -> Nonterminal {
+/// Returns the Pest TOKENS and TOKEN rules to use for the specified Rust edition.
+fn token_rules_for_edition(edition: Edition) -> (Rule, Rule) {
     match edition {
-        Edition::E2015 => Nonterminal::TOKEN_2015,
-        Edition::E2021 => Nonterminal::TOKEN_2021,
-        Edition::E2024 => Nonterminal::TOKEN_2024,
+        Edition::E2015 => (Nonterminal::TOKENS_2015, Nonterminal::TOKEN_2015),
+        Edition::E2021 => (Nonterminal::TOKENS_2021, Nonterminal::TOKEN_2021),
+        Edition::E2024 => (Nonterminal::TOKENS_2024, Nonterminal::TOKEN_2024),
     }
 }
 
-/// Information from a successful match of an edition nonterminal.
+/// Information from a successful match of a token-kind nonterminal.
 pub struct MatchData {
     /// The input characters which were consumed by the match.
     pub extent: Charseq,
@@ -93,8 +107,7 @@ impl std::fmt::Debug for MatchData {
 impl MatchData {
     /// Make a MatchData instance from the raw data provided by Pest.
     ///
-    /// `pair` should be the single top-level result from a successful match of an edition
-    /// nonterminal.
+    /// `pair`'s rule should be a token-kind nonterminal.
     fn new(pair: Pair<Nonterminal>) -> Self {
         Self {
             extent: pair.as_str().into(),
@@ -189,4 +202,20 @@ impl From<Span<'_>> for SubSpan {
             end: span.end(),
         }
     }
+}
+
+/// Returns the only item from an iterator, or reports an error if it didn't have exactly one item.
+fn extract_only_item<T>(mut stream: impl Iterator<Item = T>) -> Result<T, Multiplicity> {
+    let Some(item) = stream.next() else {
+        return Err(Multiplicity::NoItems);
+    };
+    let None = stream.next() else {
+        return Err(Multiplicity::Multiple);
+    };
+    Ok(item)
+}
+
+enum Multiplicity {
+    NoItems,
+    Multiple,
 }

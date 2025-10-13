@@ -266,14 +266,14 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
             let (matches, mut tokens) = match reason {
                 lex_via_peg::Reason::Matching(message, matches, tokens) => {
                     println!(
-                        "lex_via_peg: {failure_label} when attempting to match the edition nonterminal"
+                        "lex_via_peg: {failure_label} when attempting to match the token nonterminal"
                     );
                     println!("  error: {message}");
                     (matches, tokens)
                 }
                 lex_via_peg::Reason::Processing(message, rejected, matches, tokens) => {
                     println!(
-                        "lex_via_peg: {failure_label} when processing a match of the edition nonterminal"
+                        "lex_via_peg: {failure_label} when processing a match of a token-kind nonterminal"
                     );
                     println!("  error: {message}");
                     println!("  -- when considering match --");
