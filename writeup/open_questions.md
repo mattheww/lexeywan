@@ -45,17 +45,6 @@ See [Grammar for raw string literals](raw_strings.md) for some options.
 What kinds and attributes should fine-grained tokens have?
 
 
-#### Distinguishing raw and non-raw forms
-
-The current table distinguishes raw from non-raw forms as different top-level "kinds".
-
-I think this distinction will be needed in some cases,
-but perhaps it would be better represented using an attributes on unified kinds
-(like `rustc_ast::StrStyle` and `rustc_ast::token::IdentIsRaw`).
-
-As an example of where it might be wanted: proc-macros `Display` for raw identifiers includes the `r#` prefix for raw identifiers, but I think simply using the source extent isn't correct because the `Display` output is NFC-normalised.
-
-
 #### Hash count
 
 Should there be an attribute recording the number of hashes in a raw string or byte-string literal?
