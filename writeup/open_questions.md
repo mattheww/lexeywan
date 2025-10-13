@@ -87,25 +87,7 @@ but I'm not sure that's obvious enough that it can be stated without justificati
 This is a place where the reimplementation isn't closely parallel to the writeup.
 
 
-### String continuation escapes
-
-`rustc` has a warning that the behaviour of [String continuation escapes][string-continuation]
-(when multiple newlines are skipped)
-may change in future.
-
-The Reference has a [note][ref-string-continuation] about this,
-and points to [#1042][Ref#1042] for more information.
-
-[#136600] asks whether this is intentional.
-
-
 [String literals]: string_and_byte_literal_tokens.md#string-literal
 [Byte-string literals]: string_and_byte_literal_tokens.md#byte-string-literal
 [C-string literals]: string_and_byte_literal_tokens.md#c-string-literal
 
-[string-continuation]: escape_processing.md#string-continuation-escapes
-
-[#136600]: https://github.com/rust-lang/rust/issues/136600
-
-[Ref#1042]: https://github.com/rust-lang/reference/pull/1042
-[ref-string-continuation]: https://doc.rust-lang.org/nightly/reference/expressions/literal-expr.html#string-continuation-escapes

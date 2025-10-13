@@ -38,11 +38,26 @@ The grammar production in the Reference seems to be written to assume that these
 I haven't seen any discussion of whether this rustc behaviour is considered desirable.
 
 
+### String continuation escapes
+
+`rustc` has a warning that the behaviour of [String continuation escapes][string-continuation]
+(when multiple newlines are skipped)
+may change in future.
+
+The Reference has a [note][ref-string-continuation] about this,
+and points to [#1042][Ref#1042] for more information.
+
+[#136600] asks whether this is intentional.
+
+
 [playground-lifetime]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=31fc06e4d678e1a38d8d39f521e8a11c
 [playground-ident]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=aad27eb75b2774f16fc6b0981b770d56
 
+[ref-string-continuation]: https://doc.rust-lang.org/nightly/reference/expressions/literal-expr.html#string-continuation-escapes
+[string-continuation]: escape_processing.md#string-continuation-escapes
+
 [rfc2457]: https://rust-lang.github.io/rfcs/2457-non-ascii-idents.html
-
 [#126759]: https://github.com/rust-lang/rust/issues/126759
-
+[#136600]: https://github.com/rust-lang/rust/issues/136600
+[Ref#1042]: https://github.com/rust-lang/reference/pull/1042
 
