@@ -78,19 +78,6 @@ but `rustc` includes the NUL in its equivalent piece of data.
 Should this writeup change to match rustc?
 
 
-### How to indicate captured text
-
-Some of the nonterminals in the grammar exist only to identify text to be "captured",
-for example `LINE_COMMENT_CONTENT` here:
-
-```
-{{#include tokenise_anchored.pest:line_comment}}
-```
-
-Would it be better to extend the notation to allow annotating part of an expression without separating out a nonterminal?
-Pest's ["Tags" extension][pest-tags] would allow doing this, but it's not a standard feature of PEGs.
-
-
 ### Wording for string unescaping
 
 The description of processing for [String literals], [Byte-string literals], and [C-string literals] was originally drafted for the Reference.
@@ -125,5 +112,3 @@ and points to [#1042][Ref#1042] for more information.
 
 [Ref#1042]: https://github.com/rust-lang/reference/pull/1042
 [ref-string-continuation]: https://doc.rust-lang.org/nightly/reference/expressions/literal-expr.html#string-continuation-escapes
-
-[pest-tags]: https://pest.rs/book/grammars/syntax.html#tags
