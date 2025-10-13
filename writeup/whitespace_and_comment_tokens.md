@@ -10,6 +10,10 @@
 {{#include tokenise_anchored.pest:whitespace}}
 ```
 
+> See [Special terminals] for the definition of `PATTERN_WHITE_SPACE`.
+
+[Special terminals]: pegs.md#special-terminals
+
 ##### Attributes
 (none)
 

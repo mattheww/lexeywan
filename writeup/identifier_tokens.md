@@ -17,6 +17,10 @@ The following nonterminals are common to the definitions below:
 
 > Note: This is following the specification in [Unicode Standard Annex #31][UAX31] for Unicode version 16.0, with the addition of permitting underscore as the first character.
 
+> See [Special terminals] for the definitions of `XID_START` and `XID_CONTINUE`.
+
+[Special terminals]: pegs.md#special-terminals
+
 
 #### Raw lifetime or label (Rust 2021 and 2024) { .processing }
 
