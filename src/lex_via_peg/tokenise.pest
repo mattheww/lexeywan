@@ -195,7 +195,7 @@ Reserved_guard = { "##" | "#\"" }
 
 // ANCHOR: numeric_common
 DECIMAL_DIGITS = { ('0'..'9' | "_") * }
-HEXADECIMAL_DIGITS = { ('0'..'9' | 'a' .. 'f' | 'A' .. 'F' | "_") * }
+HEXADECIMAL_DIGITS = { ('0'..'9' | 'a'..'f' | 'A'..'F' | "_") * }
 LOW_BASE_TOKEN_DIGITS = { DECIMAL_DIGITS }
 DECIMAL_PART = { '0'..'9' ~ DECIMAL_DIGITS }
 // ANCHOR_END: numeric_common
