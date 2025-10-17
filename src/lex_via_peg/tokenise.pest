@@ -178,7 +178,7 @@ Raw_c_string_literal = { "cr" ~ RAW_DQ_REMAINDER }
 
 
 // ANCHOR: unterminated_literal
-Unterminated_literal_2015 = { "r\"" | "br\"" | "b'" }
+Unterminated_literal_2015 = { "r" ~ "\"" | "br" ~ "\"" | "b'" }
 Reserved_literal_2021 = { IDENT ~ ( "\"" | "'" ) }
 // ANCHOR_END: unterminated_literal
 
