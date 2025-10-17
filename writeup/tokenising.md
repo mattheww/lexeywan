@@ -73,6 +73,10 @@ The description specifies the token's attributes.
 
 In these descriptions, notation of the form <u>NTNAME</u> denotes the sequence of characters consumed by the nonterminal named `NTNAME` which participated in the token-kind nonterminal match.
 
+> If this notation is used for a nonterminal which might not participate in the match,
+> without saying what happens in that case,
+> it's a bug in this writeup.
+
 > If this notation is used for a nonterminal which might participate more than once in the match,
 > it's a bug in this writeup.
 
