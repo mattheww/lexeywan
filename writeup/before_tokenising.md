@@ -85,12 +85,3 @@ each of the expressions marked as `FENCE²` fails unless the text it matches is 
 
 [#70528]: https://github.com/rust-lang/rust/issues/70528
 [#71487]: https://github.com/rust-lang/rust/pull/71487
-
-
-[UTF-8]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G31703
-[encoding scheme]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G28070
-
-[finding the first non-whitespace token]: tokenising.md#find-first-nw-token
-
-[#70528]: https://github.com/rust-lang/rust/issues/70528
-[#71487]: https://github.com/rust-lang/rust/pull/71487
