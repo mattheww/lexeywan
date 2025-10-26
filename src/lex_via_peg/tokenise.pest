@@ -89,7 +89,7 @@ Whitespace = { PATTERN_WHITE_SPACE + }
 
 // ANCHOR: line_comment
 Line_comment = { "//" ~ LINE_COMMENT_CONTENT }
-LINE_COMMENT_CONTENT = { ( !"\n" ~ ANY )* }
+LINE_COMMENT_CONTENT = { ( !LF ~ ANY )* }
 // ANCHOR_END: line_comment
 
 // ANCHOR: block_comment
@@ -109,7 +109,7 @@ SQ_REMAINDER = {
     SUFFIX ?
 }
 SQ_CONTENT = {
-    "\\" ~ ANY ~ ( !"'" ~ ANY ) * |
+    BACKSLASH ~ ANY ~ ( !"'" ~ ANY ) * |
     !"'" ~ ANY
 }
 // ANCHOR_END: single_quoted_literals_common
@@ -125,13 +125,13 @@ Byte_literal = { "b" ~ SQ_REMAINDER }
 
 // ANCHOR: double_quoted_literals_common
 DQ_REMAINDER = {
-    "\"" ~ DQ_CONTENT ~ "\"" ~
+    DOUBLEQUOTE ~ DQ_CONTENT ~ DOUBLEQUOTE ~
     SUFFIX ?
 }
 DQ_CONTENT = {
     (
-        "\\" ~ ANY |
-        !"\"" ~ ANY
+        BACKSLASH ~ ANY |
+        !DOUBLEQUOTE ~ ANY
     ) *
 }
 // ANCHOR_END: double_quoted_literals_common
@@ -154,12 +154,12 @@ C_string_literal = { "c" ~ DQ_REMAINDER }
 // ANCHOR: raw_double_quoted_literals_common
 RAW_DQ_REMAINDER = {
     PUSH(HASHES) ~
-    "\"" ~ RAW_DQ_CONTENT ~ "\"" ~
+    DOUBLEQUOTE ~ RAW_DQ_CONTENT ~ DOUBLEQUOTE ~
     POP ~
     SUFFIX ?
 }
 RAW_DQ_CONTENT = {
-    ( !("\"" ~ PEEK) ~ ANY ) *
+    ( !(DOUBLEQUOTE ~ PEEK) ~ ANY ) *
 }
 HASHES = { "#" {0, 255} }
 // ANCHOR_END: raw_double_quoted_literals_common
@@ -178,8 +178,8 @@ Raw_c_string_literal = { "cr" ~ RAW_DQ_REMAINDER }
 
 
 // ANCHOR: unterminated_literal
-Unterminated_literal_2015 = { "r" ~ "\"" | "br" ~ "\"" | "b'" }
-Reserved_literal_2021 = { IDENT ~ ( "\"" | "'" ) }
+Unterminated_literal_2015 = { "r" ~ DOUBLEQUOTE | "br" ~ DOUBLEQUOTE | "b'" }
+Reserved_literal_2021 = { IDENT ~ ( DOUBLEQUOTE | "'" ) }
 // ANCHOR_END: unterminated_literal
 
 // ANCHOR: reserved_single_quoted_literal
@@ -328,3 +328,7 @@ IDENT = { IDENT_START ~ XID_CONTINUE * }
 IDENT_START = { XID_START | "_" }
 // ANCHOR_END: idents
 
+
+LF = { "\n" }
+DOUBLEQUOTE = { "\"" }
+BACKSLASH = { "\\" }

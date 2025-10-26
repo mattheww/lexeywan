@@ -9,7 +9,7 @@ See the [Parsing Expression Grammars][pegs] appendix for a more formal treatment
 See [Frontmatter grammar] and [Complete tokenisation grammar] for the grammars themselves.
 
 There is no standardised notation for parsing expression grammars.
-This writeup uses the [variant used by][pest-grammar] the [Pest] Rust library,
+This writeup is based on the [variant used by][pest-grammar] the [Pest] Rust library,
 so that it's easy to keep in sync with the reimplementation.
 
 See [Grammar for raw string literals](raw_strings.md) for a discussion of extensions used to model raw string literals and frontmatter fences.
@@ -77,9 +77,6 @@ The following forms of parsing expression are available:
 |---------------------------------------------|----------------------------------------------------------------------------------------|
 | eg `"abc"`                                  | Match the exact string provided                                                        |
 | eg `'a'..'f'`                               | Match one [character] from the provided (inclusive) range                              |
-| `"\""`                                      | Match one <b>"</b> [character]                                                         |
-| `"\\"`                                      | Match one <b>\\</b> [character]                                                        |
-| `"\n"`                                      | Match one <kbd>LF</kbd> [character]                                                    |
 | A nonterminal                               | Match the nonterminal's parsing expression                                             |
 | <code><var>e₁</var> ~ <var>e₂</var></code>  | First match <var>e₁</var>, then match <var>e₂</var>                                    |
 | <code><var>e₁</var> \| <var>e₂</var></code> | Match either <var>e₁</var> or <var>e₂</var>, with <var>e₁</var> having higher priority |
@@ -101,10 +98,13 @@ In addition, the following named terminals are available in all grammars in this
 | Terminal              | Matches                                                       |
 |-----------------------|---------------------------------------------------------------|
 | `ANY`                 | Any single Unicode [character]                                |
-| `EOI`                 | The end of input                                              |
+| `DOUBLEQUOTE`         | A <b>"</b> [character]                                        |
+| `BACKSLASH`           | A <b>\\</b> [character]                                       |
+| `LF`                  | A <kbd>LF</kbd> [character]                                   |
 | `PATTERN_WHITE_SPACE` | A [character] with the Unicode `Pattern_White_Space` property |
 | `XID_START`           | A [character] with the Unicode `XID_Start` property           |
 | `XID_CONTINUE`        | A [character] with the Unicode `XID_Continue` property        |
+| `EOI`                 | The end of input                                              |
 
 `EOI` only matches when the remaining input is empty.
 

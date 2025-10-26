@@ -69,39 +69,39 @@ So writing this out as a "scheme" of definitions might be thinkable:
 
 ```
 RDQ_0 = {
-    "\"" ~ RDQ_0_CONTENT ~ "\"" ~
+    DOUBLEQUOTE ~ RDQ_0_CONTENT ~ DOUBLEQUOTE ~
 }
 RDQ_0_CONTENT = {
-    ( !("\"") ~ ANY ) *
+    ( !(DOUBLEQUOTE) ~ ANY ) *
 }
 
 RDQ_1 = {
     "#"{1} ~
-    "\"" ~ RDQ_1_CONTENT ~ "\"" ~
+    DOUBLEQUOTE ~ RDQ_1_CONTENT ~ DOUBLEQUOTE ~
     "#"{1} ~
 }
 RDQ_1_CONTENT = {
-    ( !("\"" ~ "#"{1}) ~ ANY ) *
+    ( !(DOUBLEQUOTE ~ "#"{1}) ~ ANY ) *
 }
 
 RDQ_2 = {
     "#"{2} ~
-    "\"" ~ RDQ_2_CONTENT ~ "\"" ~
+    DOUBLEQUOTE ~ RDQ_2_CONTENT ~ DOUBLEQUOTE ~
     "#"{2} ~
 }
 RDQ_2_CONTENT = {
-    ( !("\"" ~ "#"{2}) ~ ANY ) *
+    ( !(DOUBLEQUOTE ~ "#"{2}) ~ ANY ) *
 }
 
 …
 
 RDQ_255 = {
     "#"{255} ~
-    "\"" ~ RDQ_255_CONTENT ~ "\"" ~
+    DOUBLEQUOTE ~ RDQ_255_CONTENT ~ DOUBLEQUOTE ~
     "#"{255} ~
 }
 RDQ_255_CONTENT = {
-    ( !("\"" ~ "#"{255}) ~ ANY ) *
+    ( !(DOUBLEQUOTE ~ "#"{255}) ~ ANY ) *
 }
 
 ```

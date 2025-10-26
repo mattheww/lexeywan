@@ -2,7 +2,7 @@
 
 Parsing Expression Grammars were introduced in [Ford 2004][peg-paper].
 
-The notation used in this document is the [variant used by][pest-grammar] the [Pest] Rust library.
+The notation used in this document is based on the [variant used by][pest-grammar] the [Pest] Rust library.
 
 This page describes a subset of the formalism that is sufficient for the grammars used in this writeup.
 
@@ -43,15 +43,15 @@ Parsing expressions have the following forms, where
 | __Terminals__                               |                                     |
 | eg `"abc"`                                  | Character-sequence terminal         |
 | eg `'a'..'f'`                               | Character-range terminal            |
-| `"\""`                                      |                                     |
-| `"\\"`                                      |                                     |
-| `"\n"`                                      |                                     |
-| `ANY`                                       |                                     |
-| `EOI`                                       |                                     |
-| `EMPTY`                                     |                                     |
+| `ANY`                                       | Any character                       |
+| `DOUBLEQUOTE`                               | <b>"</b>                            |
+| `BACKSLASH`                                 | <b>\\</b>                           |
+| `LF`                                        | Line feed                           |
 | `PATTERN_WHITE_SPACE`                       |                                     |
 | `XID_START`                                 |                                     |
 | `XID_CONTINUE`                              |                                     |
+| `EOI`                                       | End of input                        |
+| `EMPTY`                                     | Empty match                         |
 | __Nonterminals__                            |                                     |
 | A defined nonterminal                       |                                     |
 | __Compound expressions__                    |                                     |
@@ -172,23 +172,17 @@ succeeds if and only <var>s</var> begins with a character whose [Unicode scalar 
 and (if it succeeds) consumes that character.
 Here, c₁ and c₂ represent arbitrary single characters other than <b>'</b> (in practice, ASCII digits or letters).
 
-An attempt to match `"\""` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <b>"</b>,
-and (if it succeeds) consumes that character.
-
-An attempt to match `"\\"` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <b>\\</b>,
-and (if it succeeds) consumes that character.
-
-An attempt to match `"\n"` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <kbd>LF</kbd>,
-and (if it succeeds) consumes that character.
-
 An attempt to match `ANY` against <var>s</var> succeeds if and only if <var>s</var> is not empty,
 and (if it succeeds) consumes the first character in <var>s</var>.
 
-An attempt to match `EOI` against <var>s</var> succeeds if and only if <var>s</var> is empty,
-and (if it succeeds) consumes an empty character sequence.
+An attempt to match `DOUBLEQUOTE` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <b>"</b>,
+and (if it succeeds) consumes that character.
 
-An attempt to match `EMPTY` always succeeds,
-and (if it succeeds) consumes an empty character sequence.
+An attempt to match `BACKSLASH` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <b>\\</b>,
+and (if it succeeds) consumes that character.
+
+An attempt to match `LF` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <kbd>LF</kbd>,
+and (if it succeeds) consumes that character.
 
 An attempt to match `PATTERN_WHITE_SPACE` succeeds if and only if <var>s</var> begins with a character which has the `Pattern_White_Space` Unicode property,
 and (if it succeeds) consumes that character.
@@ -202,6 +196,12 @@ and (if it succeeds) consumes that character.
 An attempt to match `XID_CONTINUE` succeeds if and only if <var>s</var> begins with a character which has the `XID_Continue` Unicode property
 (as of Unicode 16.0.0).
 and (if it succeeds) consumes that character.
+
+An attempt to match `EOI` against <var>s</var> succeeds if and only if <var>s</var> is empty,
+and (if it succeeds) consumes an empty character sequence.
+
+An attempt to match `EMPTY` always succeeds,
+and (if it succeeds) consumes an empty character sequence.
 
 All matches of terminals have an empty elaboration.
 

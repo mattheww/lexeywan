@@ -8,6 +8,9 @@ This version of the grammar uses Pest's [`PUSH`, `PEEK`, and `POP`](raw_strings.
 
 `ANY`, `PATTERN_WHITE_SPACE`, `XID_START`, and `XID_CONTINUE` are built in to Pest and so not defined below.
 
+`LF`, `DOUBLEQUOTE`, and `BACKSLASH` are treated as special terminals in this writeup,
+but they are not built in to Pest so they have definitions below using character-sequence terminals which include escapes.
+
 ```
 {{#include tokenise.pest}}
 ```

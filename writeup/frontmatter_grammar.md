@@ -8,6 +8,9 @@ This version of the grammar uses Pest's [`PUSH`, `PEEK`, and `POP`](raw_strings.
 
 `ANY`, `EOI`, `PATTERN_WHITE_SPACE`, `XID_START`, and `XID_CONTINUE` are built in to Pest and so not defined below.
 
+`LF` is treated as a special terminal in this writeup,
+but it is not built in to Pest so it has a definition below using a character-sequence terminal which includes an escape.
+
 ```
 {{#include frontmatter.pest}}
 ```

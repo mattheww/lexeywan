@@ -6,27 +6,27 @@ FRONTMATTER = {
 }
 
 WHITESPACE_ONLY_LINE = {
-    ( !"\n" ~ PATTERN_WHITE_SPACE ) * ~
-    "\n"
+    ( !LF ~ PATTERN_WHITE_SPACE ) * ~
+    LF
 }
 
 START_LINE = {
     PUSH(FENCE) ~
     HORIZONTAL_WHITESPACE * ~
     ( INFOSTRING ~ HORIZONTAL_WHITESPACE * ) ? ~
-    "\n"
+    LF
 }
 
 CONTENT_LINE = {
     !PEEK ~
-    ( !"\n" ~ ANY ) * ~
-    "\n"
+    ( !LF ~ ANY ) * ~
+    LF
 }
 
 END_LINE = {
     POP ~
     HORIZONTAL_WHITESPACE * ~
-    ( "\n" | EOI )
+    ( LF | EOI )
 }
 
 FENCE = { "---" ~ "-" * }
@@ -43,3 +43,6 @@ RESERVED = {
     PATTERN_WHITE_SPACE * ~
     FENCE
 }
+
+
+LF = { "\n" }
