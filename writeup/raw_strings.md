@@ -13,8 +13,13 @@ This writeup uses an [ad-hoc extension][rdql-token] to the formalism,
 along similar lines to the stack extension described below
 (but without needing a full stack).
 
+This extension isn't formalised in the [appendix on PEGs](pegs.md).
+I don't think a formalisation would be simpler than formalising the stack extension described below.
+
 
 ### Pest's stack extension
+
+<div class=pegs-description>
 
 Pest provides a [stack extension][pest-stack] which is a good fit for this requirement,
 and is used in the reimplementation.
@@ -33,24 +38,27 @@ RAW_DQ_CONTENT = {
 HASHES = { "#" {0, 255} }
 ```
 
-The notion of matching an expression is extended to include a _context stack_ (a stack of strings):
-each match attempt takes the stack as an additional input and produces an updated stack as an additional output.
+The notion of attempting to match a parsing expression is extended to include a _context stack_ (a stack of character sequences):
+each match attempt takes the stack as an additional input and produces an updated stack as an additional part of the outcome.
 
 The stack is initially empty.
 
-There are three additional forms of expression: `PUSH(e)`, `PEEK(e)`, and `POP(e)`, where _e_ is an arbitrary expression.
+There are three additional forms of parsing expression:
+<code>PUSH(<var>e</var>)</code>, `PEEK`, and `POP`,
+where <var>e</var> is an arbitrary parsing expression.
 
-`PUSH(e)` behaves in the same way as the expression _e_;
-if it succeeds, it additionally pushes the text consumed by _e_ onto the stack.
+<code>PUSH(<var>e</var>)</code> behaves in the same way as the parsing expression <var>e</var>.
+If it succeeds, it additionally pushes the text consumed by <var>e</var> onto the stack.
 
-`PEEK(e)` behaves in the same way as a literal string expression, where the string is the top entry of the stack.
-If the stack is empty, `PEEK(e)` fails.
+An attempt to match `PEEK` against a character sequence <var>s</var> succeeds if and only if the top entry of the stack is a prefix of <var>s</var>.
+If the stack is empty, `PEEK` fails.
 
-`POP(e)` behaves in the same way as `PEEK(e)`.
-If it succeeds, it then pops the top entry from the stack.
+`POP` behaves in the same way as `PEEK`.
+Additionally, if it succeeds it then pops the top entry from the stack.
 
-All other expressions leave the stack unmodified.
+All other parsing expressions leave the stack unmodified.
 
+</div>
 
 ### Scheme of definitions
 

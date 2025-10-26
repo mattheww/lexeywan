@@ -19,7 +19,7 @@ The following nonterminals are common to the definitions below:
 
 > See [Special terminals] for the definitions of `XID_START` and `XID_CONTINUE`.
 
-[Special terminals]: pegs.md#special-terminals
+[Special terminals]: grammars.md#special-terminals
 
 
 #### Raw lifetime or label (Rust 2021 and 2024) { .processing }

@@ -23,7 +23,8 @@ Their definitions are presented in [Token nonterminals](token_nonterminals.md) b
 
 Each tokens nonterminal allows any number of repetitions of the corresponding token nonterminal.
 
-Each token nonterminal is defined as a choice expression, each of whose subexpressions is a single nonterminal (a <dfn>token-kind nonterminal</dfn>).
+Each token nonterminal is defined as a prioritised choice parsing expression,
+each of whose subexpressions is a single nonterminal (a <dfn>token-kind nonterminal</dfn>).
 
 The token-kind nonterminals are distinguished in the grammar as having names in `Title_case`.
 
@@ -34,7 +35,7 @@ The full grammar is also available on a [single page](complete_token_grammar.md)
 The token-kind nonterminals are presented in an order consistent with their appearance in the token nonterminals.
 That means they appear in priority order (highest priority first).
 
-## Tokenisation
+## Tokenisation { #token-kind-nonterminals }
 
 Tokenisation takes a character sequence (the <dfn>input</dfn>), and either
 produces a sequence of [fine-grained tokens] or
@@ -44,16 +45,13 @@ The analysis depends on the Rust edition which is in effect when the input is pr
 
 > So strictly speaking, the edition is a second parameter to the process described here.
 
-First, the edition's tokens nonterminal is matched against the input.
-If it does not succeed and consume the complete input, lexical analysis fails.
+First, a match of the edition's tokens nonterminal is attempted against the input.
+If the attempt does not succeed and consume the complete input, lexical analysis fails.
 
-> Strictly speaking we have to justify the assumption that matches will always either fail or succeed,
-> which basically means observing that the grammar has no left recursion.
+Otherwise, each member of the [sequence of participating matches][participating] of token-kind nonterminals in that attempt is processed as described below,
+giving the sequence of fine-grained tokens.
 
-Otherwise, the sequence of fine-grained tokens is produced by processing each match of a token-kind nonterminal which participated in the tokens nonterminal's match,
-as described below.
-
-If any match is rejected, lexical analysis fails.
+If any match is rejected during that processing, lexical analysis fails.
 
 ### Processing a token-kind nonterminal match { #processing }
 
@@ -65,18 +63,18 @@ underneath the presentation of that nonterminal's section of the grammar.
 
 Each description specifies which matches are rejected.
 For matches which are not rejected,
-a token is produced whose kind is the name of the token-kind nonterminal.
+a token is produced whose kind mirrors the name of the token-kind nonterminal.
 The description specifies the token's attributes.
 
 > If for any match the description doesn't either say that the match is rejected or specify a well-defined value for each attribute needed for the token's kind,
 > it's a bug in this writeup.
 
-In these descriptions, notation of the form <u>NTNAME</u> denotes the sequence of characters consumed by the nonterminal named `NTNAME` which participated in the token-kind nonterminal match.
+In these descriptions, notation of the form <u>NTNAME</u> denotes the sequence of characters consumed by the single participating match of `NTNAME` in the token-kind nonterminal match.
 
 > If this notation is used for a nonterminal which might not participate in the match,
 > without saying what happens in that case,
 > it's a bug in this writeup.
-
+>
 > If this notation is used for a nonterminal which might participate more than once in the match,
 > it's a bug in this writeup.
 
@@ -88,7 +86,7 @@ In these descriptions, notation of the form <u>NTNAME</u> denotes the sequence o
 The operation of _finding the first non-whitespace token_ in a character sequence (the _input_) is:
 
 Match the edition's tokens nonterminal against the input,
-giving a sequence of matches of token-kind nonterminals.
+giving a [sequence of participating matches][participating] of token-kind nonterminals.
 
 Consider the sequence of tokens obtained by [processing] each of those matches,
 stopping as soon as any match is rejected.
@@ -106,3 +104,5 @@ For this purpose a token <dfn>represents whitespace</dfn> if it is any of:
 [fine-grained tokens]: fine_grained_tokens.md
 [Shebang removal]: before_tokenising.md#shebang-removal
 [processing]: #processing
+
+[participating]: pegs.md#participating

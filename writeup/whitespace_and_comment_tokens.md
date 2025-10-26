@@ -12,7 +12,8 @@
 
 > See [Special terminals] for the definition of `PATTERN_WHITE_SPACE`.
 
-[Special terminals]: pegs.md#special-terminals
+[Special terminals]: grammars.md#special-terminals
+
 
 ##### Attributes
 (none)
@@ -67,7 +68,8 @@ The match is rejected if the token's <var>body</var> would include a <kbd>CR</kb
 
 ##### Attributes
 
-The <dfn>comment content</dfn> is the sequence of characters consumed by the first (and so the outermost) instance of `BLOCK_COMMENT_CONTENT` which participated in the match.
+The <dfn>comment content</dfn> is the sequence of characters consumed by the [first participating match][participating] (that is, the outermost match)
+of `BLOCK_COMMENT_CONTENT` in the match.
 
 The token's <var>style</var> and <var>body</var> are determined from the block comment content as follows:
 
@@ -110,4 +112,6 @@ All matches are rejected.
 
 > Note: This definition makes sure that an unterminated block comment isn't accepted as punctuation (<b>*</b> followed by <b>/</b>).
 
+
+[participating]: pegs.md#participating
 [Nested block comments]: rustc_oddities.md#nested-block-comments

@@ -32,6 +32,10 @@ h5 + pre {
     margin-top: 0;
 }
 
+ul ul {
+    padding-left: 1.5em;
+}
+
 table {
     margin-left: 0;
 }
@@ -48,7 +52,6 @@ th:empty {
 }
 
 #table-of-contents + ul ul {
-    padding-left: 1.5em;
     list-style: none;
 }
 
@@ -75,4 +78,31 @@ u {
 
 /* we abuse <kbd> for named control characters */
 kbd {
+}
+
+/* Different rules on the PEGs description page */
+
+.pegs-description ul {
+    margin-top: 0;
+}
+
+.pegs-description p:has( + ul ) {
+    margin-bottom: 0;
+}
+
+.pegs-description var {
+    color: var(--fg);
+    font-weight: bolder;
+}
+
+.pegs-description h5 + p {
+    margin-top: 1em;
+}
+
+.pegs-description pre small {
+    font-family: sans-serif;
+}
+
+.pegs-description code {
+    white-space: preserve nowrap;
 }

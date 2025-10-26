@@ -69,8 +69,11 @@ The frontmatter grammar is the following [Parsing Expression Grammar](pegs.md):
 {{#include frontmatter_simplified.pest}}
 ```
 
+> See [Special terminals] for the definition of `PATTERN_WHITE_SPACE`.
+
 These definitions require an extension to the Parsing Expression Grammar formalism:
-each of the expressions marked as `FENCE²` fails unless the text it matches is the same as the text matched by the (only) successful match using the expression marked as `FENCE¹`.
+each of the parsing expressions marked as `FENCE²` fails
+unless the characters it consumes are the same as the characters consumed by the (only) match of the expression marked as `FENCE¹`.
 
 > See [Grammar for raw string literals](raw_strings.md) for a discussion of alternatives to this extension.
 
@@ -81,6 +84,7 @@ each of the expressions marked as `FENCE²` fails unless the text it matches is 
 [UTF-8]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G31703
 [encoding scheme]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G28070
 
+[Special terminals]: grammars.md#special-terminals
 [finding the first non-whitespace token]: tokenising.md#find-first-nw-token
 
 [#70528]: https://github.com/rust-lang/rust/issues/70528

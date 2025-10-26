@@ -7,7 +7,7 @@
 
 - [Overview](./overview.md)
 - [Definitions](./definitions.md)
-  - [Parsing Expression Grammars](./pegs.md)
+- [Grammars](./grammars.md)
 - [Before tokenising](./before_tokenising.md)
 - [Tokenising](./tokenising.md)
   - [Fine-grained tokens](./fine_grained_tokens.md)
@@ -24,6 +24,7 @@
 
 - [Frontmatter grammar](./frontmatter_grammar.md)
 - [Complete tokenisation grammar](./complete_token_grammar.md)
+- [Parsing Expression Grammars](./pegs.md)
 - [Reimplementation CLI](./reimplementation_cli.md)
 
 # Discussion

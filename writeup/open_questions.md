@@ -33,7 +33,9 @@ Here's a partial list:
 
 ### Raw string literals
 
-How should raw string literals be documented?
+How should raw string literals be documented,
+and in particular how should any necessary extension to PEGs be formalised?
+
 See [Grammar for raw string literals](raw_strings.md) for some options.
 
 
