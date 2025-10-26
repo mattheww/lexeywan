@@ -165,7 +165,7 @@ In the descriptions below, <var>s</var> represents a character sequence.
 An attempt to match a <dfn>character-sequence terminal</dfn> <code>"c₁…cₙ"</code> against <var>s</var>
 succeeds if and only if the character sequence c₁…cₙ is a prefix of <var>s</var>,
 and (if it succeeds) consumes c₁…cₙ.
-Here, c₁…cₙ represents an arbitrary sequence of characters other than <b>\\</b> or <b>"</b>
+Here, c₁…cₙ represents an arbitrary sequence of characters other than <b>"</b>
 (in practice, they are printable ASCII characters).
 
 An attempt to match a <dfn>character-range terminal</dfn> <code>'c₁'..'c₂'</code> against <var>s</var>
