@@ -106,6 +106,9 @@ RDQ_255_CONTENT = {
 
 ```
 
+This approach wouldn't help for frontmatter fences,
+which don't have a length limit.
+
 
 [rdql-token]: string_and_byte_literal_tokens.html#rdql
 [pest-stack]: https://docs.rs/pest/2.8.0/pest/#special-rules
