@@ -608,7 +608,7 @@ pub const LONGLIST: &[&str] = [
     "'Kelvin 'Kelvin",
     "'r#Kelvin 'r#Kelvin",
 
-    //// String escaping (prelexing behaviour)
+    //// String escaping (before processing)
 
     r#" "\""#,
     r#" "\\""#,
