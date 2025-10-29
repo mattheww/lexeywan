@@ -39,6 +39,9 @@ pub const LONGLIST: &[&str] = [
     "//",
     "///",
     "//!",
+    "//\nx",
+    "///\nx",
+    "//!\nx",
     "//!!",
     "/// this is not NFC qa\u{0301}",
 
@@ -74,6 +77,13 @@ pub const LONGLIST: &[&str] = [
     "/* CR \r in block comment */",
     "/** CR \r in block doc comment */",
     "/*! CR \r in inner block doc comment */",
+
+    "//\r CR starting line comment",
+    "///\r CR starting line doc comment",
+    "//!\r CR starting inner line doc comment",
+    "/*\r CR starting block comment */",
+    "/**\r CR starting block doc comment */",
+    "/*!\r CR starting inner block doc comment */",
 
     r##"/// doc-comment with " in it"##,
     r##"/// doc-comment with "# in it"##,
