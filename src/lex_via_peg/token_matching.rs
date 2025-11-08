@@ -11,9 +11,10 @@ use crate::Edition;
 
 /// Matches as much as possible using the specified edition's tokens nonterminal.
 ///
-/// Reports an error message if it finds a problem in lex_via_peg's model or implementation.
-pub fn match_tokens(edition: Edition, input: &[char]) -> Result<Outcome, String> {
-    use {Multiplicity::*, Outcome::*};
+/// Reports an error message if it finds a problem in lex_via_peg's model or implementation
+/// (in particular, if the match attempt fails).
+pub fn match_tokens(edition: Edition, input: &[char]) -> Result<TokensMatchData, String> {
+    use Multiplicity::*;
     let s: String = input.iter().collect();
     let (tokens_rule, token_rule) = token_rules_for_edition(edition);
     let Ok(tokens_pairs) = TokenParser::parse(tokens_rule, &s) else {
@@ -26,7 +27,7 @@ pub fn match_tokens(edition: Edition, input: &[char]) -> Result<Outcome, String>
     let matched_span = tokens_pair.as_span();
     let token_pairs = tokens_pair.into_inner();
 
-    let mut matches = Vec::new();
+    let mut token_kind_matches = Vec::new();
     for token_pair in token_pairs {
         if token_pair.as_rule() != token_rule {
             return Err(format!(
@@ -38,26 +39,23 @@ pub fn match_tokens(edition: Edition, input: &[char]) -> Result<Outcome, String>
             NoItems => "Pest reported empty match of the token rule".to_owned(),
             Multiple => "Pest reported multiple tokens under the token rule".to_owned(),
         })?;
-        matches.push(MatchData::new(token_kind_pair));
+        token_kind_matches.push(MatchData::new(token_kind_pair));
     }
-    Ok(if matched_span.end() == s.len() {
-        Complete(matches)
-    } else {
-        Incomplete(matches)
+    Ok(TokensMatchData {
+        token_kind_matches,
+        consumed_entire_input: matched_span.end() == s.len(),
     })
 }
 
-/// The result of attempting to match an edition's tokens nonterminal.
-pub enum Outcome {
-    /// The edition's TOKENS nonterminal matched the complete input.
-    ///
-    /// Each match of a token-kind nonterminal is represented in the MatchData.
-    Complete(Vec<MatchData>),
-
-    /// The edition's TOKENS nonterminal didn't match all the input.
-    ///
-    /// Each match of a token-kind nonterminal is represented in the MatchData.
-    Incomplete(Vec<MatchData>),
+/// Information about an attempt to match an edition's tokens nonterminal.
+///
+/// The tokens nonterminal's expression is a zero-or-more repetitions expression, so the match
+/// attempt is always successful.
+pub struct TokensMatchData {
+    /// Each sub-match of a token-kind nonterminal
+    pub token_kind_matches: Vec<MatchData>,
+    /// Whether the edition's tokens nonterminal consumed all the input
+    pub consumed_entire_input: bool,
 }
 
 #[derive(pest_derive::Parser)]

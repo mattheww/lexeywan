@@ -9,7 +9,7 @@ mod processing;
 mod token_matching;
 
 pub use token_matching::MatchData;
-use token_matching::Outcome;
+use token_matching::TokensMatchData;
 
 const MAX_INPUT_LENGTH: usize = 0x100_0000;
 
@@ -38,29 +38,31 @@ pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
         panic!("input too long");
     }
 
-    let (all_matches, was_incomplete) = match token_matching::match_tokens(edition, input.chars()) {
-        Ok(Outcome::Complete(matches)) => (matches, false),
-        Ok(Outcome::Incomplete(matches)) => (matches, true),
+    let TokensMatchData {
+        token_kind_matches,
+        consumed_entire_input: matched_entire_input,
+    } = match token_matching::match_tokens(edition, input.chars()) {
+        Ok(tokens_match_data) => tokens_match_data,
         Err(message) => {
             return Analysis::ModelError(Reason::Matching(message, Vec::new(), Vec::new()))
         }
     };
 
-    // Note that if there's a processing error we only report the matches up to the match that
-    // failed processing.
+    // Note that if there's a processing error we only report the token-kind matches up to the match
+    // that failed processing.
     let mut tokens = Vec::new();
-    let mut matches = Vec::new();
-    for match_data in all_matches {
+    let mut reported_matches = Vec::new();
+    for match_data in token_kind_matches {
         match processing::process(&match_data) {
             Ok(token) => {
-                matches.push(match_data);
+                reported_matches.push(match_data);
                 tokens.push(token);
             }
             Err(processing::Error::Rejected(error_message)) => {
                 return Analysis::Rejects(Reason::Processing(
                     error_message,
                     match_data,
-                    matches,
+                    reported_matches,
                     tokens,
                 ));
             }
@@ -68,21 +70,21 @@ pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
                 return Analysis::ModelError(Reason::Processing(
                     error_message,
                     match_data,
-                    matches,
+                    reported_matches,
                     tokens,
                 ));
             }
         }
     }
 
-    if was_incomplete {
+    if matched_entire_input {
+        Analysis::Accepts(reported_matches, tokens)
+    } else {
         Analysis::Rejects(Reason::Matching(
             "The tokens nonterminal did not match the complete input".to_owned(),
-            matches,
+            reported_matches,
             tokens,
         ))
-    } else {
-        Analysis::Accepts(matches, tokens)
     }
 }
 
@@ -156,10 +158,14 @@ impl Reason {
 ///
 /// Otherwise returns None.
 pub fn lex_as_single_token(input: &[char], edition: Edition) -> Option<FineToken> {
-    let Ok(Outcome::Complete(matches)) = token_matching::match_tokens(edition, input) else {
+    let Ok(TokensMatchData {
+        token_kind_matches,
+        consumed_entire_input: true,
+    }) = token_matching::match_tokens(edition, input)
+    else {
         return None;
     };
-    let [match_data] = &matches[..] else {
+    let [match_data] = &token_kind_matches[..] else {
         return None;
     };
     processing::process(match_data).ok()
@@ -179,12 +185,15 @@ pub fn first_nonwhitespace_token(input: &[char], edition: Edition) -> Option<Fin
     }
 
     use crate::fine_tokens::{CommentStyle, FineTokenData::*};
-    let matches = match token_matching::match_tokens(edition, input) {
-        Ok(Outcome::Complete(matches)) => matches,
-        Ok(Outcome::Incomplete(matches)) => matches,
+
+    let token_kind_matches = match token_matching::match_tokens(edition, input) {
+        Ok(TokensMatchData {
+            token_kind_matches, ..
+        }) => token_kind_matches,
         Err(_) => return None,
     };
-    for match_data in matches {
+
+    for match_data in token_kind_matches {
         let Ok(token) = processing::process(&match_data) else {
             return None;
         };
