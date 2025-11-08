@@ -1,3 +1,4 @@
+// ANCHOR: main
 FRONTMATTER = {
     WHITESPACE_ONLY_LINE * ~
     START_LINE ~
@@ -36,13 +37,14 @@ INFOSTRING = {
     ( XID_CONTINUE | "-" | "." ) *
 }
 
-HORIZONTAL_WHITESPACE = { " " | "\t" }
+HORIZONTAL_WHITESPACE = { " " | TAB }
 
 
 RESERVED = {
     PATTERN_WHITE_SPACE * ~
     FENCE
 }
-
+// ANCHOR_END: main
 
 LF = { "\n" }
+TAB = { "\t" }

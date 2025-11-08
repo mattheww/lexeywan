@@ -66,7 +66,7 @@ the input is rejected.
 The frontmatter grammar is the following [Parsing Expression Grammar](pegs.md):
 
 ```
-{{#include frontmatter_simplified.pest}}
+{{#include frontmatter_anchored.pest:main}}
 ```
 
 > See [Special terminals] for the definition of `PATTERN_WHITE_SPACE`.

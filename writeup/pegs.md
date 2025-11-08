@@ -47,6 +47,7 @@ Parsing expressions have the following forms, where
 | `DOUBLEQUOTE`                               | <b>"</b>                            |
 | `BACKSLASH`                                 | <b>\\</b>                           |
 | `LF`                                        | Line feed                           |
+| `TAB`                                       | Tab                                 |
 | `PATTERN_WHITE_SPACE`                       |                                     |
 | `XID_START`                                 |                                     |
 | `XID_CONTINUE`                              |                                     |
@@ -182,6 +183,9 @@ An attempt to match `BACKSLASH` against <var>s</var> succeeds if and only if <va
 and (if it succeeds) consumes that character.
 
 An attempt to match `LF` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <kbd>LF</kbd>,
+and (if it succeeds) consumes that character.
+
+An attempt to match `TAB` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <kbd>HT</kbd>,
 and (if it succeeds) consumes that character.
 
 An attempt to match `PATTERN_WHITE_SPACE` succeeds if and only if <var>s</var> begins with a character which has the `Pattern_White_Space` Unicode property,
