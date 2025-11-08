@@ -154,33 +154,29 @@ fn map_process_whitespace(forest: Forest<FineToken>) -> Forest<(FineToken, Spaci
 /// "Glue"s `FineToken`s with spacing information into `CoarseToken`s.
 fn map_combine(forest: Forest<(FineToken, Spacing)>) -> Forest<CoarseToken> {
     forest.combining_map(|(token1, spacing), tokens| {
-        if spacing == Spacing::Joint {
-            if let Some(Tree::Token((token2, spacing2))) = tokens.peek() {
-                if let Some(double_token) = merge_two(&token1.data, &token2.data) {
-                    let mut combined_token = CoarseToken {
-                        data: double_token,
-                        origin: combine_origins(&token1.origin, &token2.origin),
-                    };
-                    let may_combine_further = *spacing2 == Spacing::Joint;
-                    // skip the second token
-                    tokens.next();
-                    if may_combine_further {
-                        if let Some(Tree::Token((token3, _))) = tokens.peek() {
-                            if let Some(triple_token) =
-                                merge_three(&combined_token.data, &token3.data)
-                            {
-                                combined_token = CoarseToken {
-                                    data: triple_token,
-                                    origin: combine_origins(&combined_token.origin, &token3.origin),
-                                };
-                                // skip the third token
-                                tokens.next();
-                            }
-                        }
-                    }
-                    return Some(combined_token);
-                }
+        if spacing == Spacing::Joint
+            && let Some(Tree::Token((token2, spacing2))) = tokens.peek()
+            && let Some(double_token) = merge_two(&token1.data, &token2.data)
+        {
+            let mut combined_token = CoarseToken {
+                data: double_token,
+                origin: combine_origins(&token1.origin, &token2.origin),
+            };
+            let may_combine_further = *spacing2 == Spacing::Joint;
+            // skip the second token
+            tokens.next();
+            if may_combine_further
+                && let Some(Tree::Token((token3, _))) = tokens.peek()
+                && let Some(triple_token) = merge_three(&combined_token.data, &token3.data)
+            {
+                combined_token = CoarseToken {
+                    data: triple_token,
+                    origin: combine_origins(&combined_token.origin, &token3.origin),
+                };
+                // skip the third token
+                tokens.next();
             }
+            return Some(combined_token);
         }
         Some(CoarseToken {
             data: token1.data.try_into().unwrap(),
