@@ -220,6 +220,7 @@ The following nonterminals are common to the definitions below:
 These definitions require an extension to the Parsing Expression Grammar formalism:
 an attempt to match one of the parsing expressions marked as `HASHES²` fails
 unless the characters it consumes are the same as the characters consumed by the (only) match of the expression marked as `HASHES¹` under the same match attempt of a token-kind nonterminal.
+Only the expressions marked as `HASHES¹` are participating matches of `HASHES`.
 
 > See [Grammar for raw string literals](raw_strings.md) for a discussion of alternatives to this extension.
 
@@ -240,6 +241,7 @@ The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did no
 ##### Rejection
 
 The match is rejected if:
+ - <u>HASHES</u> contains more than 255 characters; or
  - a <kbd>CR</kbd> character appears in <u>RAW_DQ_CONTENT</u>; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.
 
@@ -261,6 +263,7 @@ The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did no
 ##### Rejection
 
 The match is rejected if:
+ - <u>HASHES</u> contains more than 255 characters; or
  - any character whose unicode scalar value is greater than 127 appears in <u>RAW_DQ_CONTENT</u>; or
  - a <kbd>CR</kbd> character appears in <u>RAW_DQ_CONTENT</u>; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.
@@ -282,6 +285,7 @@ The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did no
 ##### Rejection
 
 The match is rejected if:
+ - <u>HASHES</u> contains more than 255 characters; or
  - a <kbd>CR</kbd> character appears in <u>RAW_DQ_CONTENT</u>; or
  - any of the token's <var>represented bytes</var> would have value 0; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.

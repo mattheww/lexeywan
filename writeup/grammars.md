@@ -83,12 +83,10 @@ The following forms of parsing expression are available:
 | <code><var>e</var> ?</code>                 | Match <var>e</var> if possible                                                         |
 | <code><var>e</var> *</code>                 | Match as many repetitions of <var>e</var> as possible (possibly zero)                  |
 | <code><var>e</var> +</code>                 | Match as many repetitions of <var>e</var> as possible (at least one)                   |
-| <code><var>e</var> {0, <var>n</var>}</code> | Match up to <var>n</var> repetitions of <var>e</var>                                   |
 | <code>! <var>e</var></code>                 | Fail if <var>e</var> would match at this point                                         |
 | <code>( <var>e</var> )</code>               | Match <var>e</var>, overriding the usual precedence                                    |
 
-Here, <var>e</var>, <var>e₁</var>, and <var>e₂</var> can be any parsing expression,
-and <var>n</var> can be any positive whole number.
+Here, <var>e</var>, <var>e₁</var>, and <var>e₂</var> can be any parsing expression.
 
 
 ### Special terminals
@@ -153,7 +151,7 @@ the matching process does not backtrack to see if the whole match can succeed if
 
 For example, matching `"a"* ~ "ab"` against <b>aaab</b> fails.
 
-Similarly <code>{0, <var>n</var>}</code> and `?` match as much as they can when they are first attempted,
+Similarly `?` matches as much as it can when it is first attempted,
 and there is no backtracking.
 
 > __Examples__

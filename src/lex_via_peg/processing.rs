@@ -231,6 +231,9 @@ fn process_c_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
 }
 
 fn process_raw_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+    if m.consumed(Nonterminal::HASHES)?.len() > 255 {
+        return Err(rejected("too many hashes"));
+    }
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
@@ -246,6 +249,9 @@ fn process_raw_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
 }
 
 fn process_raw_byte_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+    if m.consumed(Nonterminal::HASHES)?.len() > 255 {
+        return Err(rejected("too many hashes"));
+    }
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
@@ -268,6 +274,9 @@ fn process_raw_byte_string_literal(m: &MatchData) -> Result<FineTokenData, Error
 }
 
 fn process_raw_c_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+    if m.consumed(Nonterminal::HASHES)?.len() > 255 {
+        return Err(rejected("too many hashes"));
+    }
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
