@@ -248,7 +248,7 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
                     println!("  error: {message}");
                 }
             }
-            println!("  -- matches --");
+            println!("  -- token-kind nonterminal matches --");
             for match_data in matches {
                 for s in describe_match(&match_data) {
                     println!("  {s}",);
@@ -257,7 +257,7 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
             if lowering == Lowering::LowerDocComments {
                 tokens = lower_doc_comments(tokens, edition);
             }
-            println!("  -- tokens --");
+            println!("  -- fine-grained tokens --");
             for token in tokens.iter() {
                 println!("  {}", format_token(token));
             }
@@ -283,7 +283,7 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
                     (matches, tokens)
                 }
             };
-            println!("  -- previous matches --");
+            println!("  -- previous token-kind nonterminal matches --");
             for match_data in matches {
                 for s in describe_match(&match_data) {
                     println!("  {s}");
@@ -292,7 +292,7 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
             if lowering == Lowering::LowerDocComments {
                 tokens = lower_doc_comments(tokens, edition);
             }
-            println!("  -- previous tokens --");
+            println!("  -- previous fine-grained tokens --");
             for token in tokens {
                 println!("  {}", format_token(&token));
             }

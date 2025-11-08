@@ -136,7 +136,8 @@ Uses a specified [dialect].
 
 Unlike `compare`, this shows the tokens before regularisation.
 
-For the reimplementation, it shows details about what the grammar matched,
+For the reimplementation, it shows the token-kind nonterminal matches,
+together with the characters consumed by any subsidiary nonterminal matches inside them,
 and fine-grained tokens.
 
 If rustc rejects the input (and the rejection wasn't a fatal error),
