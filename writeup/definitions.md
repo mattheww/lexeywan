@@ -1,5 +1,8 @@
 # Definitions
 
+##### Table of contents
+<!-- toc -->
+
 ### Byte
 
 For the purposes of this document, <dfn>byte</dfn> means the same thing as Rust's `u8`
@@ -17,6 +20,27 @@ That means, in particular:
 
 [Unicode scalar value]: https://unicode.org/glossary/#unicode_scalar_value
 [noncharacters]: https://unicode.org/glossary/#noncharacter
+
+#### Notation for characters
+
+This document identifies characters in the following ways:
+
+Printable ASCII characters other than space are represented by themselves
+using highlighting like <b>a</b>.
+For example <b>\\</b> represents character `U+005C` (REVERSE SOLIDUS).
+
+ASCII control characters and space are represented as follows:
+
+|          |                |
+|----------|----------------|
+| `U+0000` | <kbd>NUL</kbd> |
+| `U+000A` | <kbd>LF</kbd>  |
+| `U+000D` | <kbd>CR</kbd>  |
+| `U+0009` | <kbd>HT</kbd>  |
+| `U+0020` | <kbd>SP</kbd>  |
+
+Other characters are identified by hexadecimal scalar value and name,
+for example `U+FEFF` (BYTE ORDER MARK).
 
 
 ### Sequence

@@ -73,7 +73,7 @@ The escape sequence consists of <b>\\</b> followed immediately by <kbd>LF</kbd>,
 and all following whitespace characters before the next non-whitespace character.
 
 For this purpose, the whitespace characters are
-<kbd>HT</kbd> (`U+0009`), <kbd>LF</kbd> (`U+000A`), <kbd>CR</kbd> (`U+000D`), and SPACE (`U+0020`).
+<kbd>HT</kbd>, <kbd>LF</kbd>, <kbd>CR</kbd>, and <kbd>SP</kbd>.
 
 The escaped value is an empty sequence of characters.
 

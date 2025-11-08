@@ -100,7 +100,7 @@ In addition, the following named terminals are available in all grammars in this
 | `ANY`                 | Any single Unicode [character]                                |
 | `DOUBLEQUOTE`         | A <b>"</b> [character]                                        |
 | `BACKSLASH`           | A <b>\\</b> [character]                                       |
-| `LF`                  | A <kbd>LF</kbd> [character]                                   |
+| `LF`                  | An <kbd>LF</kbd> [character]                                  |
 | `TAB`                 | A <kbd>HT</kbd> [character]                                   |
 | `PATTERN_WHITE_SPACE` | A [character] with the Unicode `Pattern_White_Space` property |
 | `XID_START`           | A [character] with the Unicode `XID_Start` property           |

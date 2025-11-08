@@ -26,7 +26,7 @@ The following nonterminals are common to the definitions below:
 
 Define a <dfn>represented character</dfn>, derived from <u>SQ_CONTENT</u> as follows:
 
-- If <u>SQ_CONTENT</u> is the single character <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>TAB</kbd>,
+- If <u>SQ_CONTENT</u> is the single character <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>HT</kbd>,
   the match is rejected.
 
 - If <u>SQ_CONTENT</u> is any other single character,
@@ -64,7 +64,7 @@ The match is rejected if:
 
 Define a <dfn>represented character</dfn>, derived from <u>SQ_CONTENT</u> as follows:
 
-- If <u>SQ_CONTENT</u> is the single character <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>TAB</kbd>,
+- If <u>SQ_CONTENT</u> is the single character <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>HT</kbd>,
   the match is rejected.
 
 - If <u>SQ_CONTENT</u> is a single character with [Unicode scalar value] greater than 127,
