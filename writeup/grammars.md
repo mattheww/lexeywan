@@ -113,19 +113,19 @@ The `XID_Start` and `XID_Continue` properties are as defined in Unicode 16.0.0.
 
 > Note: The characters with the `PATTERN_WHITE_SPACE` Unicode property are:
 >
-> |        |                         |
-> |:-------|:------------------------|
-> | U+0009 | (horizontal tab, '\t')  |
-> | U+000A | (line feed, '\n')       |
-> | U+000B | (vertical tab)          |
-> | U+000C | (form feed)             |
-> | U+000D | (carriage return, '\r') |
-> | U+0020 | (space, ' ')            |
-> | U+0085 | (next line)             |
-> | U+200E | (left-to-right mark)    |
-> | U+200F | (right-to-left mark)    |
-> | U+2028 | (line separator)        |
-> | U+2029 | (paragraph separator)   |
+> |        |                           |
+> |:-------|:--------------------------|
+> | U+0009 | CHARACTER TABULATION (HT) |
+> | U+000A | LINE FEED (LF)            |
+> | U+000B | LINE TABULATION (VT)      |
+> | U+000C | FORM FEED (FF)            |
+> | U+000D | CARRIAGE RETURN (CR)      |
+> | U+0020 | SPACE                     |
+> | U+0085 | NEXT LINE (NEL)           |
+> | U+200E | LEFT-TO-RIGHT MARK        |
+> | U+200F | RIGHT-TO-LEFT MARK        |
+> | U+2028 | LINE SEPARATOR            |
+> | U+2029 | PARAGRAPH SEPARATOR       |
 >
 > This set doesn't change in updated Unicode versions.
 
