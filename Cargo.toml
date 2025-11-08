@@ -1,7 +1,7 @@
 [package]
 name = "lexeywan"
 version = "0.3.0"
-edition = "2021"
+edition = "2024"
 
 [package.metadata.rust-analyzer]
 rustc_private=true
