@@ -3,6 +3,18 @@
 ##### Table of contents
 <!-- toc -->
 
+### Unicode
+
+References to <dfn>Unicode</dfn> in this document refer to the [Unicode standard, version 16.0][unicode-core].
+
+References to the <dfn>Unicode character database</dfn> refer to [version 16.0.0][UCD].
+
+
+#### NFC normalisation { #nfc }
+
+References to <dfn>NFC-normalised</dfn> strings are talking about Unicode's Normalization Form C, defined in [Unicode Standard Annex #15][UAX15].
+
+
 ### Byte
 
 For the purposes of this document, <dfn>byte</dfn> means the same thing as Rust's `u8`
@@ -51,9 +63,6 @@ When this document refers to a <dfn>sequence</dfn> of items, it means a finite, 
 "character sequence" and "sequence of characters" are different ways of saying the same thing.
 
 
-### NFC normalisation
-
-References to <dfn>NFC-normalised</dfn> strings are talking about Unicode's Normalization Form C, defined in [Unicode Standard Annex #15][UAX15].
-
-
-[UAX15]: https://www.unicode.org/reports/tr15/tr15-53.html
+[unicode-core]: https://www.unicode.org/versions/Unicode16.0.0/core-spec/
+[UCD]: https://www.unicode.org/Public/16.0.0/ucd/
+[UAX15]: https://www.unicode.org/reports/tr15/tr15-56.html

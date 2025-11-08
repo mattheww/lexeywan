@@ -5,7 +5,7 @@
 
 ### NFC normalisation for lifetime/label { #nfc-lifetime }
 
-Identifiers are normalised to NFC,
+Identifiers are normalised to [NFC],
 which means that `Kelvin` and `Kelvin` are treated as representing the same identifier.
 See [rfc2457].
 
@@ -49,6 +49,8 @@ and points to [#1042][Ref#1042] for more information.
 
 [#136600] asks whether this is intentional.
 
+
+[NFC]: definitions.md#nfc
 
 [playground-lifetime]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=31fc06e4d678e1a38d8d39f521e8a11c
 [playground-ident]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=aad27eb75b2774f16fc6b0981b770d56

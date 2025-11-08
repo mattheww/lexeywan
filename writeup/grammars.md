@@ -109,9 +109,10 @@ In addition, the following named terminals are available in all grammars in this
 
 `EOI` only matches when the remaining input is empty.
 
-The `XID_Start` and `XID_Continue` properties are as defined in Unicode 16.0.0.
+The `Pattern_White_Space` Unicode character property is defined in `PropList.txt` in the [Unicode character database][UCD].
+The `XID_Start` and `XID_Continue` Unicode character properties are defined in `DerivedCoreProperties.txt` in the [Unicode character database][UCD].
 
-> Note: The characters with the `PATTERN_WHITE_SPACE` Unicode property are:
+> Note: The characters with the `PATTERN_WHITE_SPACE` Unicode character property are:
 >
 > |        |                           |
 > |:-------|:--------------------------|
@@ -226,6 +227,7 @@ means "first match `ONE`, then match `TWO`, then match `THREE`".
 
 </div>
 
+[UCD]: definitions.md#unicode
 [pegs]: pegs.md
 [Frontmatter grammar]: frontmatter_grammar.md
 [Complete tokenisation grammar]: complete_token_grammar.md
@@ -233,5 +235,6 @@ means "first match `ONE`, then match `TWO`, then match `THREE`".
 [character]: definitions.md#character
 [characters]: definitions.md#character
 
+[UAX31]: https://www.unicode.org/reports/tr31/tr31-41.html
 [Pest]: https://pest.rs/book/grammars/syntax.html
 [pest-grammar]: https://docs.rs/pest_derive/latest/pest_derive/#grammar

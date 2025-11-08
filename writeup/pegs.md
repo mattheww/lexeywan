@@ -188,17 +188,16 @@ and (if it succeeds) consumes that character.
 An attempt to match `TAB` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <kbd>HT</kbd>,
 and (if it succeeds) consumes that character.
 
-An attempt to match `PATTERN_WHITE_SPACE` succeeds if and only if <var>s</var> begins with a character which has the `Pattern_White_Space` Unicode property,
+An attempt to match `PATTERN_WHITE_SPACE` succeeds if and only if <var>s</var> begins with a character which has the `Pattern_White_Space` Unicode character property,
+as defined in `PropList.txt` in the [Unicode character database][UCD],
 and (if it succeeds) consumes that character.
 
-> Note: The set of `Pattern_White_Space` characters doesn't change in updated Unicode versions.
-
-An attempt to match `XID_START` succeeds if and only if <var>s</var> begins with a character which has the `XID_Start` Unicode property
-(as of Unicode 16.0.0).
+An attempt to match `XID_START` succeeds if and only if <var>s</var> begins with a character which has the `XID_Start` Unicode character property,
+as defined in `DerivedCoreProperties.txt` in the [Unicode character database][UCD],
 and (if it succeeds) consumes that character.
 
-An attempt to match `XID_CONTINUE` succeeds if and only if <var>s</var> begins with a character which has the `XID_Continue` Unicode property
-(as of Unicode 16.0.0).
+An attempt to match `XID_CONTINUE` succeeds if and only if <var>s</var> begins with a character which has the `XID_Continue` Unicode character property,
+as defined in `DerivedCoreProperties.txt` in the [Unicode character database][UCD],
 and (if it succeeds) consumes that character.
 
 An attempt to match `EOI` against <var>s</var> succeeds if and only if <var>s</var> is empty,
@@ -297,13 +296,11 @@ is the sequence obtained by restricting the elaboration of <var>A</var> to match
 
 </div>
 
+[UCD]: definitions.md#unicode
 [Grammars]: grammars.md
 
 [Parsing expression]: #parsing-expressions
 [Matching]: #matching
-[PATTERN_WHITE_SPACE]: #unicode-property-sets
-[XID_START]: #unicode-property-sets
-[XID_CONTINUE]: #unicode-property-sets
 
 [token-kind nonterminals]: tokenising.md#token-kind-nonterminals
 [character]: definitions.md#character

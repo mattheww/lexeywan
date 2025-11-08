@@ -15,7 +15,7 @@ The following nonterminals are common to the definitions below:
 {{#include tokenise_anchored.pest:idents}}
 ```
 
-> Note: This is following the specification in [Unicode Standard Annex #31][UAX31] for Unicode version 16.0, with the addition of permitting underscore as the first character.
+> Note: This is following the specification in [Unicode Standard Annex #31][UAX31], with the addition of permitting underscore as the first character.
 
 > See [Special terminals] for the definitions of `XID_START` and `XID_CONTINUE`.
 
@@ -93,7 +93,7 @@ No matches are rejected.
 
 ##### Attributes
 
-The token's <var>represented ident</var> is the NFC-normalised form of <u>IDENT</u>.
+The token's <var>represented ident</var> is the [NFC-normalised] form of <u>IDENT</u>.
 
 ##### Rejection
 
@@ -134,7 +134,7 @@ All matches are rejected.
 
 ##### Attributes
 
-The token's <var>represented ident</var> is the NFC-normalised form of <u>IDENT</u>
+The token's <var>represented ident</var> is the [NFC-normalised] form of <u>IDENT</u>
 
 ##### Rejection
 
@@ -144,4 +144,5 @@ No matches are rejected.
 
 [UAX31]: https://www.unicode.org/reports/tr31/tr31-41.html
 
+[NFC-normalised]: definitions.md#nfc
 [NFC normalisation for lifetime/label]: rustc_oddities.md#nfc-lifetime
