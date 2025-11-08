@@ -106,22 +106,14 @@ impl MatchData {
         })
     }
 
-    /// Returns the characters consumed by the outermost match of the specified subsidiary
-    /// nonterminal.
+    /// Returns the characters consumed by the first participating match of the specified subsidiary
+    /// nonterminal in the match.
     ///
-    /// If that nonterminal participated in the match more than once, reports ModelError unless all
-    /// the matches are nested inside one "outermost" match, in which case that match's characters
-    /// are returned.
-    fn outermost_consumed(&self, nonterminal: Nonterminal) -> Result<&Charseq, Error> {
-        self.get_outermost(nonterminal)
-            .map_err(|_| {
-                Error::ModelError(format!(
-                    "{nonterminal:?} participated in the match more than once without proper nesting"
-                ))
-            })?
-            .ok_or_else(|| {
-                Error::ModelError(format!("{nonterminal:?} did not participate in the match"))
-            })
+    /// Reports ModelError if that nonterminal did not participate in the match.
+    fn consumed_by_first_participating(&self, nonterminal: Nonterminal) -> Result<&Charseq, Error> {
+        self.get_first(nonterminal).ok_or_else(|| {
+            Error::ModelError(format!("{nonterminal:?} did not participate in the match"))
+        })
     }
 
     /// Returns a clone of the characters consumed by the specified subsidiary nonterminal, or an
@@ -156,7 +148,7 @@ fn process_line_comment(m: &MatchData) -> Result<FineTokenData, Error> {
 }
 
 fn process_block_comment(m: &MatchData) -> Result<FineTokenData, Error> {
-    let comment_content = m.outermost_consumed(Nonterminal::BLOCK_COMMENT_CONTENT)?;
+    let comment_content = m.consumed_by_first_participating(Nonterminal::BLOCK_COMMENT_CONTENT)?;
     let (style, body) = match comment_content.chars() {
         ['*', '*', ..] => (CommentStyle::NonDoc, &[] as &[char]),
         ['*', rest @ ..] if !rest.is_empty() => (CommentStyle::OuterDoc, rest),

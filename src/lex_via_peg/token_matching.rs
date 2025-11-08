@@ -4,7 +4,7 @@
 //!
 //! All Pest-specific code is isolated to this module, other than the Nonterminal enumeration.
 
-use pest::{iterators::Pair, Parser, Span};
+use pest::{iterators::Pair, Parser};
 
 use crate::char_sequences::Charseq;
 use crate::Edition;
@@ -98,10 +98,10 @@ pub struct MatchData {
     pub extent: Charseq,
     /// The token-kind nonterminal which participated in the match.
     pub token_kind_nonterminal: Nonterminal,
-    /// The subsidiary nonterminals which participated in the match, the characters they consumed,
-    /// and their spans inside the full match. Parent matches are listed before their descendents.
+    /// The subsidiary nonterminals which participated in the match and the characters they consumed.
+    /// The order corresponds to the definition of "elaboration".
     /// Omits nonterminals which are documented as terminals.
-    participating: Vec<(Nonterminal, Charseq, SubSpan)>,
+    participating: Vec<(Nonterminal, Charseq)>,
 }
 
 impl std::fmt::Debug for MatchData {
@@ -126,7 +126,7 @@ impl MatchData {
                 .into_inner()
                 .flatten()
                 .filter(|sub| !is_documented_as_terminal(sub.as_rule()))
-                .map(|sub| (sub.as_rule(), sub.as_str().into(), sub.as_span().into()))
+                .map(|sub| (sub.as_rule(), sub.as_str().into()))
                 .collect(),
         }
     }
@@ -137,7 +137,7 @@ impl MatchData {
     /// Reports an error if that nonterminal participated in this match more than once.
     pub fn get_checked(&self, nonterminal: Nonterminal) -> Result<Option<&Charseq>, ()> {
         let mut found = None;
-        for (candidate, consumed, _) in self.participating.iter() {
+        for (candidate, consumed) in self.participating.iter() {
             if *candidate == nonterminal {
                 match found {
                     Some(_) => {
@@ -152,32 +152,15 @@ impl MatchData {
         Ok(found)
     }
 
-    /// Returns the characters consumed by the outermost match of the specified subsidiary
-    /// nonterminal, or None if that nonterminal did not participate in this match.
-    ///
-    /// If that nonterminal participated in this match more than once:
-    /// - if all the sub-matches are nested inside one "outermost" sub-match, returns that
-    ///   "outermost" sub-match's characters
-    /// - otherwise reports an error.
-    pub fn get_outermost(&self, nonterminal: Nonterminal) -> Result<Option<&Charseq>, ()> {
-        let mut first_found_consumed = None;
-        let mut first_found_span = None;
-        for (candidate, consumed, span) in self.participating.iter() {
+    /// Returns the characters consumed by the first participating match of the specified subsidiary
+    /// nonterminal in this match, or None if that nonterminal did not participate in this match.
+    pub fn get_first(&self, nonterminal: Nonterminal) -> Option<&Charseq> {
+        for (candidate, consumed) in self.participating.iter() {
             if *candidate == nonterminal {
-                match first_found_span {
-                    Some(outermost_span) => {
-                        if !span.is_inside(outermost_span) {
-                            return Err(());
-                        }
-                    }
-                    None => {
-                        first_found_consumed = Some(consumed);
-                        first_found_span = Some(span);
-                    }
-                }
+                return Some(consumed);
             }
         }
-        Ok(first_found_consumed)
+        None
     }
 
     /// Describes the subsidiary nonterminals making up this match, with their consumed extents.
@@ -186,34 +169,7 @@ impl MatchData {
     pub fn describe_submatches(&self) -> impl Iterator<Item = String> + use<'_> {
         self.participating
             .iter()
-            .map(|(rule, consumed, _)| format!("{rule:?} {consumed:?}"))
-    }
-}
-
-/// Position information for sub-matches inside MatchData.
-///
-/// This is used to check whether the "outermost match" principle applies when there are multiple
-/// matches for a nonterminal.
-struct SubSpan {
-    start: usize,
-    end: usize,
-}
-
-impl SubSpan {
-    /// Says whether this sub-match is properly nested inside `other`.
-    ///
-    /// This check is meaningful only if both `SubSpan`s came from the same `MatchData`.
-    fn is_inside(&self, other: &SubSpan) -> bool {
-        self.start >= other.start && self.end <= other.end
-    }
-}
-
-impl From<Span<'_>> for SubSpan {
-    fn from(span: Span) -> Self {
-        Self {
-            start: span.start(),
-            end: span.end(),
-        }
+            .map(|(rule, consumed)| format!("{rule:?} {consumed:?}"))
     }
 }
 
