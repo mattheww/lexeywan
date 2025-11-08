@@ -130,7 +130,7 @@ impl Reason {
                 if matches.is_empty() {
                     description.push("matching failed at the start of the input".into());
                 } else {
-                    let s: String = matches.iter().flat_map(|p| p.extent.chars()).collect();
+                    let s: String = matches.iter().flat_map(|p| p.consumed.chars()).collect();
                     description.push(format!(
                         "matching failed after «{}»",
                         escape_for_display(&s)

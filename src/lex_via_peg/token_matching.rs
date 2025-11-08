@@ -90,16 +90,18 @@ fn is_documented_as_terminal(nt: Nonterminal) -> bool {
     nt == Nonterminal::DOUBLEQUOTE || nt == Nonterminal::BACKSLASH || nt == Nonterminal::LF
 }
 
-/// Information from a successful match of a token-kind nonterminal.
+/// Information from a successful match attempt of a token-kind nonterminal.
 pub struct MatchData {
-    /// The input characters which were consumed by the match.
-    pub extent: Charseq,
-    /// The token-kind nonterminal which participated in the match.
+    /// The token-kind nonterminal whose match is being described.
     pub token_kind_nonterminal: Nonterminal,
+    /// The input characters which were consumed by the match.
+    pub consumed: Charseq,
     /// The subsidiary nonterminals which participated in the match and the characters they consumed.
-    /// The order corresponds to the definition of "elaboration".
+    /// See "elaboration" in the writeup for the order.
+    /// (Strictly, this is the elaboration of the match of the nonterminal's expression, not the
+    ///  elaboration of the match of the nonterminal itself.)
     /// Omits nonterminals which are documented as terminals.
-    participating: Vec<(Nonterminal, Charseq)>,
+    elaboration: Vec<(Nonterminal, Charseq)>,
 }
 
 impl std::fmt::Debug for MatchData {
@@ -107,7 +109,7 @@ impl std::fmt::Debug for MatchData {
         write!(
             f,
             "{:?} consuming {:?}",
-            self.token_kind_nonterminal, self.extent
+            self.token_kind_nonterminal, self.consumed
         )
     }
 }
@@ -118,9 +120,9 @@ impl MatchData {
     /// `pair`'s rule should be a token-kind nonterminal.
     fn new(pair: Pair<Nonterminal>) -> Self {
         Self {
-            extent: pair.as_str().into(),
+            consumed: pair.as_str().into(),
             token_kind_nonterminal: pair.as_rule(),
-            participating: pair
+            elaboration: pair
                 .into_inner()
                 .flatten()
                 .filter(|sub| !is_documented_as_terminal(sub.as_rule()))
@@ -135,7 +137,7 @@ impl MatchData {
     /// Reports an error if that nonterminal participated in this match more than once.
     pub fn get_checked(&self, nonterminal: Nonterminal) -> Result<Option<&Charseq>, ()> {
         let mut found = None;
-        for (candidate, consumed) in self.participating.iter() {
+        for (candidate, consumed) in self.elaboration.iter() {
             if *candidate == nonterminal {
                 match found {
                     Some(_) => {
@@ -153,7 +155,7 @@ impl MatchData {
     /// Returns the characters consumed by the first participating match of the specified subsidiary
     /// nonterminal in this match, or None if that nonterminal did not participate in this match.
     pub fn get_first(&self, nonterminal: Nonterminal) -> Option<&Charseq> {
-        for (candidate, consumed) in self.participating.iter() {
+        for (candidate, consumed) in self.elaboration.iter() {
             if *candidate == nonterminal {
                 return Some(consumed);
             }
@@ -165,7 +167,7 @@ impl MatchData {
     ///
     /// Omits nonterminals which are documented as terminals.
     pub fn describe_submatches(&self) -> impl Iterator<Item = String> + use<'_> {
-        self.participating
+        self.elaboration
             .iter()
             .map(|(rule, consumed)| format!("{rule:?} {consumed:?}"))
     }

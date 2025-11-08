@@ -60,7 +60,7 @@ pub fn process(match_data: &MatchData) -> Result<FineToken, Error> {
     Ok(FineToken {
         data: token_data,
         origin: Origin::Natural {
-            extent: match_data.extent.clone(),
+            extent: match_data.consumed.clone(),
         },
     })
 }
@@ -393,7 +393,7 @@ fn process_ident(m: &MatchData) -> Result<FineTokenData, Error> {
 }
 
 fn process_punctuation(m: &MatchData) -> Result<FineTokenData, Error> {
-    let mark = match m.extent.chars() {
+    let mark = match m.consumed.chars() {
         [c] => *c,
         _ => return Err(rejected("impossible Punctuation match")),
     };
