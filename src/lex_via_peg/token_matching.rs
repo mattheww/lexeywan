@@ -72,6 +72,9 @@ struct TokenParser;
 /// - the token nonterminals      (named like TOKEN_yyyy)
 /// - the token-kind nonterminals (named in Title_case)
 /// - subsidiary nonterminals     (named in UPPER_CASE)
+///
+/// Some members are nonterminals in the Pest grammar but documented as terminals in the writeup;
+/// see [is_documented_as_terminal] below.
 pub type Nonterminal = Rule;
 
 /// Returns the Pest TOKENS and TOKEN rules to use for the specified Rust edition.
@@ -83,6 +86,12 @@ fn token_rules_for_edition(edition: Edition) -> (Rule, Rule) {
     }
 }
 
+/// Reports whether a nonterminal is documented as a terminal in the writeup.
+fn is_documented_as_terminal(nt: Nonterminal) -> bool {
+    // TAB is also documented as a terminal, but it only appears in the frontmatter grammar.
+    nt == Nonterminal::DOUBLEQUOTE || nt == Nonterminal::BACKSLASH || nt == Nonterminal::LF
+}
+
 /// Information from a successful match of a token-kind nonterminal.
 pub struct MatchData {
     /// The input characters which were consumed by the match.
@@ -91,6 +100,7 @@ pub struct MatchData {
     pub token_kind_nonterminal: Nonterminal,
     /// The subsidiary nonterminals which participated in the match, the characters they consumed,
     /// and their spans inside the full match. Parent matches are listed before their descendents.
+    /// Omits nonterminals which are documented as terminals.
     participating: Vec<(Nonterminal, Charseq, SubSpan)>,
 }
 
@@ -115,6 +125,7 @@ impl MatchData {
             participating: pair
                 .into_inner()
                 .flatten()
+                .filter(|sub| !is_documented_as_terminal(sub.as_rule()))
                 .map(|sub| (sub.as_rule(), sub.as_str().into(), sub.as_span().into()))
                 .collect(),
         }
@@ -170,6 +181,8 @@ impl MatchData {
     }
 
     /// Describes the subsidiary nonterminals making up this match, with their consumed extents.
+    ///
+    /// Omits nonterminals which are documented as terminals.
     pub fn describe_submatches(&self) -> impl Iterator<Item = String> + use<'_> {
         self.participating
             .iter()
