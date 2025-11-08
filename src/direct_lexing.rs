@@ -9,7 +9,7 @@ use crate::combination;
 use crate::comparison::Verdict;
 use crate::doc_lowering::lower_doc_comments;
 use crate::lex_via_peg;
-use crate::regular_tokens::{regularise_from_coarse, regularise_from_rustc, RegularToken};
+use crate::regular_tokens::{RegularToken, regularise_from_coarse, regularise_from_rustc};
 use crate::rustc_harness::lex_via_rustc;
 use crate::tree_construction;
 use crate::trees::Forest;

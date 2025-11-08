@@ -1,9 +1,9 @@
 //! Reimplementation of rustc's lexical analysis.
 
+use crate::Edition;
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::FineToken;
 use crate::utils::escape_for_display;
-use crate::Edition;
 
 mod processing;
 mod token_matching;
@@ -44,7 +44,7 @@ pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
     } = match token_matching::match_tokens(edition, input.chars()) {
         Ok(tokens_match_data) => tokens_match_data,
         Err(message) => {
-            return Analysis::ModelError(Reason::Matching(message, Vec::new(), Vec::new()))
+            return Analysis::ModelError(Reason::Matching(message, Vec::new(), Vec::new()));
         }
     };
 

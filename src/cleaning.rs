@@ -7,7 +7,7 @@
 
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::{FineToken, FineTokenData};
-use crate::frontmatter::{find_frontmatter, FrontmatterOutcome};
+use crate::frontmatter::{FrontmatterOutcome, find_frontmatter};
 use crate::lex_via_peg::first_nonwhitespace_token;
 use crate::{CleaningMode, Edition};
 
@@ -31,7 +31,7 @@ pub fn clean(input: &Charseq, edition: Edition, cleaning: CleaningMode) -> Clean
             }
             FrontmatterOutcome::Reserved => return Rejects("malformed frontmatter".into()),
             FrontmatterOutcome::ModelError(message) => {
-                return ModelError(format!("frontmatter processing failed: {message}"))
+                return ModelError(format!("frontmatter processing failed: {message}"));
             }
         }
     }

@@ -8,7 +8,7 @@
 
 use crate::char_sequences::Charseq;
 
-use super::{model_error, rejected, Error};
+use super::{Error, model_error, rejected};
 
 /// Processes a _simple escape_ sequence, returning a byte.
 ///

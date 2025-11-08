@@ -308,7 +308,7 @@ fn process_float_literal(m: &MatchData) -> Result<FineTokenData, Error> {
         _ => {
             return Err(model_error(
                 "impossible participation for float body nonterminals",
-            ))
+            ));
         }
     };
     Ok(FineTokenData::FloatLiteral {
@@ -330,7 +330,7 @@ fn process_integer_literal(m: &MatchData) -> Result<FineTokenData, Error> {
         _ => {
             return Err(model_error(
                 "impossible participation for integer digits nonterminals",
-            ))
+            ));
         }
     };
     if digits.iter().all(|c| c == '_') {
@@ -349,7 +349,7 @@ fn process_integer_literal(m: &MatchData) -> Result<FineTokenData, Error> {
         _ => {
             return Err(model_error(
                 "impossible participation for integer literal nonterminals",
-            ))
+            ));
         }
     };
     match base {

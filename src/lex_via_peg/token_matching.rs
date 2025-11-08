@@ -4,10 +4,10 @@
 //!
 //! All Pest-specific code is isolated to this module, other than the Nonterminal enumeration.
 
-use pest::{iterators::Pair, Parser};
+use pest::{Parser, iterators::Pair};
 
-use crate::char_sequences::Charseq;
 use crate::Edition;
+use crate::char_sequences::Charseq;
 
 /// Matches as much as possible using the specified edition's tokens nonterminal.
 ///

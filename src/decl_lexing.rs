@@ -8,7 +8,7 @@ use crate::comparison::Verdict;
 use crate::doc_lowering::lower_doc_comments;
 use crate::rustc_harness::decl_via_rustc;
 use crate::trees::Forest;
-use crate::{cleaning, lex_via_peg, tree_construction, Edition};
+use crate::{Edition, cleaning, lex_via_peg, tree_construction};
 
 /// Runs rustc's lexical analysis by embedding the tokens in a declarative macro invocation.
 ///

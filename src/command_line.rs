@@ -2,11 +2,11 @@
 
 use crate::proptesting::{self, Verbosity};
 use crate::simple_reports::{
-    run_coarse_subcommand, run_compare_subcommand, run_decl_compare_subcommand,
-    run_inspect_subcommand, DetailsMode,
+    DetailsMode, run_coarse_subcommand, run_compare_subcommand, run_decl_compare_subcommand,
+    run_inspect_subcommand,
 };
 use crate::simple_tests::{run_identcheck_subcommand, run_test_subcommand};
-use crate::{testcases, CleaningMode, Edition, Lowering, LATEST_EDITION};
+use crate::{CleaningMode, Edition, LATEST_EDITION, Lowering, testcases};
 
 const USAGE: &str = "\
 Usage: lexeywan [<subcommand>] [...options]
@@ -83,7 +83,7 @@ fn run_cli_impl() -> Result<SubcommandStatus, pico_args::Error> {
                 _ => {
                     return Err(pico_args::Error::ArgumentParsingFailed {
                         cause: "unknown edition".into(),
-                    })
+                    });
                 }
             },
         )
@@ -104,7 +104,7 @@ fn run_cli_impl() -> Result<SubcommandStatus, pico_args::Error> {
                 _ => {
                     return Err(pico_args::Error::ArgumentParsingFailed {
                         cause: "unknown cleaning mode".into(),
-                    })
+                    });
                 }
             },
         )
@@ -143,7 +143,7 @@ fn run_cli_impl() -> Result<SubcommandStatus, pico_args::Error> {
                 _ => {
                     return Err(pico_args::Error::ArgumentParsingFailed {
                         cause: "unknown details mode".into(),
-                    })
+                    });
                 }
             },
         )
@@ -269,7 +269,7 @@ fn run_cli_impl() -> Result<SubcommandStatus, pico_args::Error> {
         _ => {
             return Err(pico_args::Error::ArgumentParsingFailed {
                 cause: "unknown subcommand".into(),
-            })
+            });
         }
     };
 

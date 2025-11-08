@@ -29,8 +29,8 @@ use rustc_errors::registry;
 use rustc_hash::FxHashMap;
 use rustc_session::config;
 
-use crate::trees::{Forest, GroupKind, Tree};
 use crate::Edition;
+use crate::trees::{Forest, GroupKind, Tree};
 
 use super::error_accumulator::ErrorAccumulator;
 
@@ -274,7 +274,7 @@ fn recover_rendered_tokens(krate: &rustc_ast::Crate) -> Result<Vec<RenderedToken
                             _ => {
                                 return Err(format!(
                                     "stringify! didn't use a nonraw string literal: {ast_lit}"
-                                ))
+                                ));
                             }
                         };
                         tokens.push(token);

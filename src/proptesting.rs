@@ -7,11 +7,11 @@ use proptest::{
 
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::utils::escape_for_display;
+use crate::{CleaningMode, Edition, Lowering};
 use crate::{
     command_line::SubcommandStatus,
-    comparison::{compare, Comparison},
+    comparison::{Comparison, compare},
 };
-use crate::{CleaningMode, Edition, Lowering};
 
 pub use self::strategies::DEFAULT_STRATEGY;
 use self::strategies::SIMPLE_STRATEGIES;

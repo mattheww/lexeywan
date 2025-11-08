@@ -2,11 +2,11 @@
 
 use std::iter;
 
+use crate::Edition;
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::{CommentStyle, FineToken, FineTokenData};
 use crate::lex_via_peg::lex_as_single_token;
 use crate::tokens_common::Origin;
-use crate::Edition;
 
 const MAX_HASH_COUNT: usize = 255;
 

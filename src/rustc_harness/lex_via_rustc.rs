@@ -34,15 +34,15 @@ use rustc_ast::{token::TokenKind, tokenstream::TokenStream};
 use rustc_parse::{lexer::StripTokens, parser::Parser};
 use rustc_session::parse::ParseSess;
 use rustc_span::{
-    source_map::{FilePathMapping, SourceMap},
     FileName,
+    source_map::{FilePathMapping, SourceMap},
 };
 
 use crate::trees::Forest;
 use crate::{CleaningMode, Edition, Lowering};
 
 use super::error_accumulator::ErrorAccumulator;
-use super::rustc_tokens::{map_forest, RustcToken};
+use super::rustc_tokens::{RustcToken, map_forest};
 use super::rustc_tokenstreams::make_token_stream;
 
 /// Runs rustc's lexical analysis on the specified input.

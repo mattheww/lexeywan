@@ -12,7 +12,7 @@ use std::iter::once;
 use crate::cleaning::{self, CleaningOutcome};
 use crate::combination;
 use crate::command_line::SubcommandStatus;
-use crate::comparison::{compare, Comparison, Verdict};
+use crate::comparison::{Comparison, Verdict, compare};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::doc_lowering::lower_doc_comments;

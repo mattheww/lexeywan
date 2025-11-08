@@ -7,10 +7,10 @@
 use std::io::Write as _;
 
 use crate::command_line::SubcommandStatus;
-use crate::comparison::{compare, Comparison};
+use crate::comparison::{Comparison, compare};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
-use crate::{CleaningMode, Edition, Lowering, ALL_EDITIONS, LATEST_EDITION};
+use crate::{ALL_EDITIONS, CleaningMode, Edition, LATEST_EDITION, Lowering};
 
 /// Implements the `test` (default) CLI command.
 pub fn run_test_subcommand(inputs: &[&str]) -> SubcommandStatus {

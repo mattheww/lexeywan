@@ -10,7 +10,7 @@ use std::sync::{Arc, Mutex};
 
 use rustc_error_messages::DiagMessage;
 use rustc_errors::translation::Translator;
-use rustc_errors::{registry::Registry, DiagCtxt};
+use rustc_errors::{DiagCtxt, registry::Registry};
 use rustc_span::source_map::SourceMap;
 
 #[derive(Clone)]
