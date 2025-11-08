@@ -17,6 +17,7 @@ That means, in particular:
 - there's exactly one character for each [Unicode scalar value]
 - the things that Unicode calls "[noncharacters]" are characters
 - there are no characters corresponding to surrogate code points
+- there is a character for each unassigned code point
 
 [Unicode scalar value]: https://unicode.org/glossary/#unicode_scalar_value
 [noncharacters]: https://unicode.org/glossary/#noncharacter
