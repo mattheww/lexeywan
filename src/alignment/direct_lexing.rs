@@ -4,16 +4,20 @@
 //! characters was matched, but they don't track everything we might be interested in. See
 //! `regular_tokens` for defails.
 
-use crate::cleaning::{self, CleaningOutcome};
 use crate::combination;
-use crate::comparison::Verdict;
-use crate::doc_lowering::lower_doc_comments;
-use crate::lex_via_peg;
-use crate::regular_tokens::{RegularToken, regularise_from_coarse, regularise_from_rustc};
+use crate::datatypes::tree_construction;
+use crate::datatypes::trees::Forest;
+use crate::reimplementation::cleaning::{self, CleaningOutcome};
+use crate::reimplementation::doc_lowering::lower_doc_comments;
+use crate::reimplementation::tokenisation;
 use crate::rustc_harness::lex_via_rustc;
-use crate::tree_construction;
-use crate::trees::Forest;
 use crate::{CleaningMode, Edition, Lowering};
+
+use super::Verdict;
+
+mod regular_tokens;
+
+use regular_tokens::{RegularToken, regularise_from_coarse, regularise_from_rustc};
 
 /// Runs rustc's lexical analysis and returns the regularised result.
 pub fn regularised_from_rustc(
@@ -38,13 +42,13 @@ pub fn regularised_from_peg(
     cleaning: CleaningMode,
     lowering: Lowering,
 ) -> Verdict<Forest<RegularToken>> {
-    use lex_via_peg::Analysis::*;
+    use tokenisation::Analysis::*;
     let cleaned = match cleaning::clean(&input.into(), edition, cleaning) {
         CleaningOutcome::Accepts(charseq) => charseq,
         CleaningOutcome::Rejects(reason) => return Verdict::Rejects(vec![reason]),
         CleaningOutcome::ModelError(message) => return Verdict::ModelError(vec![message]),
     };
-    match lex_via_peg::analyse(&cleaned, edition) {
+    match tokenisation::analyse(&cleaned, edition) {
         Accepts(_, mut fine_tokens) => {
             if lowering == Lowering::LowerDocComments {
                 fine_tokens = lower_doc_comments(fine_tokens, edition);

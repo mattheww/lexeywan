@@ -1,27 +1,12 @@
 #![feature(rustc_private)]
 
-mod char_sequences;
-mod cleaning;
+mod alignment;
 mod combination;
-mod command_line;
-mod comparison;
-mod decl_lexing;
-mod direct_lexing;
-mod doc_lowering;
-mod fine_tokens;
-mod frontmatter;
-mod lex_via_peg;
-mod proptesting;
-mod regular_tokens;
+mod datatypes;
+mod framework;
+mod reimplementation;
 mod rustc_harness;
-mod simple_reports;
-mod simple_tests;
-mod testcases;
 mod tokens_common;
-mod tree_construction;
-mod tree_flattening;
-mod trees;
-mod utils;
 
 #[derive(Copy, Clone, PartialEq, Eq, std::fmt::Debug)]
 enum Edition {
@@ -55,5 +40,5 @@ enum CleaningMode {
 }
 
 fn main() -> impl std::process::Termination {
-    command_line::run_cli()
+    framework::command_line::run_cli()
 }

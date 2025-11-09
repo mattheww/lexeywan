@@ -1,6 +1,6 @@
 //! Common datatypes for fine-grained and coarse-grained tokens.
 
-use crate::char_sequences::Charseq;
+use crate::datatypes::char_sequences::Charseq;
 
 /// Base (radix) of a numeric literal.
 #[derive(Copy, Clone, std::fmt::Debug)]

@@ -1,6 +1,6 @@
 //! Converts a sequence of tokens into trees.
 
-use crate::trees::{Forest, GroupKind, Tree};
+use super::trees::{Forest, GroupKind, Tree};
 
 pub trait Token {
     /// If this token might represent a delimiter, returns the delimiter character.

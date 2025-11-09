@@ -5,11 +5,15 @@
 //! Note the reimplementation doesn't model the "Decoding" step (it isn't interesting, and it's more
 //! convenient to have the testcases supplied as `str`).
 
-use crate::char_sequences::Charseq;
-use crate::fine_tokens::{FineToken, FineTokenData};
-use crate::frontmatter::{FrontmatterOutcome, find_frontmatter};
-use crate::lex_via_peg::first_nonwhitespace_token;
+use crate::datatypes::char_sequences::Charseq;
 use crate::{CleaningMode, Edition};
+
+use super::fine_tokens::{FineToken, FineTokenData};
+use super::tokenisation::first_nonwhitespace_token;
+
+use self::frontmatter::{FrontmatterOutcome, find_frontmatter};
+
+mod frontmatter;
 
 /// Apply the transformations we make to input text before tokenisation.
 ///

@@ -2,7 +2,7 @@
 set -e
 cd $(dirname $0)/..
 
-SRC=src/lex_via_peg/tokenise.pest
+SRC=src/reimplementation/tokenisation/tokenise.pest
 ANCHORED=writeup/tokenise_anchored.pest
 CLEANED=writeup/tokenise.pest
 
@@ -15,7 +15,7 @@ sed \
 sed -e '\!^//!d' < $SRC > $CLEANED
 
 
-SRC=src/frontmatter.pest
+SRC=src/reimplementation/cleaning/frontmatter.pest
 ANCHORED=writeup/frontmatter_anchored.pest
 CLEANED=writeup/frontmatter.pest
 

@@ -2,9 +2,9 @@
 //!
 //! This representation uses explicit whitespace tokens.
 
-use crate::char_sequences::Charseq;
+use crate::datatypes::char_sequences::Charseq;
+use crate::datatypes::tree_construction;
 use crate::tokens_common::{NumericBase, Origin};
-use crate::tree_construction;
 
 /// A "Fine-grained" token.
 ///

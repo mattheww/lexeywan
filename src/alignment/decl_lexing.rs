@@ -2,13 +2,17 @@
 //!
 //! This module works with the stringified representation of coarse tokens.
 
-use crate::char_sequences::Charseq;
+use crate::Edition;
 use crate::combination::{self, CoarseToken};
-use crate::comparison::Verdict;
-use crate::doc_lowering::lower_doc_comments;
-use crate::rustc_harness::decl_via_rustc;
-use crate::trees::Forest;
-use crate::{Edition, cleaning, lex_via_peg, tree_construction};
+use crate::datatypes::char_sequences::Charseq;
+use crate::datatypes::tree_construction;
+use crate::datatypes::trees::Forest;
+use crate::reimplementation::cleaning;
+use crate::reimplementation::doc_lowering::lower_doc_comments;
+use crate::reimplementation::tokenisation;
+use crate::rustc_harness::lex_via_decl_macros;
+
+use super::Verdict;
 
 /// Runs rustc's lexical analysis by embedding the tokens in a declarative macro invocation.
 ///
@@ -17,8 +21,8 @@ pub fn stringified_via_declarative_macros(
     input: &str,
     edition: Edition,
 ) -> Verdict<Forest<Charseq>> {
-    use decl_via_rustc::Analysis::*;
-    match decl_via_rustc::analyse(input, edition) {
+    use lex_via_decl_macros::Analysis::*;
+    match lex_via_decl_macros::analyse(input, edition) {
         Accepts(forest) => Verdict::Accepts(forest.map(|token| token.stringified.into())),
         Rejects(messages) => Verdict::Rejects(messages),
         FrameworkFailed(message) => {
@@ -39,9 +43,9 @@ pub fn stringified_via_declarative_macros(
 ///
 /// Models stringify!().
 pub fn stringified_via_peg(input: &str, edition: Edition) -> Verdict<Forest<Charseq>> {
-    use lex_via_peg::Analysis::*;
+    use tokenisation::Analysis::*;
     let cleaned = cleaning::clean_for_macro_input(&input.into(), edition);
-    match lex_via_peg::analyse(&cleaned, edition) {
+    match tokenisation::analyse(&cleaned, edition) {
         Accepts(_, fine_tokens) => {
             let fine_tokens = lower_doc_comments(fine_tokens, edition);
             match tree_construction::construct_forest(fine_tokens) {

@@ -15,14 +15,14 @@
 
 use std::iter::once;
 
-use crate::char_sequences::Charseq;
 use crate::combination::{self, CoarseToken, CoarseTokenData};
+use crate::datatypes::char_sequences::Charseq;
+use crate::datatypes::trees::Forest;
 use crate::rustc_harness::rustc_tokens::{
     RustcCommentKind, RustcDocCommentStyle, RustcIdentIsRaw, RustcLiteralData, RustcStringStyle,
     RustcToken, RustcTokenData,
 };
 use crate::tokens_common::Origin;
-use crate::trees::Forest;
 
 /// A token in common form for comparing lexer implementations' output.
 ///

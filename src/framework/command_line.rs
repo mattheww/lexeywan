@@ -1,12 +1,14 @@
 //! Command-line processing.
 
-use crate::proptesting::{self, Verbosity};
-use crate::simple_reports::{
+use crate::{CleaningMode, Edition, LATEST_EDITION, Lowering};
+
+use super::proptesting::{self, Verbosity};
+use super::simple_reports::{
     DetailsMode, run_coarse_subcommand, run_compare_subcommand, run_decl_compare_subcommand,
     run_inspect_subcommand,
 };
-use crate::simple_tests::{run_identcheck_subcommand, run_test_subcommand};
-use crate::{CleaningMode, Edition, LATEST_EDITION, Lowering, testcases};
+use super::simple_tests::{run_identcheck_subcommand, run_test_subcommand};
+use super::testcases;
 
 const USAGE: &str = "\
 Usage: lexeywan [<subcommand>] [...options]
