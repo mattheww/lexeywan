@@ -15,7 +15,7 @@ sed \
 sed -e '\!^//!d' < $SRC > $CLEANED
 
 
-SRC=src/frontmatter.pest
+SRC=src/reimplementation/cleaning/frontmatter.pest
 ANCHORED=writeup/frontmatter_anchored.pest
 CLEANED=writeup/frontmatter.pest
 

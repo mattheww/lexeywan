@@ -7,9 +7,12 @@
 
 use crate::char_sequences::Charseq;
 use crate::fine_tokens::{FineToken, FineTokenData};
-use crate::frontmatter::{FrontmatterOutcome, find_frontmatter};
 use crate::lex_via_peg::first_nonwhitespace_token;
 use crate::{CleaningMode, Edition};
+
+use self::frontmatter::{FrontmatterOutcome, find_frontmatter};
+
+mod frontmatter;
 
 /// Apply the transformations we make to input text before tokenisation.
 ///

@@ -8,7 +8,6 @@ mod decl_lexing;
 mod direct_lexing;
 mod doc_lowering;
 mod fine_tokens;
-mod frontmatter;
 mod lex_via_peg;
 mod proptesting;
 mod regular_tokens;
