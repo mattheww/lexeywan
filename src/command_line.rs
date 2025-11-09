@@ -5,7 +5,7 @@ use crate::framework::simple_reports::{
     DetailsMode, run_coarse_subcommand, run_compare_subcommand, run_decl_compare_subcommand,
     run_inspect_subcommand,
 };
-use crate::simple_tests::{run_identcheck_subcommand, run_test_subcommand};
+use crate::framework::simple_tests::{run_identcheck_subcommand, run_test_subcommand};
 use crate::{CleaningMode, Edition, LATEST_EDITION, Lowering, testcases};
 
 const USAGE: &str = "\
