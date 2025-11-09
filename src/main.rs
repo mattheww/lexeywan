@@ -6,7 +6,6 @@ mod command_line;
 mod comparison;
 mod decl_lexing;
 mod direct_lexing;
-mod fine_tokens;
 mod lex_via_peg;
 mod proptesting;
 mod regular_tokens;

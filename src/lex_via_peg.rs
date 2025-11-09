@@ -2,7 +2,7 @@
 
 use crate::Edition;
 use crate::char_sequences::Charseq;
-use crate::fine_tokens::FineToken;
+use crate::reimplementation::fine_tokens::FineToken;
 use crate::utils::escape_for_display;
 
 mod processing;
@@ -184,7 +184,7 @@ pub fn first_nonwhitespace_token(input: &[char], edition: Edition) -> Option<Fin
         panic!("input too long");
     }
 
-    use crate::fine_tokens::{CommentStyle, FineTokenData::*};
+    use crate::reimplementation::fine_tokens::{CommentStyle, FineTokenData::*};
 
     let token_kind_matches = match token_matching::match_tokens(edition, input) {
         Ok(TokensMatchData {

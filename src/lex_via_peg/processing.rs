@@ -1,7 +1,7 @@
 //! The "Processing a match" stage of extracting a fine-grained token.
 
 use crate::char_sequences::Charseq;
-use crate::fine_tokens::{CommentStyle, FineToken, FineTokenData};
+use crate::reimplementation::fine_tokens::{CommentStyle, FineToken, FineTokenData};
 use crate::tokens_common::{NumericBase, Origin};
 
 use super::token_matching::{MatchData, Nonterminal};
