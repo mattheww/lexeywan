@@ -10,7 +10,6 @@ use std::fmt::Debug;
 use std::iter::once;
 
 use crate::combination;
-use crate::command_line::SubcommandStatus;
 use crate::comparison::{Comparison, Verdict, compare};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
@@ -25,6 +24,8 @@ use crate::tree_flattening::flatten;
 use crate::trees::Forest;
 use crate::utils::escape_for_display;
 use crate::{CleaningMode, Edition, Lowering};
+
+use super::command_line::SubcommandStatus;
 
 /// Implements the `compare` CLI command.
 pub fn run_compare_subcommand(

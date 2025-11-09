@@ -2,7 +2,6 @@
 
 mod char_sequences;
 mod combination;
-mod command_line;
 mod comparison;
 mod decl_lexing;
 mod direct_lexing;
@@ -48,5 +47,5 @@ enum CleaningMode {
 }
 
 fn main() -> impl std::process::Termination {
-    command_line::run_cli()
+    framework::command_line::run_cli()
 }
