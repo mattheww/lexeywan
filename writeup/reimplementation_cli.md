@@ -263,7 +263,7 @@ doc-comments are converted to attributes as described in [Lowering doc-comments]
 
 ### Choosing the testcases to run { #testcases }
 
-By default, subcommands which need a list of testcases use the list hard-coded as `LONGLIST` in `testcases.rs`.
+By default, subcommands which need a list of testcases use the list hard-coded as `LONGLIST` in `framework/testcases.rs`.
 
 Pass `--short` to use the list hard-coded as `SHORTLIST` instead.
 

@@ -1,6 +1,6 @@
 //! Command-line processing.
 
-use crate::{CleaningMode, Edition, LATEST_EDITION, Lowering, testcases};
+use crate::{CleaningMode, Edition, LATEST_EDITION, Lowering};
 
 use super::proptesting::{self, Verbosity};
 use super::simple_reports::{
@@ -8,6 +8,7 @@ use super::simple_reports::{
     run_inspect_subcommand,
 };
 use super::simple_tests::{run_identcheck_subcommand, run_test_subcommand};
+use super::testcases;
 
 const USAGE: &str = "\
 Usage: lexeywan [<subcommand>] [...options]

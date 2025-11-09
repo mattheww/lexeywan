@@ -6,7 +6,6 @@ mod datatypes;
 mod framework;
 mod reimplementation;
 mod rustc_harness;
-mod testcases;
 mod tokens_common;
 
 #[derive(Copy, Clone, PartialEq, Eq, std::fmt::Debug)]
