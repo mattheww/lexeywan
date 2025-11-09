@@ -221,7 +221,7 @@ The `--count` argument specifies how many strings to generate
 (the default is 5000).
 
 The `--strategy` argument specified how to generate the strings.
-See `SIMPLE_STRATEGIES` in `strategies.rs` for the list of available strategies.
+See `SIMPLE_STRATEGIES` in `framework/proptesting/strategies.rs` for the list of available strategies.
 The `mix` strategy is the default.
 
 
