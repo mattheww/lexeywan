@@ -5,10 +5,10 @@ use proptest::{
     test_runner::{Config, TestCaseError, TestError, TestRunner},
 };
 
-use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
+use crate::alignment::comparison::{Comparison, compare};
+use crate::alignment::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::utils::escape_for_display;
 use crate::{CleaningMode, Edition, Lowering};
-use crate::comparison::{Comparison, compare};
 
 use super::command_line::SubcommandStatus;
 

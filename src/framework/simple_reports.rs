@@ -10,9 +10,9 @@ use std::fmt::Debug;
 use std::iter::once;
 
 use crate::combination;
-use crate::comparison::{Comparison, Verdict, compare};
-use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
-use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
+use crate::alignment::comparison::{Comparison, Verdict, compare};
+use crate::alignment::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
+use crate::alignment::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::reimplementation::tokenisation::{self, MatchData};
 use crate::reimplementation::cleaning::{self, CleaningOutcome};
 use crate::reimplementation::doc_lowering::lower_doc_comments;

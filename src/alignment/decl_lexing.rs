@@ -4,13 +4,14 @@
 
 use crate::char_sequences::Charseq;
 use crate::combination::{self, CoarseToken};
-use crate::comparison::Verdict;
 use crate::reimplementation::cleaning;
 use crate::reimplementation::doc_lowering::lower_doc_comments;
 use crate::reimplementation::tokenisation;
 use crate::rustc_harness::decl_via_rustc;
 use crate::trees::Forest;
 use crate::{Edition, tree_construction};
+
+use super::comparison::Verdict;
 
 /// Runs rustc's lexical analysis by embedding the tokens in a declarative macro invocation.
 ///

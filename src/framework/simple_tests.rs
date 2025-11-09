@@ -6,9 +6,9 @@
 
 use std::io::Write as _;
 
-use crate::comparison::{Comparison, compare};
-use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
-use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
+use crate::alignment::comparison::{Comparison, compare};
+use crate::alignment::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
+use crate::alignment::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::{ALL_EDITIONS, CleaningMode, Edition, LATEST_EDITION, Lowering};
 
 use super::command_line::SubcommandStatus;
