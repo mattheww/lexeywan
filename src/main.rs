@@ -7,7 +7,6 @@ mod comparison;
 mod decl_lexing;
 mod direct_lexing;
 mod framework;
-mod proptesting;
 mod reimplementation;
 mod rustc_harness;
 mod simple_reports;
