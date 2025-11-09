@@ -5,6 +5,9 @@
 //!
 //! This representation doesn't have whitespace tokens: we've used all the information we need
 //! from them to perform combination.
+//!
+//! The writeup doesn't yet discuss coarse-grained tokens, so for now this module isn't treated as
+//! part of the reimplementation.
 
 use crate::datatypes::char_sequences::{Charseq, concat_charseqs};
 use crate::datatypes::trees::{Forest, Tree};
