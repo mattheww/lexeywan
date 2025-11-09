@@ -6,7 +6,7 @@
 
 use crate::combination;
 use crate::comparison::Verdict;
-use crate::regular_tokens::{RegularToken, regularise_from_coarse, regularise_from_rustc};
+use crate::framework::regular_tokens::{RegularToken, regularise_from_coarse, regularise_from_rustc};
 use crate::reimplementation::cleaning::{self, CleaningOutcome};
 use crate::reimplementation::doc_lowering::lower_doc_comments;
 use crate::reimplementation::tokenisation;
