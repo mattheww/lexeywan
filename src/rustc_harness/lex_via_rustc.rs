@@ -11,7 +11,8 @@
 //! (BOM-removal and CRLF-conversion) always happen.
 //!
 //! Shebang removal and front-matter removal happen if requested by the CleaningMode. See
-//! [`cleaning`][`crate::cleaning`] module for how we make equivalent input for comparison.
+//! [`cleaning`][`crate::reimplementation::cleaning`] module for how we make equivalent input for
+//! comparison.
 //!
 //! This normally uses `rustc_parse::source_str_to_stream` to run the lexers. But at present that
 //! doesn't allow a choice of cleaning mode, so for modes other than CleanShebang this instead makes

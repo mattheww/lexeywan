@@ -9,7 +9,6 @@
 use std::fmt::Debug;
 use std::iter::once;
 
-use crate::cleaning::{self, CleaningOutcome};
 use crate::combination;
 use crate::command_line::SubcommandStatus;
 use crate::comparison::{Comparison, Verdict, compare};
@@ -19,6 +18,7 @@ use crate::doc_lowering::lower_doc_comments;
 use crate::fine_tokens::FineToken;
 use crate::lex_via_peg;
 use crate::lex_via_peg::MatchData;
+use crate::reimplementation::cleaning::{self, CleaningOutcome};
 use crate::rustc_harness::lex_via_rustc;
 use crate::tokens_common::Origin;
 use crate::tree_construction;

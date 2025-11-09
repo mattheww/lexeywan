@@ -1,7 +1,6 @@
 #![feature(rustc_private)]
 
 mod char_sequences;
-mod cleaning;
 mod combination;
 mod command_line;
 mod comparison;
@@ -13,6 +12,7 @@ mod frontmatter;
 mod lex_via_peg;
 mod proptesting;
 mod regular_tokens;
+mod reimplementation;
 mod rustc_harness;
 mod simple_reports;
 mod simple_tests;

@@ -4,12 +4,12 @@
 //! characters was matched, but they don't track everything we might be interested in. See
 //! `regular_tokens` for defails.
 
-use crate::cleaning::{self, CleaningOutcome};
 use crate::combination;
 use crate::comparison::Verdict;
 use crate::doc_lowering::lower_doc_comments;
 use crate::lex_via_peg;
 use crate::regular_tokens::{RegularToken, regularise_from_coarse, regularise_from_rustc};
+use crate::reimplementation::cleaning::{self, CleaningOutcome};
 use crate::rustc_harness::lex_via_rustc;
 use crate::tree_construction;
 use crate::trees::Forest;
