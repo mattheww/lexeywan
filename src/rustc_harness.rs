@@ -8,7 +8,7 @@
 // The code in this module compiles with
 // rustc 1.92.0-nightly (caccb4d03 2025-09-24)
 
-pub mod decl_via_rustc;
+pub mod lex_via_decl_macros;
 pub mod lex_via_rustc;
 pub mod rustc_tokens;
 

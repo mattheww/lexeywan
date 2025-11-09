@@ -10,7 +10,7 @@ use crate::datatypes::trees::Forest;
 use crate::reimplementation::cleaning;
 use crate::reimplementation::doc_lowering::lower_doc_comments;
 use crate::reimplementation::tokenisation;
-use crate::rustc_harness::decl_via_rustc;
+use crate::rustc_harness::lex_via_decl_macros;
 
 use super::Verdict;
 
@@ -21,8 +21,8 @@ pub fn stringified_via_declarative_macros(
     input: &str,
     edition: Edition,
 ) -> Verdict<Forest<Charseq>> {
-    use decl_via_rustc::Analysis::*;
-    match decl_via_rustc::analyse(input, edition) {
+    use lex_via_decl_macros::Analysis::*;
+    match lex_via_decl_macros::analyse(input, edition) {
         Accepts(forest) => Verdict::Accepts(forest.map(|token| token.stringified.into())),
         Rejects(messages) => Verdict::Rejects(messages),
         FrameworkFailed(message) => {
