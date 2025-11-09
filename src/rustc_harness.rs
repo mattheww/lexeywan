@@ -11,6 +11,6 @@
 pub mod decl_via_rustc;
 pub mod lex_via_rustc;
 pub mod rustc_tokens;
-pub mod rustc_tokenstreams;
 
 mod error_accumulator;
+mod rustc_tokenstreams;
