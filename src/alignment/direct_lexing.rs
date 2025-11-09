@@ -5,7 +5,6 @@
 //! `regular_tokens` for defails.
 
 use crate::combination;
-use crate::framework::regular_tokens::{RegularToken, regularise_from_coarse, regularise_from_rustc};
 use crate::reimplementation::cleaning::{self, CleaningOutcome};
 use crate::reimplementation::doc_lowering::lower_doc_comments;
 use crate::reimplementation::tokenisation;
@@ -15,6 +14,10 @@ use crate::trees::Forest;
 use crate::{CleaningMode, Edition, Lowering};
 
 use super::comparison::Verdict;
+
+mod regular_tokens;
+
+use regular_tokens::{RegularToken, regularise_from_coarse, regularise_from_rustc};
 
 /// Runs rustc's lexical analysis and returns the regularised result.
 pub fn regularised_from_rustc(
