@@ -9,7 +9,6 @@ mod direct_lexing;
 mod framework;
 mod reimplementation;
 mod rustc_harness;
-mod simple_reports;
 mod simple_tests;
 mod testcases;
 mod tokens_common;

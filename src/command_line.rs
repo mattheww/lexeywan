@@ -1,7 +1,7 @@
 //! Command-line processing.
 
 use crate::framework::proptesting::{self, Verbosity};
-use crate::simple_reports::{
+use crate::framework::simple_reports::{
     DetailsMode, run_coarse_subcommand, run_compare_subcommand, run_decl_compare_subcommand,
     run_inspect_subcommand,
 };

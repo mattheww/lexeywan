@@ -2,3 +2,4 @@
 
 pub mod proptesting;
 pub mod regular_tokens;
+pub mod simple_reports;
