@@ -189,7 +189,7 @@ Reserved_single_quoted_literal_2021 = { "'" ~ "r#" ? ~ IDENT ~ "'" }
 
 
 // ANCHOR: reserved_guard
-Reserved_guard = { "##" | "#\"" }
+Reserved_guard = { "##" | "#" ~ DOUBLEQUOTE }
 // ANCHOR_END: reserved_guard
 
 
