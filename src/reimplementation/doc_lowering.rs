@@ -4,10 +4,10 @@ use std::iter;
 
 use crate::Edition;
 use crate::char_sequences::Charseq;
-use crate::lex_via_peg::lex_as_single_token;
 use crate::tokens_common::Origin;
 
 use super::fine_tokens::{CommentStyle, FineToken, FineTokenData};
+use super::tokenisation::lex_as_single_token;
 
 const MAX_HASH_COUNT: usize = 255;
 

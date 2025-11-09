@@ -7,9 +7,10 @@ use crate::combination::{self, CoarseToken};
 use crate::comparison::Verdict;
 use crate::reimplementation::cleaning;
 use crate::reimplementation::doc_lowering::lower_doc_comments;
+use crate::reimplementation::tokenisation;
 use crate::rustc_harness::decl_via_rustc;
 use crate::trees::Forest;
-use crate::{Edition, lex_via_peg, tree_construction};
+use crate::{Edition, tree_construction};
 
 /// Runs rustc's lexical analysis by embedding the tokens in a declarative macro invocation.
 ///
@@ -40,9 +41,9 @@ pub fn stringified_via_declarative_macros(
 ///
 /// Models stringify!().
 pub fn stringified_via_peg(input: &str, edition: Edition) -> Verdict<Forest<Charseq>> {
-    use lex_via_peg::Analysis::*;
+    use tokenisation::Analysis::*;
     let cleaned = cleaning::clean_for_macro_input(&input.into(), edition);
-    match lex_via_peg::analyse(&cleaned, edition) {
+    match tokenisation::analyse(&cleaned, edition) {
         Accepts(_, fine_tokens) => {
             let fine_tokens = lower_doc_comments(fine_tokens, edition);
             match tree_construction::construct_forest(fine_tokens) {

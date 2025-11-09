@@ -1,7 +1,7 @@
 This repository includes:
 
 * a detailed description of the Rust 1.90 lexer (in `writeup`)
-* a Rust reimplementation of the lexer based on that description (in `src/lex_via_peg`)
+* a Rust reimplementation of the lexer based on that description (in `src/reimplementation`)
 * a manual list of testcases
 * harnesses for running `rustc`'s lexer in-process via `rustc_private` (in `src/rustc_harness`:
   * one comparing the reimplementation to the `rustc_parse` high-level lexer

@@ -6,10 +6,10 @@
 //! convenient to have the testcases supplied as `str`).
 
 use crate::char_sequences::Charseq;
-use crate::lex_via_peg::first_nonwhitespace_token;
 use crate::{CleaningMode, Edition};
 
 use super::fine_tokens::{FineToken, FineTokenData};
+use super::tokenisation::first_nonwhitespace_token;
 
 use self::frontmatter::{FrontmatterOutcome, find_frontmatter};
 

@@ -14,8 +14,7 @@ use crate::command_line::SubcommandStatus;
 use crate::comparison::{Comparison, Verdict, compare};
 use crate::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::direct_lexing::{regularised_from_peg, regularised_from_rustc};
-use crate::lex_via_peg;
-use crate::lex_via_peg::MatchData;
+use crate::reimplementation::tokenisation::{self, MatchData};
 use crate::reimplementation::cleaning::{self, CleaningOutcome};
 use crate::reimplementation::doc_lowering::lower_doc_comments;
 use crate::reimplementation::fine_tokens::FineToken;
@@ -231,14 +230,14 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
         }
     };
 
-    let analysis = lex_via_peg::analyse(&cleaned, edition);
+    let analysis = tokenisation::analyse(&cleaned, edition);
     let failure_label = match analysis {
-        lex_via_peg::Analysis::Rejects(..) => "rejected",
-        lex_via_peg::Analysis::ModelError(..) => "reported a bug in its model",
+        tokenisation::Analysis::Rejects(..) => "rejected",
+        tokenisation::Analysis::ModelError(..) => "reported a bug in its model",
         _ => "",
     };
     match analysis {
-        lex_via_peg::Analysis::Accepts(matches, mut tokens) => {
+        tokenisation::Analysis::Accepts(matches, mut tokens) => {
             match tree_construction::construct_forest(tokens.clone()) {
                 Ok(_) => {
                     println!("lex_via_peg: accepted");
@@ -262,16 +261,16 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
                 println!("  {}", format_token(token));
             }
         }
-        lex_via_peg::Analysis::Rejects(reason) | lex_via_peg::Analysis::ModelError(reason) => {
+        tokenisation::Analysis::Rejects(reason) | tokenisation::Analysis::ModelError(reason) => {
             let (matches, mut tokens) = match reason {
-                lex_via_peg::Reason::Matching(message, matches, tokens) => {
+                tokenisation::Reason::Matching(message, matches, tokens) => {
                     println!(
                         "lex_via_peg: {failure_label} when attempting to match the token nonterminal"
                     );
                     println!("  error: {message}");
                     (matches, tokens)
                 }
-                lex_via_peg::Reason::Processing(message, rejected, matches, tokens) => {
+                tokenisation::Reason::Processing(message, rejected, matches, tokens) => {
                     println!(
                         "lex_via_peg: {failure_label} when processing a match of a token-kind nonterminal"
                     );
@@ -315,8 +314,8 @@ fn show_coarse(input: &str, edition: Edition, cleaning: CleaningMode, lowering: 
             return;
         }
     };
-    match lex_via_peg::analyse(&cleaned, edition) {
-        lex_via_peg::Analysis::Accepts(_, mut tokens) => {
+    match tokenisation::analyse(&cleaned, edition) {
+        tokenisation::Analysis::Accepts(_, mut tokens) => {
             if lowering == Lowering::LowerDocComments {
                 tokens = lower_doc_comments(tokens, edition);
             }
@@ -338,13 +337,13 @@ fn show_coarse(input: &str, edition: Edition, cleaning: CleaningMode, lowering: 
                 }
             }
         }
-        lex_via_peg::Analysis::Rejects(reason) => {
+        tokenisation::Analysis::Rejects(reason) => {
             println!("lex_via_peg: rejected");
             for message in reason.into_description() {
                 println!("  {message}");
             }
         }
-        lex_via_peg::Analysis::ModelError(reason) => {
+        tokenisation::Analysis::ModelError(reason) => {
             println!("lex_via_peg: reported a bug in its model:");
             for s in reason.into_description() {
                 println!("  error: {s}");
