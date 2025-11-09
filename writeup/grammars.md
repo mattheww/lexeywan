@@ -214,7 +214,7 @@ means "first match `ONE`, then match `TWO`, then match `THREE`".
 
 ## Common idioms
 
-"Any character except" is written using the not-predicate and `ANY`.
+"Any character except" is written using the negative lookup operator and `ANY`.
 
 > __Example__
 >
