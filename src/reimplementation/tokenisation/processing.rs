@@ -4,7 +4,7 @@ use crate::datatypes::char_sequences::Charseq;
 use crate::reimplementation::fine_tokens::{CommentStyle, FineToken, FineTokenData};
 use crate::tokens_common::{NumericBase, Origin};
 
-use super::token_matching::{MatchData, Nonterminal};
+use super::tokens_matching::{MatchData, Nonterminal};
 
 mod escape_processing;
 use self::escape_processing::{

@@ -6,10 +6,10 @@ use crate::datatypes::char_sequences::{Charseq, escape_for_display};
 use super::fine_tokens::FineToken;
 
 mod processing;
-mod token_matching;
+mod tokens_matching;
 
-pub use token_matching::MatchData;
-use token_matching::TokensMatchData;
+pub use tokens_matching::MatchData;
+use tokens_matching::TokensMatchData;
 
 const MAX_INPUT_LENGTH: usize = 0x100_0000;
 
@@ -41,7 +41,7 @@ pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
     let TokensMatchData {
         token_kind_matches,
         consumed_entire_input: matched_entire_input,
-    } = match token_matching::match_tokens(edition, input.chars()) {
+    } = match tokens_matching::match_tokens(edition, input.chars()) {
         Ok(tokens_match_data) => tokens_match_data,
         Err(message) => {
             return Analysis::ModelError(Reason::Matching(message, Vec::new(), Vec::new()));
@@ -161,7 +161,7 @@ pub fn lex_as_single_token(input: &[char], edition: Edition) -> Option<FineToken
     let Ok(TokensMatchData {
         token_kind_matches,
         consumed_entire_input: true,
-    }) = token_matching::match_tokens(edition, input)
+    }) = tokens_matching::match_tokens(edition, input)
     else {
         return None;
     };
@@ -186,7 +186,7 @@ pub fn first_nonwhitespace_token(input: &[char], edition: Edition) -> Option<Fin
 
     use crate::reimplementation::fine_tokens::{CommentStyle, FineTokenData::*};
 
-    let token_kind_matches = match token_matching::match_tokens(edition, input) {
+    let token_kind_matches = match tokens_matching::match_tokens(edition, input) {
         Ok(TokensMatchData {
             token_kind_matches, ..
         }) => token_kind_matches,
