@@ -1,8 +1,8 @@
 #![feature(rustc_private)]
 
 mod alignment;
-mod char_sequences;
 mod combination;
+mod datatypes;
 mod framework;
 mod reimplementation;
 mod rustc_harness;

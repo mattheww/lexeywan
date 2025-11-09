@@ -5,7 +5,7 @@
 //! Note the reimplementation doesn't model the "Decoding" step (it isn't interesting, and it's more
 //! convenient to have the testcases supplied as `str`).
 
-use crate::char_sequences::Charseq;
+use crate::datatypes::char_sequences::Charseq;
 use crate::{CleaningMode, Edition};
 
 use super::fine_tokens::{FineToken, FineTokenData};

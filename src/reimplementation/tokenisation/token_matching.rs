@@ -7,7 +7,7 @@
 use pest::{Parser, iterators::Pair};
 
 use crate::Edition;
-use crate::char_sequences::Charseq;
+use crate::datatypes::char_sequences::Charseq;
 
 /// Matches as much as possible using the specified edition's tokens nonterminal.
 ///

@@ -6,7 +6,7 @@
 //! This representation doesn't have whitespace tokens: we've used all the information we need
 //! from them to perform combination.
 
-use crate::char_sequences::{Charseq, concat_charseqs};
+use crate::datatypes::char_sequences::{Charseq, concat_charseqs};
 use crate::reimplementation::fine_tokens::{CommentStyle, FineToken, FineTokenData};
 use crate::tokens_common::{NumericBase, Origin};
 use crate::trees::{Forest, Tree};

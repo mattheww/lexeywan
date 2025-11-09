@@ -6,7 +6,7 @@
 //! rejection this means only that the input isn't an instance of the relevant form of escape
 //! sequence.
 
-use crate::char_sequences::Charseq;
+use crate::datatypes::char_sequences::Charseq;
 
 use super::{Error, model_error, rejected};
 

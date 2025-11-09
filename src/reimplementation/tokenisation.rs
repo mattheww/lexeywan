@@ -1,7 +1,7 @@
 //! The tokenisation stage of lexical analysis.
 
 use crate::Edition;
-use crate::char_sequences::Charseq;
+use crate::datatypes::char_sequences::Charseq;
 use crate::utils::escape_for_display;
 
 use super::fine_tokens::FineToken;

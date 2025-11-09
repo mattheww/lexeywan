@@ -3,7 +3,7 @@
 use std::iter;
 
 use crate::Edition;
-use crate::char_sequences::Charseq;
+use crate::datatypes::char_sequences::Charseq;
 use crate::tokens_common::Origin;
 
 use super::fine_tokens::{CommentStyle, FineToken, FineTokenData};

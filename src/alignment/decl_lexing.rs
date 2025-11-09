@@ -2,8 +2,8 @@
 //!
 //! This module works with the stringified representation of coarse tokens.
 
-use crate::char_sequences::Charseq;
 use crate::combination::{self, CoarseToken};
+use crate::datatypes::char_sequences::Charseq;
 use crate::reimplementation::cleaning;
 use crate::reimplementation::doc_lowering::lower_doc_comments;
 use crate::reimplementation::tokenisation;
