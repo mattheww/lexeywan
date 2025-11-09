@@ -13,7 +13,7 @@ use crate::reimplementation::tokenisation;
 use crate::rustc_harness::lex_via_rustc;
 use crate::{CleaningMode, Edition, Lowering};
 
-use super::comparison::Verdict;
+use super::Verdict;
 
 mod regular_tokens;
 

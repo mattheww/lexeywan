@@ -9,7 +9,7 @@
 use std::fmt::Debug;
 use std::iter::once;
 
-use crate::alignment::comparison::{Comparison, Verdict, compare};
+use crate::alignment::Verdict;
 use crate::alignment::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::alignment::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::combination;
@@ -26,6 +26,7 @@ use crate::tokens_common::Origin;
 use crate::{CleaningMode, Edition, Lowering};
 
 use super::command_line::SubcommandStatus;
+use super::comparison::{Comparison, compare};
 
 /// Implements the `compare` CLI command.
 pub fn run_compare_subcommand(

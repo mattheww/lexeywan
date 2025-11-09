@@ -5,12 +5,12 @@ use proptest::{
     test_runner::{Config, TestCaseError, TestError, TestRunner},
 };
 
-use crate::alignment::comparison::{Comparison, compare};
 use crate::alignment::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::datatypes::char_sequences::escape_for_display;
 use crate::{CleaningMode, Edition, Lowering};
 
 use super::command_line::SubcommandStatus;
+use super::comparison::{Comparison, compare};
 
 pub use self::strategies::DEFAULT_STRATEGY;
 use self::strategies::SIMPLE_STRATEGIES;
