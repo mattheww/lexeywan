@@ -8,7 +8,6 @@ mod reimplementation;
 mod rustc_harness;
 mod testcases;
 mod tokens_common;
-mod utils;
 
 #[derive(Copy, Clone, PartialEq, Eq, std::fmt::Debug)]
 enum Edition {

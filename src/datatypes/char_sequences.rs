@@ -137,3 +137,23 @@ pub fn concat_charseqs(l1: &Charseq, l2: &Charseq) -> Charseq {
     chars.extend(l2.iter());
     Charseq(chars)
 }
+
+/// Returns an escaped form of a string, for display to an end user.
+///
+/// Uses nonascii characters to indicate the escapes, to avoid conflicts with characters meaningful
+/// in Rust.
+///
+/// The escaped form is similar to [Charseq]'s Debug representation.
+pub fn escape_for_display(input: &str) -> String {
+    let mut s = String::new();
+    for c in input.chars() {
+        if c.is_ascii_graphic() || c == ' ' || c == '·' {
+            s.push(c)
+        } else if (c as u32) < 256 {
+            s.push_str(&format!("‹{:02X}›", c as u32));
+        } else {
+            s.push_str(&format!("‹{:04X}›", c as u32));
+        }
+    }
+    s
+}

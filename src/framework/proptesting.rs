@@ -7,7 +7,7 @@ use proptest::{
 
 use crate::alignment::comparison::{Comparison, compare};
 use crate::alignment::direct_lexing::{regularised_from_peg, regularised_from_rustc};
-use crate::utils::escape_for_display;
+use crate::datatypes::char_sequences::escape_for_display;
 use crate::{CleaningMode, Edition, Lowering};
 
 use super::command_line::SubcommandStatus;

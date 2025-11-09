@@ -13,6 +13,7 @@ use crate::alignment::comparison::{Comparison, Verdict, compare};
 use crate::alignment::decl_lexing::{stringified_via_declarative_macros, stringified_via_peg};
 use crate::alignment::direct_lexing::{regularised_from_peg, regularised_from_rustc};
 use crate::combination;
+use crate::datatypes::char_sequences::escape_for_display;
 use crate::datatypes::tree_construction;
 use crate::datatypes::tree_flattening::flatten;
 use crate::datatypes::trees::Forest;
@@ -22,7 +23,6 @@ use crate::reimplementation::fine_tokens::FineToken;
 use crate::reimplementation::tokenisation::{self, MatchData};
 use crate::rustc_harness::lex_via_rustc;
 use crate::tokens_common::Origin;
-use crate::utils::escape_for_display;
 use crate::{CleaningMode, Edition, Lowering};
 
 use super::command_line::SubcommandStatus;
