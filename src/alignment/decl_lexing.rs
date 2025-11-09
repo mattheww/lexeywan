@@ -2,14 +2,15 @@
 //!
 //! This module works with the stringified representation of coarse tokens.
 
+use crate::Edition;
 use crate::combination::{self, CoarseToken};
 use crate::datatypes::char_sequences::Charseq;
+use crate::datatypes::tree_construction;
+use crate::datatypes::trees::Forest;
 use crate::reimplementation::cleaning;
 use crate::reimplementation::doc_lowering::lower_doc_comments;
 use crate::reimplementation::tokenisation;
 use crate::rustc_harness::decl_via_rustc;
-use crate::trees::Forest;
-use crate::{Edition, tree_construction};
 
 use super::comparison::Verdict;
 

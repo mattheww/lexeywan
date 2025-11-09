@@ -5,12 +5,12 @@
 //! `regular_tokens` for defails.
 
 use crate::combination;
+use crate::datatypes::tree_construction;
+use crate::datatypes::trees::Forest;
 use crate::reimplementation::cleaning::{self, CleaningOutcome};
 use crate::reimplementation::doc_lowering::lower_doc_comments;
 use crate::reimplementation::tokenisation;
 use crate::rustc_harness::lex_via_rustc;
-use crate::tree_construction;
-use crate::trees::Forest;
 use crate::{CleaningMode, Edition, Lowering};
 
 use super::comparison::Verdict;

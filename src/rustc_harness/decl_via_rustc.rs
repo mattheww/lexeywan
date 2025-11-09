@@ -30,7 +30,7 @@ use rustc_hash::FxHashMap;
 use rustc_session::config;
 
 use crate::Edition;
-use crate::trees::{Forest, GroupKind, Tree};
+use crate::datatypes::trees::{Forest, GroupKind, Tree};
 
 use super::error_accumulator::ErrorAccumulator;
 

@@ -9,7 +9,7 @@ use rustc_ast::{
 };
 use rustc_span::source_map::SourceMap;
 
-use crate::trees::{self, Forest, Tree};
+use crate::datatypes::trees::{self, Forest, Tree};
 
 /// Information we keep about a token from the rustc tokeniser.
 ///

@@ -8,9 +8,6 @@ mod reimplementation;
 mod rustc_harness;
 mod testcases;
 mod tokens_common;
-mod tree_construction;
-mod tree_flattening;
-mod trees;
 mod utils;
 
 #[derive(Copy, Clone, PartialEq, Eq, std::fmt::Debug)]

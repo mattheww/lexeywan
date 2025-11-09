@@ -7,9 +7,9 @@
 //! from them to perform combination.
 
 use crate::datatypes::char_sequences::{Charseq, concat_charseqs};
+use crate::datatypes::trees::{Forest, Tree};
 use crate::reimplementation::fine_tokens::{CommentStyle, FineToken, FineTokenData};
 use crate::tokens_common::{NumericBase, Origin};
-use crate::trees::{Forest, Tree};
 
 /// A "Coarse-grained" token.
 ///

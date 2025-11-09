@@ -39,7 +39,7 @@ use rustc_span::{
     source_map::{FilePathMapping, SourceMap},
 };
 
-use crate::trees::Forest;
+use crate::datatypes::trees::Forest;
 use crate::{CleaningMode, Edition, Lowering};
 
 use super::error_accumulator::ErrorAccumulator;

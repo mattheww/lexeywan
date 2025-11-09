@@ -2,7 +2,7 @@
 //!
 //! This isn't needed anywhere in our model of Rust; it's used for reporting.
 
-use crate::trees::{Forest, GroupKind, Tree};
+use super::trees::{Forest, GroupKind, Tree};
 
 /// Convert a forest of tokens into a linear sequence.
 ///
