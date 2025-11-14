@@ -786,6 +786,15 @@ pub const LONGLIST: &[&str] = [
     " c\"string\\\n\n\r\tcontinuation\"",
     " c\"string\\\n    ",
 
+    // PATTERN_WHITESPACE that isn't in CONTINUATION_WHITESPACE isn't eaten
+    " \"string\\\n\u{000B}continuation\"",
+    " \"string\\\n\u{000C}continuation\"",
+    " \"string\\\n\u{0085}continuation\"",
+    " \"string\\\n\u{200E}continuation\"",
+    " \"string\\\n\u{200F}continuation\"",
+    " \"string\\\n\u{2028}continuation\"",
+    " \"string\\\n\u{2029}continuation\"",
+
     " \"non-NFC a\u{0301}\" ",
     " \"NFC \u{e1}\" ",
     " \"Kelvin Kelvin\" ",
