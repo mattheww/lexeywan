@@ -709,9 +709,10 @@ pub const LONGLIST: &[&str] = [
 
     // String unescaping
 
-    r#" "\x00 \x7f \' \" \n \r \t \\ \0" "#,
+    r#" "\x00 \x79 \x7a \x7f \' \" \n \r \t \\ \0" "#,
     r#" "\x00\x7f\'\"\n\r\t\\\0" "#,
-    r#" "\x80 \xff" "#,
+    r#" "\x80" "#,
+    r#" "\xff" "#,
     r#" "\x" "#,
     r#" "\xz" "#,
     r#" "\xzz" "#,
@@ -760,7 +761,8 @@ pub const LONGLIST: &[&str] = [
     r#" "\u00e6" "#,
 
     r#" b"\x00 \x7f \' \" \n \r \t \\ \0" "#,
-    r#" b"\x80 \xff" "#,
+    r#" b"\x80 \xff \x90 \xA0" "#,
+    r#" b"\xfg" "#,
     r#" b"\u{00e6}" "#,
     r#" b"\z" "#,
 
@@ -777,6 +779,8 @@ pub const LONGLIST: &[&str] = [
     r" '\x00' ",
     r" '\x7f' ",
     r" '\x80' ",
+    r" '\x79' ",
+    r" '\x7A' ",
     r" '\xff' ",
     r" '\u{00e6}' ",
     r" '\u{2192}' ",
@@ -790,6 +794,8 @@ pub const LONGLIST: &[&str] = [
     r" b'\x00' ",
     r" b'\x7f' ",
     r" b'\x80' ",
+    r" b'\x79' ",
+    r" b'\x7A' ",
     r" b'\xff' ",
     r" b'\u{00e6}' ",
     r" b'\u{2192}' ",
