@@ -761,6 +761,7 @@ pub const LONGLIST: &[&str] = [
 
     r" '\x00' ",
     r" '\x7f' ",
+    r" '\x80' ",
     r" '\xff' ",
     r" '\u{00e6}' ",
     r" '\u{2192}' ",
@@ -773,6 +774,7 @@ pub const LONGLIST: &[&str] = [
 
     r" b'\x00' ",
     r" b'\x7f' ",
+    r" b'\x80' ",
     r" b'\xff' ",
     r" b'\u{00e6}' ",
     r" b'\u{2192}' ",
