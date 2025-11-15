@@ -20,7 +20,7 @@ use crate::datatypes::trees::Forest;
 use crate::reimplementation::cleaning::{self, CleaningOutcome};
 use crate::reimplementation::doc_lowering::lower_doc_comments;
 use crate::reimplementation::fine_tokens::FineToken;
-use crate::reimplementation::tokenisation::{self, MatchData};
+use crate::reimplementation::tokenisation::{self, TokenKindMatch};
 use crate::rustc_harness::lex_via_rustc;
 use crate::tokens_common::Origin;
 use crate::{CleaningMode, Edition, Lowering};
@@ -128,7 +128,7 @@ pub enum DetailsMode {
     Always,
 }
 
-fn describe_match(match_data: &MatchData) -> impl Iterator<Item = String> + use<'_> {
+fn describe_match(match_data: &TokenKindMatch) -> impl Iterator<Item = String> + use<'_> {
     once(format!(
         "{:?}, {:?}",
         match_data.token_kind_nonterminal, match_data.consumed

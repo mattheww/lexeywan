@@ -8,7 +8,7 @@ use super::fine_tokens::FineToken;
 mod processing;
 mod tokens_matching;
 
-pub use tokens_matching::MatchData;
+pub use tokens_matching::TokenKindMatch;
 use tokens_matching::TokensMatchData;
 
 const MAX_INPUT_LENGTH: usize = 0x100_0000;
@@ -91,7 +91,7 @@ pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
 /// Result of running lexical analysis on a string.
 pub enum Analysis {
     /// Lexical analysis accepted the input.
-    Accepts(Vec<MatchData>, Vec<FineToken>),
+    Accepts(Vec<TokenKindMatch>, Vec<FineToken>),
 
     /// Lexical analysis rejected the input.
     Rejects(Reason),
@@ -108,7 +108,7 @@ pub enum Reason {
     ///
     /// The lists of matches and tokens represent what was lexed successfully before the token
     /// nonterminal ceased to match.
-    Matching(String, Vec<MatchData>, Vec<FineToken>),
+    Matching(String, Vec<TokenKindMatch>, Vec<FineToken>),
 
     /// Rejected when processing a match of a token-kind nonterminal.
     ///
@@ -118,7 +118,7 @@ pub enum Reason {
     /// when we encountered a problem with the model).
     ///
     /// The lists of matches and tokens represent what was lexed successfully first.
-    Processing(String, MatchData, Vec<MatchData>, Vec<FineToken>),
+    Processing(String, TokenKindMatch, Vec<TokenKindMatch>, Vec<FineToken>),
 }
 
 impl Reason {

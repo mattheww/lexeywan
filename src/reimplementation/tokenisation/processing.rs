@@ -4,7 +4,7 @@ use crate::datatypes::char_sequences::Charseq;
 use crate::reimplementation::fine_tokens::{CommentStyle, FineToken, FineTokenData};
 use crate::tokens_common::{NumericBase, Origin};
 
-use super::tokens_matching::{MatchData, Nonterminal};
+use super::tokens_matching::{Nonterminal, TokenKindMatch};
 
 mod escape_processing;
 use self::escape_processing::{
@@ -20,7 +20,7 @@ use self::escape_processing::{
 /// If the match is accepted, returns a fine-grained token.
 ///
 /// If the match is rejected, distinguishes rejection from "model error".
-pub fn process(match_data: &MatchData) -> Result<FineToken, Error> {
+pub fn process(match_data: &TokenKindMatch) -> Result<FineToken, Error> {
     let token_data = match match_data.token_kind_nonterminal {
         Nonterminal::Whitespace => process_whitespace(match_data)?,
         Nonterminal::Line_comment => process_line_comment(match_data)?,
@@ -86,7 +86,7 @@ fn rejected(s: &str) -> Error {
     Error::Rejected(s.to_owned())
 }
 
-impl MatchData {
+impl TokenKindMatch {
     /// Returns the characters consumed by the specified subsidiary nonterminal, or None if that
     /// nonterminal did not participate in the match.
     ///
@@ -126,11 +126,11 @@ impl MatchData {
     }
 }
 
-fn process_whitespace(_m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_whitespace(_m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     Ok(FineTokenData::Whitespace)
 }
 
-fn process_line_comment(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_line_comment(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let comment_content = m.consumed(Nonterminal::LINE_COMMENT_CONTENT)?;
     let (style, body) = match comment_content.chars() {
         ['/', '/', ..] => (CommentStyle::NonDoc, &[] as &[char]),
@@ -147,7 +147,7 @@ fn process_line_comment(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_block_comment(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_block_comment(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let comment_content = m.consumed_by_first_participating(Nonterminal::BLOCK_COMMENT_CONTENT)?;
     let (style, body) = match comment_content.chars() {
         ['*', '*', ..] => (CommentStyle::NonDoc, &[] as &[char]),
@@ -164,7 +164,7 @@ fn process_block_comment(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_character_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_character_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
@@ -177,7 +177,7 @@ fn process_character_literal(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_byte_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_byte_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
@@ -193,7 +193,7 @@ fn process_byte_literal(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
@@ -206,7 +206,7 @@ fn process_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_byte_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
@@ -217,7 +217,7 @@ fn process_byte_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_c_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
         return Err(rejected("underscore literal suffix"));
@@ -230,7 +230,7 @@ fn process_c_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_raw_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_raw_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     if m.consumed(Nonterminal::HASHES)?.len() > 255 {
         return Err(rejected("too many hashes"));
     }
@@ -248,7 +248,7 @@ fn process_raw_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_raw_byte_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_raw_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     if m.consumed(Nonterminal::HASHES)?.len() > 255 {
         return Err(rejected("too many hashes"));
     }
@@ -273,7 +273,7 @@ fn process_raw_byte_string_literal(m: &MatchData) -> Result<FineTokenData, Error
     })
 }
 
-fn process_raw_c_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_raw_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     if m.consumed(Nonterminal::HASHES)?.len() > 255 {
         return Err(rejected("too many hashes"));
     }
@@ -295,7 +295,7 @@ fn process_raw_c_string_literal(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_float_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_float_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     let body = match (
         m.maybe_consumed(Nonterminal::FLOAT_BODY_WITH_EXPONENT)?,
@@ -317,7 +317,7 @@ fn process_float_literal(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_integer_literal(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_integer_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     let digits = match (
         m.maybe_consumed(Nonterminal::LOW_BASE_TOKEN_DIGITS)?,
@@ -372,7 +372,7 @@ fn process_integer_literal(m: &MatchData) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_raw_lifetime_or_label(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_raw_lifetime_or_label(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let name = m.consumed(Nonterminal::IDENT)?.clone();
     let s = name.to_string();
     if s == "_" || s == "crate" || s == "self" || s == "super" || s == "Self" {
@@ -381,12 +381,12 @@ fn process_raw_lifetime_or_label(m: &MatchData) -> Result<FineTokenData, Error> 
     Ok(FineTokenData::RawLifetimeOrLabel { name })
 }
 
-fn process_lifetime_or_label(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_lifetime_or_label(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let name = m.consumed(Nonterminal::IDENT)?.clone();
     Ok(FineTokenData::LifetimeOrLabel { name })
 }
 
-fn process_raw_ident(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_raw_ident(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let represented_ident = m.consumed(Nonterminal::IDENT)?.nfc();
     let s = represented_ident.to_string();
     if s == "_" || s == "crate" || s == "self" || s == "super" || s == "Self" {
@@ -395,13 +395,13 @@ fn process_raw_ident(m: &MatchData) -> Result<FineTokenData, Error> {
     Ok(FineTokenData::RawIdent { represented_ident })
 }
 
-fn process_ident(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_ident(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     Ok(FineTokenData::Ident {
         represented_ident: m.consumed(Nonterminal::IDENT)?.nfc(),
     })
 }
 
-fn process_punctuation(m: &MatchData) -> Result<FineTokenData, Error> {
+fn process_punctuation(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     let mark = match m.consumed.chars() {
         [c] => *c,
         _ => return Err(rejected("impossible Punctuation match")),

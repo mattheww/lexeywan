@@ -39,7 +39,7 @@ pub fn match_tokens(edition: Edition, input: &[char]) -> Result<TokensMatchData,
             NoItems => "Pest reported empty match of the token rule".to_owned(),
             Multiple => "Pest reported multiple tokens under the token rule".to_owned(),
         })?;
-        token_kind_matches.push(MatchData::new(token_kind_pair));
+        token_kind_matches.push(TokenKindMatch::new(token_kind_pair));
     }
     Ok(TokensMatchData {
         token_kind_matches,
@@ -53,7 +53,7 @@ pub fn match_tokens(edition: Edition, input: &[char]) -> Result<TokensMatchData,
 /// attempt is always successful.
 pub struct TokensMatchData {
     /// Each sub-match of a token-kind nonterminal
-    pub token_kind_matches: Vec<MatchData>,
+    pub token_kind_matches: Vec<TokenKindMatch>,
     /// Whether the edition's tokens nonterminal consumed all the input
     pub consumed_entire_input: bool,
 }
@@ -91,7 +91,7 @@ fn is_documented_as_terminal(nt: Nonterminal) -> bool {
 }
 
 /// Information from a successful match attempt of a token-kind nonterminal.
-pub struct MatchData {
+pub struct TokenKindMatch {
     /// The token-kind nonterminal whose match is being described.
     pub token_kind_nonterminal: Nonterminal,
     /// The input characters which were consumed by the match.
@@ -104,7 +104,7 @@ pub struct MatchData {
     elaboration: Vec<(Nonterminal, Charseq)>,
 }
 
-impl std::fmt::Debug for MatchData {
+impl std::fmt::Debug for TokenKindMatch {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -114,7 +114,7 @@ impl std::fmt::Debug for MatchData {
     }
 }
 
-impl MatchData {
+impl TokenKindMatch {
     /// Make a MatchData instance from the raw data provided by Pest.
     ///
     /// `pair`'s rule should be a token-kind nonterminal.
