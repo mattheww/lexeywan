@@ -103,11 +103,14 @@ impl<NONTERMINAL: RuleType + WrittenUp> MatchData<NONTERMINAL> {
         }
     }
 
-    /// Returns the characters consumed by the specified subsidiary nonterminal, or None if that
-    /// nonterminal did not participate in this match.
+    /// Returns the characters consumed by the only participating match of the specified subsidiary
+    /// nonterminal, or None if that nonterminal did not participate in this match.
     ///
     /// Reports an error if that nonterminal participated in this match more than once.
-    pub fn get_checked(&self, nonterminal: NONTERMINAL) -> Result<Option<&Charseq>, ()> {
+    pub fn consumed_by_only_participating_match(
+        &self,
+        nonterminal: NONTERMINAL,
+    ) -> Result<Option<&Charseq>, ()> {
         let mut found = None;
         for (candidate, consumed) in self.elaboration.iter() {
             if *candidate == nonterminal {
@@ -126,7 +129,10 @@ impl<NONTERMINAL: RuleType + WrittenUp> MatchData<NONTERMINAL> {
 
     /// Returns the characters consumed by the first participating match of the specified subsidiary
     /// nonterminal in this match, or None if that nonterminal did not participate in this match.
-    pub fn get_first(&self, nonterminal: NONTERMINAL) -> Option<&Charseq> {
+    pub fn consumed_by_first_participating_match(
+        &self,
+        nonterminal: NONTERMINAL,
+    ) -> Option<&Charseq> {
         for (candidate, consumed) in self.elaboration.iter() {
             if *candidate == nonterminal {
                 return Some(consumed);

@@ -92,7 +92,7 @@ impl TokenKindMatch {
     ///
     /// Reports ModelError if that nonterminal participated in the match more than once.
     fn maybe_consumed(&self, nonterminal: Nonterminal) -> Result<Option<&Charseq>, Error> {
-        self.get_checked(nonterminal)
+        self.consumed_by_only_participating_match(nonterminal)
             .map_err(|_| Error::ModelError(format!("{nonterminal:?} participated more than once")))
     }
 
@@ -111,9 +111,10 @@ impl TokenKindMatch {
     ///
     /// Reports ModelError if that nonterminal did not participate in the match.
     fn consumed_by_first_participating(&self, nonterminal: Nonterminal) -> Result<&Charseq, Error> {
-        self.get_first(nonterminal).ok_or_else(|| {
-            Error::ModelError(format!("{nonterminal:?} did not participate in the match"))
-        })
+        self.consumed_by_first_participating_match(nonterminal)
+            .ok_or_else(|| {
+                Error::ModelError(format!("{nonterminal:?} did not participate in the match"))
+            })
     }
 
     /// Returns a clone of the characters consumed by the specified subsidiary nonterminal, or an
