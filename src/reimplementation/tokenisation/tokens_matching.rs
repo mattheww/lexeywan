@@ -4,10 +4,10 @@
 //!
 //! All Pest-specific code is isolated to this module, other than the Nonterminal enumeration.
 
-use pest::{Parser, iterators::Pair};
+use pest::Parser;
 
 use crate::Edition;
-use crate::datatypes::char_sequences::Charseq;
+use crate::reimplementation::pegs::{MatchData, WrittenUp};
 
 /// Matches as much as possible using the specified edition's tokens nonterminal.
 ///
@@ -72,7 +72,7 @@ struct TokenParser;
 /// - subsidiary nonterminals     (named in UPPER_CASE)
 ///
 /// Some members are nonterminals in the Pest grammar but documented as terminals in the writeup;
-/// see [is_documented_as_terminal] below.
+/// see the is_documented_as_terminal implementation below.
 pub type Nonterminal = Rule;
 
 /// Returns the Pest TOKENS and TOKEN rules to use for the specified Rust edition.
@@ -84,92 +84,18 @@ fn token_rules_for_edition(edition: Edition) -> (Rule, Rule) {
     }
 }
 
-/// Reports whether a nonterminal is documented as a terminal in the writeup.
-fn is_documented_as_terminal(nt: Nonterminal) -> bool {
-    // TAB is also documented as a terminal, but it only appears in the frontmatter grammar.
-    nt == Nonterminal::DOUBLEQUOTE || nt == Nonterminal::BACKSLASH || nt == Nonterminal::LF
-}
-
 /// Information from a successful match attempt of a token-kind nonterminal.
-pub struct TokenKindMatch {
-    /// The token-kind nonterminal whose match is being described.
-    pub token_kind_nonterminal: Nonterminal,
-    /// The input characters which were consumed by the match.
-    pub consumed: Charseq,
-    /// The subsidiary nonterminals which participated in the match and the characters they consumed.
-    /// See "elaboration" in the writeup for the order.
-    /// (Strictly, this is the elaboration of the match of the nonterminal's expression, not the
-    ///  elaboration of the match of the nonterminal itself.)
-    /// Omits nonterminals which are documented as terminals.
-    elaboration: Vec<(Nonterminal, Charseq)>,
-}
+///
+/// As far as the type system is concerned this could be a match of any nonterminal from the
+/// tokenisation grammar, but we only use it for token-kind nonterminals.
+pub type TokenKindMatch = MatchData<Nonterminal>;
 
-impl std::fmt::Debug for TokenKindMatch {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{:?} consuming {:?}",
-            self.token_kind_nonterminal, self.consumed
-        )
-    }
-}
-
-impl TokenKindMatch {
-    /// Make a MatchData instance from the raw data provided by Pest.
-    ///
-    /// `pair`'s rule should be a token-kind nonterminal.
-    fn new(pair: Pair<Nonterminal>) -> Self {
-        Self {
-            consumed: pair.as_str().into(),
-            token_kind_nonterminal: pair.as_rule(),
-            elaboration: pair
-                .into_inner()
-                .flatten()
-                .filter(|sub| !is_documented_as_terminal(sub.as_rule()))
-                .map(|sub| (sub.as_rule(), sub.as_str().into()))
-                .collect(),
-        }
-    }
-
-    /// Returns the characters consumed by the specified subsidiary nonterminal, or None if that
-    /// nonterminal did not participate in this match.
-    ///
-    /// Reports an error if that nonterminal participated in this match more than once.
-    pub fn get_checked(&self, nonterminal: Nonterminal) -> Result<Option<&Charseq>, ()> {
-        let mut found = None;
-        for (candidate, consumed) in self.elaboration.iter() {
-            if *candidate == nonterminal {
-                match found {
-                    Some(_) => {
-                        return Err(());
-                    }
-                    None => {
-                        found = Some(consumed);
-                    }
-                }
-            }
-        }
-        Ok(found)
-    }
-
-    /// Returns the characters consumed by the first participating match of the specified subsidiary
-    /// nonterminal in this match, or None if that nonterminal did not participate in this match.
-    pub fn get_first(&self, nonterminal: Nonterminal) -> Option<&Charseq> {
-        for (candidate, consumed) in self.elaboration.iter() {
-            if *candidate == nonterminal {
-                return Some(consumed);
-            }
-        }
-        None
-    }
-
-    /// Describes the subsidiary nonterminals making up this match, with their consumed extents.
-    ///
-    /// Omits nonterminals which are documented as terminals.
-    pub fn describe_submatches(&self) -> impl Iterator<Item = String> + use<'_> {
-        self.elaboration
-            .iter()
-            .map(|(rule, consumed)| format!("{rule:?} {consumed:?}"))
+impl WrittenUp for Nonterminal {
+    fn is_documented_as_terminal(&self) -> bool {
+        // TAB is also documented as a terminal, but it only appears in the frontmatter grammar.
+        *self == Nonterminal::DOUBLEQUOTE
+            || *self == Nonterminal::BACKSLASH
+            || *self == Nonterminal::LF
     }
 }
 
