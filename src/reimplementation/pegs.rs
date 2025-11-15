@@ -1,9 +1,68 @@
 //! Support for working with Pest parsing expression grammars.
 
-use pest::RuleType;
 use pest::iterators::Pair;
+use pest::{Parser, RuleType};
 
 use crate::datatypes::char_sequences::Charseq;
+
+/// Attempt to match the specified nonterminal against the specified string.
+///
+/// A returned error indicates that Pest didn't behave the way we expect.
+pub fn attempt_pest_match<'a, NONTERMINAL: RuleType, PARSER: Parser<NONTERMINAL>>(
+    nonterminal: NONTERMINAL,
+    against: &'a str,
+) -> Result<Outcome<'a, NONTERMINAL>, String> {
+    use Multiplicity::*;
+    let Ok(top_level_pairs) = PARSER::parse(nonterminal, against) else {
+        return Ok(Outcome::Failure);
+    };
+    // Pest's top-level Pairs is 'above' the match for the nonterminal you asked for,
+    // with no useful information. It contains a single Pair which is the match for the nonterminal
+    // you asked for.
+    let requested_pair = extract_only_item(top_level_pairs).map_err(|m| match m {
+        NoItems => "Pest reported empty response".to_owned(),
+        Multiple => "Pest reported multiple top-level matches".to_owned(),
+    })?;
+    if requested_pair.as_rule() != nonterminal {
+        return Err(format!(
+            "Pest's match wasn't for the expected {nonterminal:?}"
+        ));
+    }
+    let consumed_entire_input = requested_pair.as_span().end() == against.len();
+    Ok(Outcome::Success {
+        pair: requested_pair,
+        consumed_entire_input,
+    })
+}
+
+/// Information from the outcome of a Pest match attempt.
+///
+/// If we want to know exactly what was consumed, we can find out from 'pair'.
+pub enum Outcome<'a, NONTERMINAL: RuleType> {
+    Success {
+        /// Pest Pair representing the match of the specified nonterminal.
+        pair: Pair<'a, NONTERMINAL>,
+        /// Whether the match's consumed characters were the whole of 'against'.
+        consumed_entire_input: bool,
+    },
+    Failure,
+}
+
+/// Returns the only item from an iterator, or reports an error if it didn't have exactly one item.
+pub fn extract_only_item<T>(mut stream: impl Iterator<Item = T>) -> Result<T, Multiplicity> {
+    let Some(item) = stream.next() else {
+        return Err(Multiplicity::NoItems);
+    };
+    let None = stream.next() else {
+        return Err(Multiplicity::Multiple);
+    };
+    Ok(item)
+}
+
+pub enum Multiplicity {
+    NoItems,
+    Multiple,
+}
 
 /// Information from a successful match attempt of a PEG nonterminal.
 pub struct MatchData<NONTERMINAL: RuleType> {

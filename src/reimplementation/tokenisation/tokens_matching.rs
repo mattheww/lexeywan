@@ -4,10 +4,10 @@
 //!
 //! All Pest-specific code is isolated to this module, other than the Nonterminal enumeration.
 
-use pest::Parser;
-
 use crate::Edition;
-use crate::reimplementation::pegs::{MatchData, WrittenUp};
+use crate::reimplementation::pegs::{
+    MatchData, Multiplicity, Outcome, WrittenUp, attempt_pest_match, extract_only_item,
+};
 
 /// Matches as much as possible using the specified edition's tokens nonterminal.
 ///
@@ -15,20 +15,19 @@ use crate::reimplementation::pegs::{MatchData, WrittenUp};
 /// (in particular, if the match attempt fails).
 pub fn match_tokens(edition: Edition, input: &[char]) -> Result<TokensMatchData, String> {
     use Multiplicity::*;
-    let s: String = input.iter().collect();
     let (tokens_rule, token_rule) = token_rules_for_edition(edition);
-    let Ok(tokens_pairs) = TokenParser::parse(tokens_rule, &s) else {
+    let s: String = input.iter().collect();
+
+    let Outcome::Success {
+        pair: tokens_pair,
+        consumed_entire_input,
+    } = attempt_pest_match::<Nonterminal, TokenParser>(tokens_rule, &s)?
+    else {
         return Err("Pest reported no match of the tokens rule".to_owned());
     };
-    let tokens_pair = extract_only_item(tokens_pairs).map_err(|m| match m {
-        NoItems => "Pest reported empty response".to_owned(),
-        Multiple => "Pest reported multiple top-level matches".to_owned(),
-    })?;
-    let matched_span = tokens_pair.as_span();
-    let token_pairs = tokens_pair.into_inner();
 
     let mut token_kind_matches = Vec::new();
-    for token_pair in token_pairs {
+    for token_pair in tokens_pair.into_inner() {
         if token_pair.as_rule() != token_rule {
             return Err(format!(
                 "Pest matched {:?} under the tokens rule",
@@ -43,7 +42,7 @@ pub fn match_tokens(edition: Edition, input: &[char]) -> Result<TokensMatchData,
     }
     Ok(TokensMatchData {
         token_kind_matches,
-        consumed_entire_input: matched_span.end() == s.len(),
+        consumed_entire_input,
     })
 }
 
@@ -97,20 +96,4 @@ impl WrittenUp for Nonterminal {
             || *self == Nonterminal::BACKSLASH
             || *self == Nonterminal::LF
     }
-}
-
-/// Returns the only item from an iterator, or reports an error if it didn't have exactly one item.
-fn extract_only_item<T>(mut stream: impl Iterator<Item = T>) -> Result<T, Multiplicity> {
-    let Some(item) = stream.next() else {
-        return Err(Multiplicity::NoItems);
-    };
-    let None = stream.next() else {
-        return Err(Multiplicity::Multiple);
-    };
-    Ok(item)
-}
-
-enum Multiplicity {
-    NoItems,
-    Multiple,
 }
