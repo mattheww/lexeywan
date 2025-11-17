@@ -7,7 +7,7 @@ use unicode_normalization::UnicodeNormalization;
 
 /// A sequence of characters.
 ///
-/// A `Charseq` can be indexed using any of the following forms:
+/// A `Charseq` can be indexed in the same way as a slice. For example:
 ///
 ///  - `charseq[idx]`
 ///  - `charseq[idx..]`
