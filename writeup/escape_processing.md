@@ -5,6 +5,17 @@
 
 The descriptions of processing string and character literals make use of several forms of <dfn>escape</dfn>.
 
+> The following table summarises which forms of escape are accepted in each kind of string or byte literal (raw literals don't use any forms of escape).
+>
+> | Kind  | Simple | 8-bit | 7-bit | Unicode | String continuation |
+> |-------|--------|-------|-------|---------|---------------------|
+> | `''`  | ✓      |       | ✓     | ✓       |                     |
+> | `b''` | ✓      | ✓     |       |         |                     |
+> | `""`  | ✓      |       | ✓     | ✓       | ✓                   |
+> | `b""` | ✓      | ✓     |       |         | ✓                   |
+> | `c""` | ✓      | ✓     |       | ✓       | ✓                   |
+
+
 Each form of escape is characterised by:
 - an <dfn>escape sequence</dfn>: a sequence of characters, which always begins with <b>\\</b>
 - an <dfn>escaped value</dfn>: either a single character or an empty sequence of characters
