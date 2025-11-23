@@ -99,13 +99,14 @@ pub fn run_identcheck_subcommand() -> SubcommandStatus {
     let mut failures = 0;
     let mut model_errors = 0;
     for c in char::MIN..=char::MAX {
-        let input = format!("{c} a{c}");
-        let rustc = regularised_from_rustc(&input, edition, cleaning, lowering);
-        let lex_via_peg = regularised_from_peg(&input, edition, cleaning, lowering);
-        match compare(&rustc, &lex_via_peg) {
-            Comparison::Agree => passes += 1,
-            Comparison::Differ => failures += 1,
-            Comparison::ModelErrors => model_errors += 1,
+        for input in [format!("{c}"), format!("a{c}")] {
+            let rustc = regularised_from_rustc(&input, edition, cleaning, lowering);
+            let lex_via_peg = regularised_from_peg(&input, edition, cleaning, lowering);
+            match compare(&rustc, &lex_via_peg) {
+                Comparison::Agree => passes += 1,
+                Comparison::Differ => failures += 1,
+                Comparison::ModelErrors => model_errors += 1,
+            }
         }
     }
     println!("\n{passes} passed, {failures} failed");
