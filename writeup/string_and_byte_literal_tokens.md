@@ -256,7 +256,7 @@ The match is rejected if:
 ##### Attributes
 
 The token's <var>represented bytes</var> are the [Unicode scalar values] of the characters in <u>RAW_DQ_CONTENT</u>.
-(This is well defined because of the first rejection case below.)
+(This is well defined because of the second rejection case below.)
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
