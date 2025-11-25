@@ -550,6 +550,7 @@ pub const LONGLIST: &[&str] = [
     " b'yyy''",
     " b'y y''",
     " b'y'z",
+    " b'y'_",
     " b'yyy'z",
     " b'y y'z",
     " b'y'z'",
@@ -639,6 +640,7 @@ pub const LONGLIST: &[&str] = [
     r#" b"\\"suff "#,
     r#" b"\"""#,
     r#" b"\\"""#,
+    r#" b"xy"_ "#,
 
     r#" c"\""#,
     r#" c"\\""#,
@@ -647,6 +649,7 @@ pub const LONGLIST: &[&str] = [
     r#" c"\\"suff "#,
     r#" c"\"""#,
     r#" c"\\"""#,
+    r#" c"xy"_ "#,
 
     " \"x \n \0 z\" ",
     " b\"x \n \0 z\" ",
