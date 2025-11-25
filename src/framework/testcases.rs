@@ -269,6 +269,7 @@ pub const LONGLIST: &[&str] = [
     "\"xxx\"",
     "\"x\ny\"",
     "\"x\n\ny\"",
+    "\"x\ty\"",
 
     r#" xxx""#,
     r#" "yyy"#,
@@ -660,6 +661,7 @@ pub const LONGLIST: &[&str] = [
 
     " \"£ á Ω 🦀 \x07 \u{FFFF} \" ",
     " b\"\x07 \" ",
+    " b\"\t \" ",
     " b\"\u{007F} \" ",
     " b\"\u{0080} \" ",
     " b\"£ \" ",
@@ -669,10 +671,10 @@ pub const LONGLIST: &[&str] = [
     " cr\"\u{007F} \" ",
     " cr\"\u{0080} \" ",
     " cr\"£ \" ",
-    " c\"£ á Ω 🦀 \x07 \u{FFFF} \" ",
-    " r\"£ á Ω 🦀 \x07 \u{FFFF} \" ",
-    " br\"£ á Ω 🦀 \x07 \u{FFFF} \" ",
-    " cr\"£ á Ω 🦀 \x07 \u{FFFF} \" ",
+    " c\"£ á Ω 🦀 \x07 \t \u{FFFF} \" ",
+    " r\"£ á Ω 🦀 \x07 \t \u{FFFF} \" ",
+    " br\"£ á Ω 🦀 \x07 \t \u{FFFF} \" ",
+    " cr\"£ á Ω 🦀 \x07 \t \u{FFFF} \" ",
 
     r" '\'",
     r" '\\'",
