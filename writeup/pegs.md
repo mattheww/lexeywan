@@ -45,6 +45,7 @@ Parsing expressions have the following forms, where
 | `ANY`                                       | Any character                       |
 | `DOUBLEQUOTE`                               | <b>"</b>                            |
 | `BACKSLASH`                                 | <b>\\</b>                           |
+| `CR`                                        | Carriage return                     |
 | `LF`                                        | Line feed                           |
 | `TAB`                                       | Tab                                 |
 | `PATTERN_WHITE_SPACE`                       |                                     |
@@ -177,6 +178,9 @@ An attempt to match `DOUBLEQUOTE` against <var>s</var> succeeds if and only if <
 and (if it succeeds) consumes that character.
 
 An attempt to match `BACKSLASH` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <b>\\</b>,
+and (if it succeeds) consumes that character.
+
+An attempt to match `CR` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <kbd>CR</kbd>,
 and (if it succeeds) consumes that character.
 
 An attempt to match `LF` against <var>s</var> succeeds if and only if <var>s</var> begins with the character <kbd>LF</kbd>,

@@ -98,6 +98,7 @@ In addition, the following named terminals are available in all grammars in this
 | `ANY`                 | Any single Unicode [character]                                |
 | `DOUBLEQUOTE`         | A <b>"</b> [character]                                        |
 | `BACKSLASH`           | A <b>\\</b> [character]                                       |
+| `CR`                  | A <kbd>CR</kbd> [character]                                  |
 | `LF`                  | An <kbd>LF</kbd> [character]                                  |
 | `TAB`                 | An <kbd>HT</kbd> [character]                                  |
 | `PATTERN_WHITE_SPACE` | A [character] with the Unicode `Pattern_White_Space` property |
