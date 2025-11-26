@@ -96,5 +96,5 @@ The escaped value is an empty sequence of characters.
 [Unicode scalar values]: http://www.unicode.org/glossary/#unicode_scalar_value
 [`u8::from_str_radix`]: https://doc.rust-lang.org/std/primitive.u8.html#method.from_str_radix
 [`u32::from_str_radix`]: https://doc.rust-lang.org/std/primitive.u32.html#method.from_str_radix
-[String continuation escapes]: open_questions.md#string-continuation-escapes
+[String continuation escapes]: rustc_oddities.md#string-continuation-escapes
 
