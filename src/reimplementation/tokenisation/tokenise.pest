@@ -89,7 +89,7 @@ Whitespace = { PATTERN_WHITE_SPACE + }
 
 // ANCHOR: line_comment
 Line_comment = { "//" ~ LINE_COMMENT_CONTENT }
-LINE_COMMENT_CONTENT = { ( !LF ~ ANY )* }
+LINE_COMMENT_CONTENT = { ( !LF ~ ANY ) * }
 // ANCHOR_END: line_comment
 
 // ANCHOR: block_comment
