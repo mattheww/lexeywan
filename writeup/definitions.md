@@ -47,9 +47,9 @@ ASCII control characters and space are represented as follows:
 |          |                |
 |----------|----------------|
 | `U+0000` | <kbd>NUL</kbd> |
+| `U+0009` | <kbd>HT</kbd>  |
 | `U+000A` | <kbd>LF</kbd>  |
 | `U+000D` | <kbd>CR</kbd>  |
-| `U+0009` | <kbd>HT</kbd>  |
 | `U+0020` | <kbd>SP</kbd>  |
 
 Other characters are identified by hexadecimal scalar value and name,
