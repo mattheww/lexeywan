@@ -722,6 +722,7 @@ pub const LONGLIST: &[&str] = [
     r#" "\x00\x7f\'\"\n\r\t\\\0" "#,
     r#" "\x80" "#,
     r#" "\xff" "#,
+    r#" "\xf0\x9f\xa6\x80" "#, // example from rfc3349
     r#" "\x" "#,
     r#" "\xz" "#,
     r#" "\xzz" "#,
@@ -799,6 +800,7 @@ pub const LONGLIST: &[&str] = [
     r" '\x79' ",
     r" '\x7A' ",
     r" '\xff' ",
+    r" '\xf0\x9f\xa6\x80' ",
     r" '\u{00e6}' ",
     r" '\u{2192}' ",
     r" '\u{110000}' ",
