@@ -73,22 +73,22 @@ and their matches are <dfn>participating matches</dfn>.
 
 The following forms of parsing expression are available:
 
-| Form                                        | Matching                                                                               |
-|---------------------------------------------|----------------------------------------------------------------------------------------|
-| eg `"abc"`                                  | Match the exact string provided                                                        |
-| eg `'a'..'f'`                               | Match one [character] from the provided (inclusive) range                              |
-| A nonterminal                               | Match the nonterminal's parsing expression                                             |
-| <code><var>e₁</var> ~ <var>e₂</var></code>  | First match <var>e₁</var>, then match <var>e₂</var>                                    |
-| <code><var>e₁</var> \| <var>e₂</var></code> | Match either <var>e₁</var> or <var>e₂</var>, with <var>e₁</var> having higher priority |
-| <code><var>e</var> ?</code>                 | Match <var>e</var> if possible                                                         |
-| <code><var>e</var> *</code>                 | Match as many repetitions of <var>e</var> as possible (possibly zero)                  |
-| <code><var>e</var> +</code>                 | Match as many repetitions of <var>e</var> as possible (at least one)                   |
-| <code><var>e</var> {0, <var>n</var>}</code> | Match up to <var>n</var> repetitions of <var>e</var>                                   |
-| <code>! <var>e</var></code>                 | Fail if <var>e</var> would match at this point                                         |
-| <code>( <var>e</var> )</code>               | Match <var>e</var>, overriding the usual precedence                                    |
+| Form                                                   | Matching                                                                               |
+|--------------------------------------------------------|----------------------------------------------------------------------------------------|
+| eg `"abc"`                                             | Match the exact string provided                                                        |
+| eg `'a'..'f'`                                          | Match one [character] from the provided (inclusive) range                              |
+| A nonterminal                                          | Match the nonterminal's parsing expression                                             |
+| <code><var>e₁</var> ~ <var>e₂</var></code>             | First match <var>e₁</var>, then match <var>e₂</var>                                    |
+| <code><var>e₁</var> \| <var>e₂</var></code>            | Match either <var>e₁</var> or <var>e₂</var>, with <var>e₁</var> having higher priority |
+| <code><var>e</var> ?</code>                            | Match <var>e</var> if possible                                                         |
+| <code><var>e</var> *</code>                            | Match as many repetitions of <var>e</var> as possible (possibly zero)                  |
+| <code><var>e</var> +</code>                            | Match as many repetitions of <var>e</var> as possible (at least one)                   |
+| <code><var>e</var> {<var>m</var>, <var>n</var>}</code> | Match between <var>m</var> and <var>n</var> (inclusive) repetitions of <var>e</var>    |
+| <code>! <var>e</var></code>                            | Fail if <var>e</var> would match at this point                                         |
+| <code>( <var>e</var> )</code>                          | Match <var>e</var>, overriding the usual precedence                                    |
 
 Here, <var>e</var>, <var>e₁</var>, and <var>e₂</var> can be any parsing expression,
-and <var>n</var> can be any positive whole number.
+and <var>m</var> and <var>n</var> can be any positive whole number.
 
 
 ### Special terminals
@@ -154,7 +154,7 @@ the matching process does not backtrack to see if the whole match can succeed if
 
 For example, matching `"a"* ~ "ab"` against <b>aaab</b> fails.
 
-Similarly <code>{0, <var>n</var>}</code> and `?` match as much as they can when they are first attempted,
+Similarly <code>{<var>m</var>, <var>n</var>}</code> and `?` match as much as they can when they are first attempted,
 and there is no backtracking.
 
 > __Examples__
