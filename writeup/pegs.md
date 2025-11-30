@@ -35,7 +35,8 @@ No nonterminal appears more than once on the left hand side of a definition.
 ### Parsing expressions
 
 Parsing expressions have the following forms, where
-<var>e</var>, <var>e₁</var>, and <var>e₂</var> represent arbitrary parsing expressions.
+ - <var>e</var>, <var>e₁</var>, and <var>e₂</var> represent arbitrary parsing expressions
+ - <var>n</var> represents an arbitrary positive integer, written in decimal.
 
 |                                             |                                     |
 |---------------------------------------------|-------------------------------------|
@@ -61,11 +62,13 @@ Parsing expressions have the following forms, where
 | <code><var>e</var> ?</code>                 | Option suffix expression            |
 | <code><var>e</var> *</code>                 | Zero-or-more repetitions expression |
 | <code><var>e</var> +</code>                 | One-or-more repetitions expression  |
+| <code><var>e</var> {0, <var>n</var>}</code> | limited repetitions expression      |
 | <code>! <var>e</var></code>                 | Negative lookahead expression       |
 | __Grouping__                                |                                     |
 | <code>( <var>e</var> )</code>               |                                     |
 
-The symbols `~`, `|`, `?`, `*`, `+`, and `!` are called <dfn>parsing operators</dfn>.
+The symbols `~`, `|`, `?`, `*`, `+`, `!`, and the form <code>{0, <var>n</var>}</code>,
+are called <dfn>parsing operators</dfn>.
 
 Each nonterminal which appears in a parsing expression has a definition in the grammar.
 
@@ -256,13 +259,19 @@ The <dfn>option expression</dfn> <code><var>e</var>?</code> reduces to
 <code><var>e</var> | EMPTY</code>.
 
 
-##### Repetition expressions (`*` and `+`)
+##### Repetition expressions (`*`, `+`, and <code>{0,<var>n</var>}</code>)
 
 A <dfn>zero-or-more repetitions expression</dfn> <code><var>e</var>\*</code> reduces to
 <code>( <var>e</var> ~ <var>e</var>* ) | EMPTY</code>.
 
 A <dfn>one-or-more repetitions expression</dfn> <code><var>e</var>+</code> reduces to
 <code><var>e</var> ~ <var>e</var>*</code>.
+
+A <dfn>limited repetition expression</dfn> of the form <code><var>e</var>{0, 1}</code> reduces to
+<code><var>e</var>?</code>.
+
+A <dfn>limited repetition expression</dfn> of the form <code><var>e</var>{0, <var>n</var>}</code>, for <var>n</var> > 1, reduces to
+<code><var>e</var>? ~ <var>e</var>{0, <var>n</var>-1}</code>.
 
 
 ##### Negative lookahead expressions (`!`)

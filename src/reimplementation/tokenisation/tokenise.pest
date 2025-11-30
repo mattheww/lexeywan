@@ -161,7 +161,7 @@ RAW_DQ_REMAINDER = {
 RAW_DQ_CONTENT = {
     ( !(DOUBLEQUOTE ~ PEEK) ~ ANY ) *
 }
-HASHES = { "#" * }
+HASHES = { "#" {0, 255} }
 // ANCHOR_END: raw_double_quoted_literals_common
 
 // ANCHOR: raw_string_literal
