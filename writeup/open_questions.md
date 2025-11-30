@@ -79,14 +79,8 @@ Should this writeup change to match rustc?
 
 ### Wording for string unescaping
 
-The description of processing for [String literals], [Byte-string literals], and [C-string literals] was originally drafted for the Reference.
-Should there be a more formal definition of unescaping processes than the current "left-to-right order" and
-"contributes" wording?
-
-I believe that any literal content which will be accepted can be written uniquely as a sequence of (escape-sequence or non-<b>\\</b>-character),
-but I'm not sure that's obvious enough that it can be stated without justification.
-
-This is a place where the reimplementation isn't closely parallel to the writeup.
+The description of building up the represented bytes for [C-string literals] still uses the "contributes" wording from the Reference.
+Is it worth having something more formal?
 
 
 [String literals]: string_and_byte_literal_tokens.md#string-literal

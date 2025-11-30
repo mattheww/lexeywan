@@ -91,7 +91,6 @@ pub type TokenKindMatch = MatchData<Nonterminal>;
 
 impl WrittenUp for Nonterminal {
     fn is_documented_as_terminal(&self) -> bool {
-        // TAB is also documented as a terminal, but it only appears in the frontmatter grammar.
         *self == Nonterminal::DOUBLEQUOTE
             || *self == Nonterminal::BACKSLASH
             || *self == Nonterminal::LF

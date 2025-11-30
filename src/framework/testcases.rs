@@ -846,7 +846,7 @@ pub const LONGLIST: &[&str] = [
     " c\"string\\\n\n\r\tcontinuation\"",
     " c\"string\\\n    ",
 
-    // PATTERN_WHITESPACE that isn't in CONTINUATION_WHITESPACE isn't eaten
+    // PATTERN_WHITESPACE that isn't in STRING_CONTINUATION_ESCAPE_BODY isn't eaten
     " \"string\\\n\u{000B}continuation\"",
     " \"string\\\n\u{000C}continuation\"",
     " \"string\\\n\u{0085}continuation\"",

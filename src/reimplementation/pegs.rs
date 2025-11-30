@@ -103,6 +103,11 @@ impl<NONTERMINAL: RuleType + WrittenUp> MatchData<NONTERMINAL> {
         }
     }
 
+    /// Says whether the specified subsidiary nonterminal participated in this match.
+    pub fn participated(&self, nonterminal: NONTERMINAL) -> bool {
+        self.elaboration.iter().any(|&(nt, _)| nt == nonterminal)
+    }
+
     /// Returns the characters consumed by the only participating match of the specified subsidiary
     /// nonterminal, or None if that nonterminal did not participate in this match.
     ///
@@ -139,6 +144,18 @@ impl<NONTERMINAL: RuleType + WrittenUp> MatchData<NONTERMINAL> {
             }
         }
         None
+    }
+
+    /// Returns the characters consumed by the participating matches of the specified subsidiary
+    /// nonterminal (see "Sequences of matches" in the writeup.
+    pub fn consumed_by_all_participating_matches(&self, nonterminal: NONTERMINAL) -> Charseq {
+        Charseq::new(
+            self.elaboration
+                .iter()
+                .filter(|(candidate, _)| *candidate == nonterminal)
+                .flat_map(|(_, consumed)| consumed.iter())
+                .collect(),
+        )
     }
 
     /// Describes the subsidiary nonterminals making up this match, with their consumed extents.

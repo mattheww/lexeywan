@@ -2,16 +2,15 @@
 
 use crate::datatypes::char_sequences::Charseq;
 use crate::reimplementation::fine_tokens::{CommentStyle, FineToken, FineTokenData};
+use crate::reimplementation::tokenisation::processing::escape_processing::{
+    LiteralComponent, MaybeInterpretation::*, try_escape_interpretation,
+    try_single_escape_interpretation,
+};
 use crate::tokens_common::{NumericBase, Origin};
 
 use super::tokens_matching::{Nonterminal, TokenKindMatch};
 
 mod escape_processing;
-use self::escape_processing::{
-    interpret_7_bit_escape, interpret_8_bit_escape, interpret_8_bit_escape_as_byte,
-    interpret_simple_escape, interpret_simple_escape_as_byte, interpret_unicode_escape,
-    is_string_continuation_whitespace,
-};
 
 /// Converts a match to a fine-grained token, or rejects the match.
 ///
@@ -86,6 +85,18 @@ fn rejected(s: &str) -> Error {
     Error::Rejected(s.to_owned())
 }
 
+impl From<escape_processing::Error> for Error {
+    fn from(error: escape_processing::Error) -> Self {
+        use escape_processing::Error::*;
+        let msg = match error {
+            Undefined(msg) => format!("depends on undefined value: {msg}"),
+            BadParse(msg) => format!("escape-processing grammar problem: {msg}"),
+            Internal(msg) => format!("bug in escape-processing: {msg}"),
+        };
+        Error::ModelError(msg)
+    }
+}
+
 impl TokenKindMatch {
     /// Returns the characters consumed by the specified subsidiary nonterminal, or None if that
     /// nonterminal did not participate in the match.
@@ -139,7 +150,7 @@ fn process_line_comment(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
         ['!', rest @ ..] => (CommentStyle::InnerDoc, rest),
         _ => (CommentStyle::NonDoc, &[] as &[char]),
     };
-    if !matches!(style, CommentStyle::NonDoc) && comment_content.contains('\r') {
+    if !matches!(style, CommentStyle::NonDoc) && comment_content.contains('\u{000d}') {
         return Err(rejected("CR in line doc comment"));
     }
     Ok(FineTokenData::LineComment {
@@ -156,7 +167,7 @@ fn process_block_comment(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
         ['!', rest @ ..] => (CommentStyle::InnerDoc, rest),
         _ => (CommentStyle::NonDoc, &[] as &[char]),
     };
-    if !matches!(style, CommentStyle::NonDoc) && comment_content.contains('\r') {
+    if !matches!(style, CommentStyle::NonDoc) && comment_content.contains('\u{000d}') {
         return Err(rejected("CR in block doc comment"));
     }
     Ok(FineTokenData::BlockComment {
@@ -166,28 +177,67 @@ fn process_block_comment(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
 }
 
 fn process_character_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+    use LiteralComponent::*;
+    let sq_content = m.consumed(Nonterminal::SQ_CONTENT)?;
+    let single_escape_interpretation = match try_single_escape_interpretation(sq_content)? {
+        HasInterpretation(interpretation) => interpretation,
+        // rejected: "has no single-escape interpretation"
+        HasNoInterpretation(reason) => return Err(rejected(reason)),
+    };
+    let Some(represented_character) = single_escape_interpretation.represented_character()? else {
+        // rejected: "single-escape interpretation has no represented character"
+        return Err(rejected("no represented character"));
+    };
+    if matches!(single_escape_interpretation, NonEscape { .. })
+        && matches!(
+            single_escape_interpretation.represented_character()?,
+            Some('\u{000a}') | Some('\u{000d}') | Some('\u{0009}')
+        )
+    {
+        // rejected: "non-escape whose represented character is LF, CR, or HT"
+        return Err(rejected("escape-only char"));
+    }
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
+        // rejected: "suffix would consist of the single character _"
         return Err(rejected("underscore literal suffix"));
     }
     Ok(FineTokenData::CharacterLiteral {
-        represented_character: represented_character_for_character_literal(
-            m.consumed(Nonterminal::SQ_CONTENT)?,
-        )?,
+        represented_character,
         suffix,
     })
 }
 
 fn process_byte_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+    use LiteralComponent::*;
+    let sq_content = m.consumed(Nonterminal::SQ_CONTENT)?;
+    let single_escape_interpretation = match try_single_escape_interpretation(sq_content)? {
+        HasInterpretation(interpretation) => interpretation,
+        // rejected: "has no single-escape interpretation"
+        HasNoInterpretation(reason) => return Err(rejected(reason)),
+    };
+    if matches!(single_escape_interpretation, NonEscape { .. })
+        && matches!(
+            single_escape_interpretation.represented_character()?,
+            Some('\u{000a}') | Some('\u{000d}') | Some('\u{0009}')
+        )
+    {
+        // rejected: "non-escape whose represented character is LF, CR, or HT"
+        return Err(rejected("escape-only char"));
+    }
+    if matches!(single_escape_interpretation, UnicodeEscape { .. }) {
+        // rejected: "Unicode escape"
+        return Err(rejected("unicode escape"));
+    }
+    let Some(represented_byte) = single_escape_interpretation.represented_byte()? else {
+        // rejected: "has no represented byte"
+        return Err(rejected("no represented byte"));
+    };
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
+        // rejected: "suffix would consist of the single character _"
         return Err(rejected("underscore literal suffix"));
     }
-    let represented_character =
-        represented_character_for_byte_literal(m.consumed(Nonterminal::SQ_CONTENT)?)?;
-    let represented_byte: u8 = represented_character
-        .try_into()
-        .map_err(|_| model_error("represented_character_for_byte_literal is out of range"))?;
     Ok(FineTokenData::ByteLiteral {
         represented_byte,
         suffix,
@@ -195,38 +245,132 @@ fn process_byte_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
 }
 
 fn process_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+    use LiteralComponent::*;
+    let dq_content = m.consumed(Nonterminal::DQ_CONTENT)?;
+    let escape_interpretation = match try_escape_interpretation(dq_content)? {
+        HasInterpretation(interpetation) => interpetation,
+        // rejected: "has no escape interpretation"
+        HasNoInterpretation(reason) => return Err(rejected(reason)),
+    };
+    let mut unescaped = Vec::new();
+    for component in escape_interpretation.iter() {
+        let Some(represented_character) = component.represented_character()? else {
+            // rejected: "a component that has no represented character"
+            return Err(Error::Rejected(format!(
+                "component without represented character: {component:?}"
+            )));
+        };
+        unescaped.push(represented_character);
+        if matches!(component, NonEscape { .. })
+            && component.represented_character()? == Some('\u{000d}')
+        {
+            // rejected: "a non-escape whose represented character is CR"
+            return Err(rejected("CR non-escape"));
+        }
+    }
+    let represented_string = Charseq::new(unescaped);
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
+        // rejected: "suffix would consist of the single character _"
         return Err(rejected("underscore literal suffix"));
     }
     Ok(FineTokenData::StringLiteral {
-        represented_string: represented_string_for_string_literal(
-            m.consumed(Nonterminal::DQ_CONTENT)?,
-        )?,
+        represented_string,
         suffix,
     })
 }
 
 fn process_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+    use LiteralComponent::*;
+    let dq_content = m.consumed(Nonterminal::DQ_CONTENT)?;
+    let escape_interpretation = match try_escape_interpretation(dq_content)? {
+        HasInterpretation(interpetation) => interpetation,
+        // rejected: "has no escape interpretation"
+        HasNoInterpretation(reason) => return Err(rejected(reason)),
+    };
+    let mut represented_bytes = Vec::new();
+    for component in escape_interpretation.iter() {
+        if matches!(component, NonEscape { .. })
+            && component.represented_character()? == Some('\u{000d}')
+        {
+            // rejected: "a non-escape whose represented character is CR"
+            return Err(rejected("CR non-escape"));
+        }
+        if matches!(component, UnicodeEscape { .. }) {
+            // rejected: "a Unicode escape"
+            return Err(rejected("unicode escape in byte string literal"));
+        }
+        let Some(represented_byte) = component.represented_byte()? else {
+            // rejected: "a component that has no represented byte"
+            return Err(Error::Rejected(format!(
+                "component without represented byte: {component:?}"
+            )));
+        };
+        represented_bytes.push(represented_byte);
+    }
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
+        // rejected: "suffix would consist of the single character _"
         return Err(rejected("underscore literal suffix"));
     }
     Ok(FineTokenData::ByteStringLiteral {
-        represented_bytes: represented_bytes_for_byte_string(m.consumed(Nonterminal::DQ_CONTENT)?)?,
+        represented_bytes,
         suffix,
     })
 }
 
 fn process_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+    use LiteralComponent::*;
+    let dq_content = m.consumed(Nonterminal::DQ_CONTENT)?;
+    let escape_interpretation = match try_escape_interpretation(dq_content)? {
+        HasInterpretation(interpetation) => interpetation,
+        // rejected: "has no escape interpretation"
+        HasNoInterpretation(reason) => return Err(rejected(reason)),
+    };
+    let mut buf = [0; 4];
+    let mut represented_bytes = Vec::new();
+    for component in escape_interpretation.iter() {
+        if matches!(component, UnicodeEscape { .. }) && component.represented_character()?.is_none()
+        {
+            // rejected: "a Unicode escape which has no represented character"
+            return Err(rejected("out-of-range unicode escape"));
+        }
+        if matches!(component, NonEscape { .. })
+            && component.represented_character()? == Some('\u{000d}')
+        {
+            // rejected: "a non-escape whose represented character is CR"
+            return Err(rejected("CR non-escape"));
+        }
+        match component {
+            // "Each non-escape, simple escape, or Unicode escape contributes the UTF-8 encoding of
+            //  its represented character"
+            NonEscape { .. } | SimpleEscape { .. } | UnicodeEscape { .. } => {
+                let Some(represented_character) = component.represented_character()? else {
+                    return Err(model_error("no represented character"));
+                };
+                represented_bytes.extend(represented_character.encode_utf8(&mut buf).bytes());
+            }
+            // "Each hexadecimal escape contributes its represented byte"
+            HexadecimalEscape { .. } => {
+                let Some(represented_byte) = component.represented_byte()? else {
+                    return Err(model_error("no represented byte"));
+                };
+                represented_bytes.push(represented_byte);
+            }
+            _ => return Err(model_error("unhandled component")),
+        }
+    }
+    if represented_bytes.contains(&0) {
+        // rejected: "any of the token's represented bytes would be 0"
+        return Err(rejected("representation of NUL"));
+    }
     let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     if suffix.chars() == ['_'] {
+        // rejected: "suffix would consist of the single character _"
         return Err(rejected("underscore literal suffix"));
     }
     Ok(FineTokenData::CStringLiteral {
-        represented_bytes: represented_bytes_for_c_string_literal(
-            m.consumed(Nonterminal::DQ_CONTENT)?,
-        )?,
+        represented_bytes,
         suffix,
     })
 }
@@ -237,8 +381,8 @@ fn process_raw_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error
         return Err(rejected("underscore literal suffix"));
     }
     let raw_dq_content = m.consumed(Nonterminal::RAW_DQ_CONTENT)?.clone();
-    if raw_dq_content.contains('\r') {
-        return Err(rejected("CR in raw string literal"));
+    if raw_dq_content.contains('\u{000d}') {
+        return Err(rejected("CR non-escape"));
     }
     Ok(FineTokenData::RawStringLiteral {
         represented_string: raw_dq_content,
@@ -253,10 +397,10 @@ fn process_raw_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, 
     }
     let raw_dq_content = m.consumed(Nonterminal::RAW_DQ_CONTENT)?;
     if raw_dq_content.scalar_values().any(|n| n > 127) {
-        return Err(rejected("non-ASCII character in raw byte string literal"));
+        return Err(rejected("non-ASCII character"));
     }
-    if raw_dq_content.contains('\r') {
-        return Err(rejected("CR in raw byte string literal"));
+    if raw_dq_content.contains('\u{000d}') {
+        return Err(rejected("CR in raw content"));
     }
     let represented_bytes = raw_dq_content
         .scalar_values()
@@ -274,12 +418,12 @@ fn process_raw_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Err
         return Err(rejected("underscore literal suffix"));
     }
     let raw_dq_content = m.consumed(Nonterminal::RAW_DQ_CONTENT)?;
-    if raw_dq_content.contains('\r') {
-        return Err(rejected("CR in raw C string literal"));
+    if raw_dq_content.contains('\u{000d}') {
+        return Err(rejected("CR in raw content"));
     }
     let represented_bytes: Vec<u8> = raw_dq_content.to_string().into();
     if represented_bytes.contains(&0) {
-        return Err(rejected("NUL in raw C string literal"));
+        return Err(rejected("NUL in raw content"));
     }
     Ok(FineTokenData::RawCStringLiteral {
         represented_bytes,
@@ -399,174 +543,4 @@ fn process_punctuation(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
         _ => return Err(rejected("impossible Punctuation match")),
     };
     Ok(FineTokenData::Punctuation { mark })
-}
-
-/// Validates and interprets the SQ_CONTENT of a '' literal.
-fn represented_character_for_character_literal(sq_content: &Charseq) -> Result<char, Error> {
-    match sq_content.chars() {
-        ['\''] | ['\\'] => Err(model_error("impossible SQ_CONTENT")),
-        ['\n'] | ['\r'] | ['\t'] => Err(rejected("escape-only char")),
-        [c] => Ok(*c),
-        ['\\', 'x', rest @ ..] => interpret_7_bit_escape(rest),
-        ['\\', 'u', rest @ ..] => interpret_unicode_escape(rest),
-        ['\\', c] => interpret_simple_escape(*c).map_err(|_| rejected("unknown escape")),
-        ['\\', ..] => Err(rejected("unknown escape")),
-        _ => Err(model_error("impossible SQ_CONTENT")),
-    }
-}
-
-/// Validates and interprets the SQ_CONTENT of a b'' literal as a character.
-fn represented_character_for_byte_literal(sq_content: &Charseq) -> Result<char, Error> {
-    match sq_content.chars() {
-        ['\''] | ['\\'] => Err(model_error("impossible SQ_CONTENT")),
-        ['\n'] | ['\r'] | ['\t'] => Err(rejected("escape-only char")),
-        [c] if *c as u32 > 127 => Err(rejected("non-ASCII character in byte literal")),
-        [c] => Ok(*c),
-        ['\\', 'x', rest @ ..] => interpret_8_bit_escape(rest),
-        ['\\', c] => interpret_simple_escape(*c).map_err(|_| rejected("unknown escape")),
-        ['\\', ..] => Err(rejected("unknown escape")),
-        _ => Err(model_error("impossible SQ_CONTENT")),
-    }
-}
-
-/// Validates and interprets the DQ_CONTENT of a "" literal.
-fn represented_string_for_string_literal(dq_content: &Charseq) -> Result<Charseq, Error> {
-    let mut chars = dq_content.iter().peekable();
-    let mut unescaped = Vec::new();
-    while let Some(c) = chars.next() {
-        match c {
-            '\\' => match chars.next().ok_or_else(|| model_error("empty escape"))? {
-                'x' => {
-                    let digits: Vec<_> = (0..2).filter_map(|_| chars.next()).collect();
-                    unescaped.push(interpret_7_bit_escape(&digits)?);
-                }
-                'u' => {
-                    let mut escape = Vec::new();
-                    loop {
-                        match chars.next() {
-                            Some(c) => {
-                                escape.push(c);
-                                if c == '}' {
-                                    break;
-                                }
-                            }
-                            None => return Err(rejected("unterminated unicode escape")),
-                        }
-                    }
-                    unescaped.push(interpret_unicode_escape(&escape)?);
-                }
-                '\n' => {
-                    while let Some(c) = chars.peek() {
-                        if is_string_continuation_whitespace(*c) {
-                            chars.next();
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                c => match interpret_simple_escape(c) {
-                    Ok(escaped_value) => unescaped.push(escaped_value),
-                    Err(_) => return Err(rejected("unknown escape")),
-                },
-            },
-            '\r' => return Err(rejected("CR in string literal")),
-            _ => unescaped.push(c),
-        }
-    }
-    Ok(Charseq::new(unescaped))
-}
-
-/// Validates and interprets the DQ_CONTENT of a b"" literal.
-fn represented_bytes_for_byte_string(dq_content: &Charseq) -> Result<Vec<u8>, Error> {
-    let mut chars = dq_content.iter().peekable();
-    let mut represented_string = Vec::new();
-    while let Some(c) = chars.next() {
-        match c {
-            '\\' => match chars.next().ok_or_else(|| model_error("empty escape"))? {
-                'x' => {
-                    let digits: Vec<_> = (0..2).filter_map(|_| chars.next()).collect();
-                    represented_string.push(interpret_8_bit_escape(&digits)?);
-                }
-                '\n' => {
-                    while let Some(c) = chars.peek() {
-                        if is_string_continuation_whitespace(*c) {
-                            chars.next();
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                c => match interpret_simple_escape(c) {
-                    Ok(escaped_value) => represented_string.push(escaped_value),
-                    Err(_) => return Err(rejected("unknown escape")),
-                },
-            },
-            '\r' => return Err(rejected("CR in byte string literal")),
-            _ => {
-                if c as u32 > 127 {
-                    return Err(rejected("non-ASCII character in byte string literal"));
-                }
-                represented_string.push(c)
-            }
-        }
-    }
-    Ok(represented_string
-        .into_iter()
-        .map(|c| c.try_into().unwrap())
-        .collect())
-}
-
-/// Validates and interprets the DQ_CONTENT of a c"" literal.
-fn represented_bytes_for_c_string_literal(dq_content: &Charseq) -> Result<Vec<u8>, Error> {
-    let mut buf = [0; 4];
-    let mut chars = dq_content.iter().peekable();
-    let mut unescaped = Vec::new();
-    while let Some(c) = chars.next() {
-        match c {
-            '\\' => match chars.next().ok_or_else(|| model_error("empty escape"))? {
-                'x' => {
-                    let digits: Vec<_> = (0..2).filter_map(|_| chars.next()).collect();
-                    unescaped.push(interpret_8_bit_escape_as_byte(&digits)?);
-                }
-                'u' => {
-                    let mut escape = Vec::new();
-                    loop {
-                        match chars.next() {
-                            Some(c) => {
-                                escape.push(c);
-                                if c == '}' {
-                                    break;
-                                }
-                            }
-                            None => return Err(rejected("unterminated unicode escape")),
-                        }
-                    }
-                    unescaped.extend(
-                        interpret_unicode_escape(&escape)?
-                            .encode_utf8(&mut buf)
-                            .bytes(),
-                    );
-                }
-                '\n' => {
-                    while let Some(c) = chars.peek() {
-                        if is_string_continuation_whitespace(*c) {
-                            chars.next();
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                c => match interpret_simple_escape_as_byte(c) {
-                    Ok(escaped_value) => unescaped.push(escaped_value),
-                    Err(_) => return Err(rejected("unknown escape")),
-                },
-            },
-            '\r' => return Err(rejected("CR in C string literal")),
-            _ => unescaped.extend(c.encode_utf8(&mut buf).bytes()),
-        }
-    }
-    if unescaped.contains(&0) {
-        return Err(rejected("NUL in C string literal"));
-    }
-    Ok(unescaped)
 }

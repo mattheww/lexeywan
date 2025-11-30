@@ -1,12 +1,12 @@
 # Grammars used in this writeup
 
-This document relies on two _parsing expression grammars_:
-one for tokenising and one for recognising frontmatter.
+This document relies on three _parsing expression grammars_:
+one for tokenising, one for processing escapes, and one for recognising frontmatter.
 
 This page summarises how these grammars work.
 See the [Parsing Expression Grammars][pegs] appendix for a more formal treatment.
 
-See [Frontmatter grammar] and [Complete tokenisation grammar] for the grammars themselves.
+See [Frontmatter grammar], [Complete tokenisation grammar], and [Escape-processing grammar] for the grammars themselves.
 
 There is no standardised notation for parsing expression grammars.
 This writeup is based on the [variant used by][pest-grammar] the [Pest] Rust library,
@@ -232,6 +232,7 @@ means "first match `ONE`, then match `TWO`, then match `THREE`".
 [pegs]: pegs.md
 [Frontmatter grammar]: frontmatter_grammar.md
 [Complete tokenisation grammar]: complete_token_grammar.md
+[Escape-processing grammar]: escape_processing_grammar.md
 
 [character]: definitions.md#character
 [characters]: definitions.md#character

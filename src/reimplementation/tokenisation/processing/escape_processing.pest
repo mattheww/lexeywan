@@ -1,0 +1,43 @@
+// ANCHOR: main
+LITERAL_COMPONENTS = {
+    LITERAL_COMPONENT *
+}
+
+LITERAL_COMPONENT = {
+    !BACKSLASH ~ ANY |
+    BACKSLASH ~ ESCAPE_BODY
+}
+
+ESCAPE_BODY = {
+    SIMPLE_ESCAPE_BODY |
+    UNICODE_ESCAPE_BODY |
+    HEXADECIMAL_ESCAPE_BODY |
+    STRING_CONTINUATION_ESCAPE_BODY
+}
+
+SIMPLE_ESCAPE_BODY = {
+    "0" | "t" | "n" | "r" | DOUBLEQUOTE | "'" | BACKSLASH
+}
+
+UNICODE_ESCAPE_BODY = {
+    "u" ~ "{" ~ ( HEXADECIMAL_DIGIT ~ "_" * ){1,6} ~ "}"
+}
+
+HEXADECIMAL_ESCAPE_BODY = {
+    "x" ~ HEXADECIMAL_DIGIT ~ HEXADECIMAL_DIGIT
+}
+
+STRING_CONTINUATION_ESCAPE_BODY = {
+    LF ~ ( TAB | LF | CR | " " ) *
+}
+
+HEXADECIMAL_DIGIT = {
+    '0'..'9' | 'a'..'f' | 'A'..'F'
+}
+// ANCHOR_END: main
+
+TAB = { "\u{0009}" }
+CR = { "\u{000d}" }
+LF = { "\u{000a}" }
+DOUBLEQUOTE = { "\"" }
+BACKSLASH = { "\\" }

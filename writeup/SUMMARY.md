@@ -24,6 +24,7 @@
 
 - [Frontmatter grammar](./frontmatter_grammar.md)
 - [Complete tokenisation grammar](./complete_token_grammar.md)
+- [Escape-processing grammar](./escape_processing_grammar.md)
 - [Parsing Expression Grammars](./pegs.md)
 - [Reimplementation CLI](./reimplementation_cli.md)
 

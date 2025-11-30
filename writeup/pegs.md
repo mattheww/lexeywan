@@ -126,7 +126,8 @@ The binary parsing operators `~` and `|` are left-associative:
 A <dfn>match attempt</dfn> is characterised by
 a grammar,
 a parsing expression <var>e</var>, and
-a character sequence <var>s</var>. In this document the grammar is always implicit.
+a character sequence <var>s</var>.
+On the remainder of this page the grammar is treated as implicit.
 
 A match attempt is identified using the form "a match attempt of <var>e</var> against <var>s</var>" or "an attempt to match <var>e</var> against <var>s</var>".
 On this page,
@@ -295,6 +296,17 @@ there is a participating match of <var>N</var> in <var>A</var>.
 If a nonterminal <var>N</var> participates in a match <var>A</var>,
 the <dfn>first participating match</dfn> of <var>N</var> in <var>A</var> is
 the first match of <var>N</var> in the elaboration of <var>A</var>.
+
+#### Sequences of matches
+
+The characters consumed by a sequence of matches <var>A₁</var>…<var>Aₙ</var></dfn>
+are the sequence of characters obtained by
+concatenating the character sequences consumed by each <var>Aᵢ</var>,
+in order.
+
+If <var>N</var> is a nonterminal,
+the <dfn>sequence of participating matches</dfn> of <var>N</var> in a match <var>A</var>
+is the sequence obtained by restricting the elaboration of <var>A</var> to matches of <var>N</var>.
 
 If <var>𝑵</var> is a class of nonterminals,
 the <dfn>sequence of participating matches</dfn> of <var>𝑵</var> in a match <var>A</var>

@@ -15,6 +15,14 @@ sed \
 sed -e '\!^//!d' < $SRC > $CLEANED
 
 
+SRC=src/reimplementation/tokenisation/processing/escape_processing.pest
+ANCHORED=writeup/escape_processing_anchored.pest
+CLEANED=writeup/escape_processing.pest
+
+cp $SRC $ANCHORED
+sed -e '\!^//!d' < $SRC > $CLEANED
+
+
 SRC=src/reimplementation/cleaning/frontmatter.pest
 ANCHORED=writeup/frontmatter_anchored.pest
 CLEANED=writeup/frontmatter.pest

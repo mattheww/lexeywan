@@ -80,6 +80,20 @@ u {
 kbd {
 }
 
+/* Summary table of quoted literal forms */
+
+.escapes-table th {
+    background-color: var(--quote-bg);
+    font-size: 15px;
+    text-align: left;
+    vertical-align: bottom;
+}
+
+.escapes-table td {
+    white-space: nowrap
+}
+
+
 /* Different rules on the PEGs description page */
 
 .pegs-description ul {

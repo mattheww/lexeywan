@@ -6,8 +6,8 @@ which is aiming to be both correct and verifiable.
 It's accompanied by a reimplementation of the lexer in Rust based on that description
 and a [framework] for comparing its output to `rustc`'s.
 
-One component of the description is a [Parsing Expression Grammar](complete_token_grammar.md);
-the reimplementation uses the [Pest] library to generate the corresponding parser.
+The description uses [Parsing Expression Grammars](complete_token_grammar.md);
+the reimplementation uses the [Pest] library to generate the corresponding parsers.
 
 [framework]: reimplementation_cli.md
 
