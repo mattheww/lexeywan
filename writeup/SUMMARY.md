@@ -13,7 +13,7 @@
   - [Fine-grained tokens](./fine_grained_tokens.md)
   - [Token nonterminals](./token_nonterminals.md)
   - [Whitespace and comment tokens](./whitespace_and_comment_tokens.md)
-  - [String and byte literal tokens](./string_and_byte_literal_tokens.md)
+  - [String and byte literal tokens](./quoted_literal_tokens.md)
     - [Escape processing](./escape_processing.md)
   - [Numeric literal tokens](./numeric_literal_tokens.md)
   - [Identifier-like tokens](./identifier_tokens.md)

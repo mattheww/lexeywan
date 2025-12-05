@@ -83,7 +83,7 @@ The description of building up the represented bytes for [C-string literals] sti
 Is it worth having something more formal?
 
 
-[String literals]: string_and_byte_literal_tokens.md#string-literal
-[Byte-string literals]: string_and_byte_literal_tokens.md#byte-string-literal
-[C-string literals]: string_and_byte_literal_tokens.md#c-string-literal
+[String literals]: quoted_literal_tokens.md#string-literal
+[Byte-string literals]: quoted_literal_tokens.md#byte-string-literal
+[C-string literals]: quoted_literal_tokens.md#c-string-literal
 

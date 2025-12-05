@@ -107,5 +107,5 @@ RDQ_255_CONTENT = {
 ```
 
 
-[rdql-token]: string_and_byte_literal_tokens.html#rdql
+[rdql-token]: quoted_literal_tokens.html#rdql
 [pest-stack]: https://docs.rs/pest/2.8.0/pest/#special-rules
