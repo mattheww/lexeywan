@@ -1,9 +1,9 @@
-## String and byte literal tokens
+## Quoted literal tokens
 
 ##### Table of contents
 <!-- toc -->
 
-> Each kind of string or byte literal represents a character, byte, sequence of characters, or sequence of bytes.
+> Each kind of quoted literal represents a character, byte, sequence of characters, or sequence of bytes.
 >
 > These representations are obtained by interpreting the literal content
 > (the consumed characters between <b>'</b> <b>'</b> or <b>"</b> <b>"</b>),
@@ -16,7 +16,7 @@
 
 ### Summary
 
-> The following table summarises which forms of character and escape are accepted in each kind of string or byte literal.
+> The following table summarises which forms of character and escape are accepted in each kind of quoted literal.
 
 <div class=escapes-table>
 
