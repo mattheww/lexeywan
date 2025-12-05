@@ -434,7 +434,6 @@ fn process_raw_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Err
 }
 
 fn process_float_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
-    let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     let body = match (
         m.maybe_consumed(Nonterminal::FLOAT_BODY_WITH_EXPONENT)?,
         m.maybe_consumed(Nonterminal::FLOAT_BODY_WITHOUT_EXPONENT)?,
@@ -447,6 +446,7 @@ fn process_float_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
             return model_error("impossible participation for float body nonterminals");
         }
     };
+    let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
     Ok(FineTokenData::FloatLiteral {
         body: body.clone(),
         suffix,
@@ -454,22 +454,6 @@ fn process_float_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
 }
 
 fn process_integer_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
-    let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
-    let digits = match (
-        m.maybe_consumed(Nonterminal::LOW_BASE_TOKEN_DIGITS)?,
-        m.maybe_consumed(Nonterminal::HEXADECIMAL_DIGITS)?,
-        m.maybe_consumed(Nonterminal::DECIMAL_PART)?,
-    ) {
-        (Some(consumed), None, None) => consumed,
-        (None, Some(consumed), None) => consumed,
-        (None, None, Some(consumed)) => consumed,
-        _ => {
-            return model_error("impossible participation for integer digits nonterminals");
-        }
-    };
-    if digits.iter().all(|c| c == '_') {
-        return rejected("no digits");
-    }
     let base = match (
         m.maybe_consumed(Nonterminal::INTEGER_BINARY_LITERAL)?,
         m.maybe_consumed(Nonterminal::INTEGER_OCTAL_LITERAL)?,
@@ -484,6 +468,22 @@ fn process_integer_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
             return model_error("impossible participation for integer literal nonterminals");
         }
     };
+    let digits = match (
+        m.maybe_consumed(Nonterminal::LOW_BASE_TOKEN_DIGITS)?,
+        m.maybe_consumed(Nonterminal::HEXADECIMAL_DIGITS)?,
+        m.maybe_consumed(Nonterminal::DECIMAL_PART)?,
+    ) {
+        (Some(consumed), None, None) => consumed,
+        (None, Some(consumed), None) => consumed,
+        (None, None, Some(consumed)) => consumed,
+        _ => {
+            return model_error("impossible participation for integer digits nonterminals");
+        }
+    };
+    let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
+    if digits.iter().all(|c| c == '_') {
+        return rejected("no digits");
+    }
     match base {
         NumericBase::Binary => {
             if !digits.iter().all(|c| c == '_' || ('0'..'2').contains(&c)) {
