@@ -30,7 +30,7 @@ END_LINE = {
     ( LF | EOI )
 }
 
-FENCE = { "---" ~ "-" * }
+FENCE = { "-" {3, 255} }
 
 INFOSTRING = {
     ( XID_START | "_" ) ~
