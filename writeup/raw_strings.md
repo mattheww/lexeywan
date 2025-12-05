@@ -26,7 +26,7 @@ and is used in the reimplementation.
 
 It looks like this:
 ```
-RAW_DOUBLE_QUOTED_REMAINDER = {
+RAW_DOUBLE_QUOTED_FORM = {
     PUSH(HASHES) ~
     "\"" ~ RAW_DOUBLE_QUOTED_CONTENT ~ "\"" ~
     POP ~
