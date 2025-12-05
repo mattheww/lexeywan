@@ -104,31 +104,31 @@ Unterminated_block_comment = { "/*" }
 
 
 // ANCHOR: single_quoted_literals_common
-SQ_REMAINDER = {
-    "'" ~ SQ_CONTENT ~ "'" ~
+SINGLE_QUOTED_REMAINDER = {
+    "'" ~ SINGLE_QUOTED_CONTENT ~ "'" ~
     SUFFIX ?
 }
-SQ_CONTENT = {
+SINGLE_QUOTED_CONTENT = {
     BACKSLASH ~ ANY ~ ( !"'" ~ ANY ) * |
     !"'" ~ ANY
 }
 // ANCHOR_END: single_quoted_literals_common
 
 // ANCHOR: character_literal
-Character_literal = { SQ_REMAINDER }
+Character_literal = { SINGLE_QUOTED_REMAINDER }
 // ANCHOR_END: character_literal
 
 // ANCHOR: byte_literal
-Byte_literal = { "b" ~ SQ_REMAINDER }
+Byte_literal = { "b" ~ SINGLE_QUOTED_REMAINDER }
 // ANCHOR_END: byte_literal
 
 
 // ANCHOR: double_quoted_literals_common
-DQ_REMAINDER = {
-    DOUBLEQUOTE ~ DQ_CONTENT ~ DOUBLEQUOTE ~
+DOUBLE_QUOTED_REMAINDER = {
+    DOUBLEQUOTE ~ DOUBLE_QUOTED_CONTENT ~ DOUBLEQUOTE ~
     SUFFIX ?
 }
-DQ_CONTENT = {
+DOUBLE_QUOTED_CONTENT = {
     (
         BACKSLASH ~ ANY |
         !DOUBLEQUOTE ~ ANY
@@ -137,43 +137,43 @@ DQ_CONTENT = {
 // ANCHOR_END: double_quoted_literals_common
 
 // ANCHOR: string_literal
-String_literal = { DQ_REMAINDER }
+String_literal = { DOUBLE_QUOTED_REMAINDER }
 // ANCHOR_END: string_literal
 
 // ANCHOR: byte_string_literal
-Byte_string_literal = { "b" ~ DQ_REMAINDER }
+Byte_string_literal = { "b" ~ DOUBLE_QUOTED_REMAINDER }
 // ANCHOR_END: byte_string_literal
 
 // ANCHOR: c_string_literal
-C_string_literal = { "c" ~ DQ_REMAINDER }
+C_string_literal = { "c" ~ DOUBLE_QUOTED_REMAINDER }
 // ANCHOR_END: c_string_literal
 
 
 // ANCHOR_END: double_quoted_literals
 
 // ANCHOR: raw_double_quoted_literals_common
-RAW_DQ_REMAINDER = {
+RAW_DOUBLE_QUOTED_REMAINDER = {
     PUSH(HASHES) ~
-    DOUBLEQUOTE ~ RAW_DQ_CONTENT ~ DOUBLEQUOTE ~
+    DOUBLEQUOTE ~ RAW_DOUBLE_QUOTED_CONTENT ~ DOUBLEQUOTE ~
     POP ~
     SUFFIX ?
 }
-RAW_DQ_CONTENT = {
+RAW_DOUBLE_QUOTED_CONTENT = {
     ( !(DOUBLEQUOTE ~ PEEK) ~ ANY ) *
 }
 HASHES = { "#" {0, 255} }
 // ANCHOR_END: raw_double_quoted_literals_common
 
 // ANCHOR: raw_string_literal
-Raw_string_literal = { "r" ~ RAW_DQ_REMAINDER }
+Raw_string_literal = { "r" ~ RAW_DOUBLE_QUOTED_REMAINDER }
 // ANCHOR_END: raw_string_literal
 
 // ANCHOR: raw_byte_string_literal
-Raw_byte_string_literal = { "br" ~ RAW_DQ_REMAINDER }
+Raw_byte_string_literal = { "br" ~ RAW_DOUBLE_QUOTED_REMAINDER }
 // ANCHOR_END: raw_byte_string_literal
 
 // ANCHOR: raw_c_string_literal
-Raw_c_string_literal = { "cr" ~ RAW_DQ_REMAINDER }
+Raw_c_string_literal = { "cr" ~ RAW_DOUBLE_QUOTED_REMAINDER }
 // ANCHOR_END: raw_c_string_literal
 
 

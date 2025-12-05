@@ -64,16 +64,16 @@ The following nonterminals are common to the definitions below:
 
 ##### Attributes
 
-The token's <var>represented character</var> is the represented character of <u>SQ_CONTENT</u>'s [single-escape interpretation].
+The token's <var>represented character</var> is the represented character of <u>SINGLE_QUOTED_CONTENT</u>'s [single-escape interpretation].
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
 ##### Rejection
 
 The match is rejected if:
- - <u>SQ_CONTENT</u> has no single-escape interpretation; or
- - <u>SQ_CONTENT</u>'s single-escape interpretation has no represented character; or
- - <u>SQ_CONTENT</u>'s single-escape interpretation is a [non-escape]
+ - <u>SINGLE_QUOTED_CONTENT</u> has no single-escape interpretation; or
+ - <u>SINGLE_QUOTED_CONTENT</u>'s single-escape interpretation has no represented character; or
+ - <u>SINGLE_QUOTED_CONTENT</u>'s single-escape interpretation is a [non-escape]
    whose represented character is <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>HT</kbd>; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.
 
@@ -87,18 +87,18 @@ The match is rejected if:
 
 ##### Attributes
 
-The token's <var>represented byte</var> is the represented byte of <u>SQ_CONTENT</u>'s [single-escape interpretation].
+The token's <var>represented byte</var> is the represented byte of <u>SINGLE_QUOTED_CONTENT</u>'s [single-escape interpretation].
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
 ##### Rejection
 
 The match is rejected if:
- - <u>SQ_CONTENT</u> has no single-escape interpretation; or
- - <u>SQ_CONTENT</u>'s single-escape interpretation is any of the following:
+ - <u>SINGLE_QUOTED_CONTENT</u> has no single-escape interpretation; or
+ - <u>SINGLE_QUOTED_CONTENT</u>'s single-escape interpretation is any of the following:
    - a [non-escape] whose represented character is <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>HT</kbd>
    - a [Unicode escape]; or
- - <u>SQ_CONTENT</u>'s single-escape interpretation has no represented byte; or
+ - <u>SINGLE_QUOTED_CONTENT</u>'s single-escape interpretation has no represented byte; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.
 
 
@@ -124,15 +124,15 @@ The following nonterminals are common to the definitions below:
 ##### Attributes
 
 The token's <var>represented string</var> is the sequence made up of
-the represented character of each component of <u>DQ_CONTENT</u>'s [escape interpretation].
+the represented character of each component of <u>DOUBLE_QUOTED_CONTENT</u>'s [escape interpretation].
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
 ##### Rejection
 
 The match is rejected if:
- - <u>DQ_CONTENT</u> has no escape interpretation; or
- - <u>DQ_CONTENT</u>'s escape interpretation contains any of the following
+ - <u>DOUBLE_QUOTED_CONTENT</u> has no escape interpretation; or
+ - <u>DOUBLE_QUOTED_CONTENT</u>'s escape interpretation contains any of the following
    - a component that has no represented character
    - a [non-escape] whose represented character is <kbd>CR</kbd>; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.
@@ -148,15 +148,15 @@ The match is rejected if:
 ##### Attributes
 
 The token's <var>represented bytes</var> are
-the represented byte of each component of <u>DQ_CONTENT</u>'s [escape interpretation].
+the represented byte of each component of <u>DOUBLE_QUOTED_CONTENT</u>'s [escape interpretation].
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
 ##### Rejection
 
 The match is rejected if:
- - <u>DQ_CONTENT</u> has no escape interpretation; or
- - <u>DQ_CONTENT</u>'s escape interpretation contains any of the following:
+ - <u>DOUBLE_QUOTED_CONTENT</u> has no escape interpretation; or
+ - <u>DOUBLE_QUOTED_CONTENT</u>'s escape interpretation contains any of the following:
    - a [non-escape] whose represented character is <kbd>CR</kbd>
    - a [Unicode escape]
    - a component that has no represented byte; or
@@ -172,7 +172,7 @@ The match is rejected if:
 
 ##### Attributes
 
-The token's <var>represented bytes</var> are derived from <u>DQ_CONTENT</u>'s [escape interpretation] in the following way:
+The token's <var>represented bytes</var> are derived from <u>DOUBLE_QUOTED_CONTENT</u>'s [escape interpretation] in the following way:
 - Each [non-escape], [simple escape], or [Unicode escape] contributes the UTF-8 encoding of its represented character.
 - Each [hexadecimal escape] contributes its represented byte.
 
@@ -181,8 +181,8 @@ The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did no
 ##### Rejection
 
 The match is rejected if:
- - <u>DQ_CONTENT</u> has no escape interpretation; or
- - <u>DQ_CONTENT</u>'s escape interpretation contains any of the following:
+ - <u>DOUBLE_QUOTED_CONTENT</u> has no escape interpretation; or
+ - <u>DOUBLE_QUOTED_CONTENT</u>'s escape interpretation contains any of the following:
    - a Unicode escape that has no represented character
    - a [non-escape] whose represented character is <kbd>CR</kbd>; or
  - any of the token's <var>represented bytes</var> would be 0; or
@@ -217,14 +217,14 @@ unless the characters it consumes are the same as the characters consumed by the
 
 ##### Attributes
 
-The token's <var>represented string</var> is <u>RAW_DQ_CONTENT</u>.
+The token's <var>represented string</var> is <u>RAW_DOUBLE_QUOTED_CONTENT</u>.
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
 ##### Rejection
 
 The match is rejected if:
- - a <kbd>CR</kbd> character appears in <u>RAW_DQ_CONTENT</u>; or
+ - a <kbd>CR</kbd> character appears in <u>RAW_DOUBLE_QUOTED_CONTENT</u>; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.
 
 
@@ -237,7 +237,7 @@ The match is rejected if:
 
 ##### Attributes
 
-The token's <var>represented bytes</var> are the [Unicode scalar values] of the characters in <u>RAW_DQ_CONTENT</u>.
+The token's <var>represented bytes</var> are the [Unicode scalar values] of the characters in <u>RAW_DOUBLE_QUOTED_CONTENT</u>.
 (This is well defined because of the first rejection case below.)
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
@@ -245,8 +245,8 @@ The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did no
 ##### Rejection
 
 The match is rejected if:
- - any character whose Unicode scalar value is greater than 127 appears in <u>RAW_DQ_CONTENT</u>; or
- - a <kbd>CR</kbd> character appears in <u>RAW_DQ_CONTENT</u>; or
+ - any character whose Unicode scalar value is greater than 127 appears in <u>RAW_DOUBLE_QUOTED_CONTENT</u>; or
+ - a <kbd>CR</kbd> character appears in <u>RAW_DOUBLE_QUOTED_CONTENT</u>; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.
 
 
@@ -259,14 +259,14 @@ The match is rejected if:
 
 ##### Attributes
 
-The token's <var>represented bytes</var> are the UTF-8 encoding of <u>RAW_DQ_CONTENT</u>
+The token's <var>represented bytes</var> are the UTF-8 encoding of <u>RAW_DOUBLE_QUOTED_CONTENT</u>
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
 ##### Rejection
 
 The match is rejected if:
- - a <kbd>CR</kbd> character appears in <u>RAW_DQ_CONTENT</u>; or
+ - a <kbd>CR</kbd> character appears in <u>RAW_DOUBLE_QUOTED_CONTENT</u>; or
  - any of the token's <var>represented bytes</var> would be 0; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.
 

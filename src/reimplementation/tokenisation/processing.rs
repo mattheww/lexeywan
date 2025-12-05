@@ -178,12 +178,13 @@ fn process_block_comment(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
 
 fn process_character_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     use LiteralComponent::*;
-    let sq_content = m.consumed(Nonterminal::SQ_CONTENT)?;
-    let single_escape_interpretation = match try_single_escape_interpretation(sq_content)? {
-        HasInterpretation(interpretation) => interpretation,
-        // rejected: "has no single-escape interpretation"
-        HasNoInterpretation(reason) => return rejected(reason),
-    };
+    let single_quoted_content = m.consumed(Nonterminal::SINGLE_QUOTED_CONTENT)?;
+    let single_escape_interpretation =
+        match try_single_escape_interpretation(single_quoted_content)? {
+            HasInterpretation(interpretation) => interpretation,
+            // rejected: "has no single-escape interpretation"
+            HasNoInterpretation(reason) => return rejected(reason),
+        };
     let Some(represented_character) = single_escape_interpretation.represented_character()? else {
         // rejected: "single-escape interpretation has no represented character"
         return rejected("no represented character");
@@ -210,12 +211,13 @@ fn process_character_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error>
 
 fn process_byte_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     use LiteralComponent::*;
-    let sq_content = m.consumed(Nonterminal::SQ_CONTENT)?;
-    let single_escape_interpretation = match try_single_escape_interpretation(sq_content)? {
-        HasInterpretation(interpretation) => interpretation,
-        // rejected: "has no single-escape interpretation"
-        HasNoInterpretation(reason) => return rejected(reason),
-    };
+    let single_quoted_content = m.consumed(Nonterminal::SINGLE_QUOTED_CONTENT)?;
+    let single_escape_interpretation =
+        match try_single_escape_interpretation(single_quoted_content)? {
+            HasInterpretation(interpretation) => interpretation,
+            // rejected: "has no single-escape interpretation"
+            HasNoInterpretation(reason) => return rejected(reason),
+        };
     if matches!(single_escape_interpretation, NonEscape { .. })
         && matches!(
             single_escape_interpretation.represented_character()?,
@@ -246,8 +248,8 @@ fn process_byte_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
 
 fn process_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     use LiteralComponent::*;
-    let dq_content = m.consumed(Nonterminal::DQ_CONTENT)?;
-    let escape_interpretation = match try_escape_interpretation(dq_content)? {
+    let double_quoted_content = m.consumed(Nonterminal::DOUBLE_QUOTED_CONTENT)?;
+    let escape_interpretation = match try_escape_interpretation(double_quoted_content)? {
         HasInterpretation(interpetation) => interpetation,
         // rejected: "has no escape interpretation"
         HasNoInterpretation(reason) => return rejected(reason),
@@ -282,8 +284,8 @@ fn process_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
 
 fn process_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     use LiteralComponent::*;
-    let dq_content = m.consumed(Nonterminal::DQ_CONTENT)?;
-    let escape_interpretation = match try_escape_interpretation(dq_content)? {
+    let double_quoted_content = m.consumed(Nonterminal::DOUBLE_QUOTED_CONTENT)?;
+    let escape_interpretation = match try_escape_interpretation(double_quoted_content)? {
         HasInterpretation(interpetation) => interpetation,
         // rejected: "has no escape interpretation"
         HasNoInterpretation(reason) => return rejected(reason),
@@ -321,8 +323,8 @@ fn process_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Erro
 
 fn process_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     use LiteralComponent::*;
-    let dq_content = m.consumed(Nonterminal::DQ_CONTENT)?;
-    let escape_interpretation = match try_escape_interpretation(dq_content)? {
+    let double_quoted_content = m.consumed(Nonterminal::DOUBLE_QUOTED_CONTENT)?;
+    let escape_interpretation = match try_escape_interpretation(double_quoted_content)? {
         HasInterpretation(interpetation) => interpetation,
         // rejected: "has no escape interpretation"
         HasNoInterpretation(reason) => return rejected(reason),
@@ -380,12 +382,12 @@ fn process_raw_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error
     if suffix.chars() == ['_'] {
         return rejected("underscore literal suffix");
     }
-    let raw_dq_content = m.consumed(Nonterminal::RAW_DQ_CONTENT)?.clone();
-    if raw_dq_content.contains('\u{000d}') {
+    let raw_double_quoted_content = m.consumed(Nonterminal::RAW_DOUBLE_QUOTED_CONTENT)?.clone();
+    if raw_double_quoted_content.contains('\u{000d}') {
         return rejected("CR non-escape");
     }
     Ok(FineTokenData::RawStringLiteral {
-        represented_string: raw_dq_content,
+        represented_string: raw_double_quoted_content,
         suffix,
     })
 }
@@ -395,14 +397,14 @@ fn process_raw_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, 
     if suffix.chars() == ['_'] {
         return rejected("underscore literal suffix");
     }
-    let raw_dq_content = m.consumed(Nonterminal::RAW_DQ_CONTENT)?;
-    if raw_dq_content.scalar_values().any(|n| n > 127) {
+    let raw_double_quoted_content = m.consumed(Nonterminal::RAW_DOUBLE_QUOTED_CONTENT)?;
+    if raw_double_quoted_content.scalar_values().any(|n| n > 127) {
         return rejected("non-ASCII character");
     }
-    if raw_dq_content.contains('\u{000d}') {
+    if raw_double_quoted_content.contains('\u{000d}') {
         return rejected("CR in raw content");
     }
-    let represented_bytes = raw_dq_content
+    let represented_bytes = raw_double_quoted_content
         .scalar_values()
         .map(|c| c.try_into().unwrap())
         .collect();
@@ -417,11 +419,11 @@ fn process_raw_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Err
     if suffix.chars() == ['_'] {
         return rejected("underscore literal suffix");
     }
-    let raw_dq_content = m.consumed(Nonterminal::RAW_DQ_CONTENT)?;
-    if raw_dq_content.contains('\u{000d}') {
+    let raw_double_quoted_content = m.consumed(Nonterminal::RAW_DOUBLE_QUOTED_CONTENT)?;
+    if raw_double_quoted_content.contains('\u{000d}') {
         return rejected("CR in raw content");
     }
-    let represented_bytes: Vec<u8> = raw_dq_content.to_string().into();
+    let represented_bytes: Vec<u8> = raw_double_quoted_content.to_string().into();
     if represented_bytes.contains(&0) {
         return rejected("NUL in raw content");
     }

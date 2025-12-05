@@ -26,13 +26,13 @@ and is used in the reimplementation.
 
 It looks like this:
 ```
-RAW_DQ_REMAINDER = {
+RAW_DOUBLE_QUOTED_REMAINDER = {
     PUSH(HASHES) ~
-    "\"" ~ RAW_DQ_CONTENT ~ "\"" ~
+    "\"" ~ RAW_DOUBLE_QUOTED_CONTENT ~ "\"" ~
     POP ~
     SUFFIX ?
 }
-RAW_DQ_CONTENT = {
+RAW_DOUBLE_QUOTED_CONTENT = {
     ( !("\"" ~ PEEK) ~ ANY ) *
 }
 HASHES = { "#" {0, 255} }
