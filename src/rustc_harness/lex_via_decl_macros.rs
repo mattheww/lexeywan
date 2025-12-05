@@ -94,7 +94,6 @@ pub fn analyse(input: &str, edition: Edition) -> Analysis {
             override_queries: None,
             registry: registry::Registry::new(rustc_errors::codes::DIAGNOSTICS),
             make_codegen_backend: None,
-            expanded_args: Vec::new(),
             ice_file: None,
             hash_untracked_state: None,
             using_internal_features: &rustc_driver::USING_INTERNAL_FEATURES,
@@ -248,7 +247,7 @@ fn recover_rendered_tokens(krate: &rustc_ast::Crate) -> Result<Vec<RenderedToken
     let mut tokens = Vec::new();
     for item in &krate.items {
         if let rustc_ast::ItemKind::Const(const_item) = &item.kind {
-            let Some(expr) = const_item.expr.as_deref() else {
+            let Some(expr) = const_item.rhs.as_ref().map(|ct| ct.expr()) else {
                 return Err("const with no expression".to_string());
             };
             let rustc_ast::ExprKind::Block(block, ..) = &expr.kind else {

@@ -34,7 +34,7 @@ That means it describes raw lifetimes/labels and the additional reservations in 
 Other statements in this document are intended to be true as of September 2025.
 
 The reimplementation is intended to be compiled against (and compared against)\
-`rustc 1.92.0-nightly (caccb4d03 2025-09-24)`
+`rustc 1.93.0-nightly (b33119ffd 2025-12-04)`
 
 
 ### Editions
