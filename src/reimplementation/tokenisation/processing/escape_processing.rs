@@ -43,7 +43,6 @@ fn classify_escape(m: &EscapingMatch) -> Result<LiteralComponent, Error> {
         )));
     }
 
-    #[allow(clippy::enum_variant_names)]
     enum Classification {
         NonEscape,
         SimpleEscape,
@@ -109,7 +108,6 @@ fn classify_escape(m: &EscapingMatch) -> Result<LiteralComponent, Error> {
 /// Classification of a LITERAL_COMPONENT match, in each case with the most fundamental attribute
 /// defined under "Classifying escapes" in the writeup.
 #[derive(std::fmt::Debug)]
-#[allow(clippy::enum_variant_names)]
 pub enum LiteralComponent {
     NonEscape { represented_character: char },
     SimpleEscape { represented_character: char },

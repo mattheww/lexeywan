@@ -21,3 +21,4 @@ features = ["std", "tempfile"]
 
 [lints.clippy]
 print_with_newline = "allow"
+enum_variant_names = "allow"
