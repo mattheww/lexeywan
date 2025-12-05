@@ -378,13 +378,13 @@ fn process_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> 
 }
 
 fn process_raw_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
-    let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
-    if suffix.chars() == ['_'] {
-        return rejected("underscore literal suffix");
-    }
     let raw_double_quoted_content = m.consumed(Nonterminal::RAW_DOUBLE_QUOTED_CONTENT)?.clone();
     if raw_double_quoted_content.contains('\u{000d}') {
         return rejected("CR non-escape");
+    }
+    let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
+    if suffix.chars() == ['_'] {
+        return rejected("underscore literal suffix");
     }
     Ok(FineTokenData::RawStringLiteral {
         represented_string: raw_double_quoted_content,
@@ -393,10 +393,6 @@ fn process_raw_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error
 }
 
 fn process_raw_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
-    let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
-    if suffix.chars() == ['_'] {
-        return rejected("underscore literal suffix");
-    }
     let raw_double_quoted_content = m.consumed(Nonterminal::RAW_DOUBLE_QUOTED_CONTENT)?;
     if raw_double_quoted_content.scalar_values().any(|n| n > 127) {
         return rejected("non-ASCII character");
@@ -408,6 +404,10 @@ fn process_raw_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, 
         .scalar_values()
         .map(|c| c.try_into().unwrap())
         .collect();
+    let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
+    if suffix.chars() == ['_'] {
+        return rejected("underscore literal suffix");
+    }
     Ok(FineTokenData::RawByteStringLiteral {
         represented_bytes,
         suffix,
@@ -415,10 +415,6 @@ fn process_raw_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, 
 }
 
 fn process_raw_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
-    let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
-    if suffix.chars() == ['_'] {
-        return rejected("underscore literal suffix");
-    }
     let raw_double_quoted_content = m.consumed(Nonterminal::RAW_DOUBLE_QUOTED_CONTENT)?;
     if raw_double_quoted_content.contains('\u{000d}') {
         return rejected("CR in raw content");
@@ -426,6 +422,10 @@ fn process_raw_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Err
     let represented_bytes: Vec<u8> = raw_double_quoted_content.to_string().into();
     if represented_bytes.contains(&0) {
         return rejected("NUL in raw content");
+    }
+    let suffix = m.consumed_or_empty(Nonterminal::SUFFIX)?;
+    if suffix.chars() == ['_'] {
+        return rejected("underscore literal suffix");
     }
     Ok(FineTokenData::RawCStringLiteral {
         represented_bytes,
