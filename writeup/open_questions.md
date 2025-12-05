@@ -11,24 +11,26 @@ but many of them are new (and so can freely be changed).
 
 Here's a partial list:
 
-| Term                       | Source                           |
-|:---------------------------|:---------------------------------|
-| processing                 | New                              |
-| fine-grained token         | New                              |
-| compound token             | New                              |
-| literal content            | Reference                        |
-| simple escape              | Reference                        |
-| escape sequence            | Reference                        |
-| escaped value              | Reference                        |
-| string continuation escape | Reference (as `STRING_CONTINUE`) |
-| string representation      | Reference                        |
-| represented byte           | New                              |
-| represented character      | Reference                        |
-| represented bytes          | Reference                        |
-| represented string         | Reference                        |
-| represented ident          | New                              |
-| style (of a comment)       | rustc internal                   |
-| body (of a comment)        | Reference                        |
+| Term                       | Source                                |
+|:---------------------------|:--------------------------------------|
+| processing                 | New                                   |
+| fine-grained token         | New                                   |
+| compound token             | New                                   |
+| literal content            | Reference                             |
+| non-escape                 | New                                   |
+| simple escape              | Reference                             |
+| hexadecimal escape         | rustc error message (as "hex escape") |
+| escape sequence            | Reference                             |
+| escaped value              | Reference                             |
+| string continuation escape | Reference (as `STRING_CONTINUE`)      |
+| string representation      | Reference                             |
+| represented byte           | New                                   |
+| represented character      | Reference                             |
+| represented bytes          | Reference                             |
+| represented string         | Reference                             |
+| represented ident          | New                                   |
+| style (of a comment)       | rustc internal                        |
+| body (of a comment)        | Reference                             |
 
 
 ### Raw string literals
