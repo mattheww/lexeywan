@@ -1,6 +1,6 @@
 This repository includes:
 
-* a detailed description of the Rust 1.90 lexer (in `writeup`)
+* a detailed description of the Rust 1.91 lexer (in `writeup`)
 * a Rust reimplementation of the lexer based on that description (in `src/reimplementation`)
 * a manual list of testcases (in `src/framework/testcases.rs`)
 * harnesses for running `rustc`'s lexer in-process via `rustc_private` (in `src/rustc_harness`:

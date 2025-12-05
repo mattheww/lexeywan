@@ -53,8 +53,8 @@ If shebang removal is performed:
 
 ## Frontmatter removal
 
-> Stability: As of Rust 1.90 frontmatter removal is unstable.
-> Under stable rustc 1.90, and under nightly rustc without the `frontmatter` feature flag,
+> Stability: As of Rust 1.91 frontmatter removal is unstable.
+> Under stable rustc 1.91, and under nightly rustc without the `frontmatter` feature flag,
 > input which would undergo frontmatter removal is rejected.
 
 If an attempt to match the `FRONTMATTER` nonterminal defined in the frontmatter grammar against the remaining sequence succeeds,

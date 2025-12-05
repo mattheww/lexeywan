@@ -19,7 +19,7 @@ the reimplementation uses the [Pest] library to generate the corresponding parse
 
 ### Rust language version
 
-This document describes Rust version 1.90
+This document describes Rust version 1.91
 and the following unstable features
 (as they behave in the nightly version of rustc identified below):
 
@@ -31,7 +31,7 @@ That means it describes raw lifetimes/labels and the additional reservations in 
 - [pr131656] (allowing more numeric suffixes beginning with `e`)
 
 
-Other statements in this document are intended to be true as of September 2025.
+Other statements in this document are intended to be true as of December 2025.
 
 The reimplementation is intended to be compiled against (and compared against)\
 `rustc 1.93.0-nightly (b33119ffd 2025-12-04)`
@@ -39,7 +39,7 @@ The reimplementation is intended to be compiled against (and compared against)\
 
 ### Editions
 
-This document describes the editions supported by Rust 1.90:
+This document describes the editions supported by Rust 1.91:
 - 2015
 - 2018
 - 2021
