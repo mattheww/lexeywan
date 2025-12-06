@@ -57,13 +57,13 @@ If shebang removal is performed:
 > Under stable rustc 1.91, and under nightly rustc without the `frontmatter` feature flag,
 > input which would undergo frontmatter removal is rejected.
 
-If an attempt to match the `FRONTMATTER` nonterminal defined in the frontmatter grammar against the remaining sequence succeeds,
+If an attempt to match the `FRONTMATTER` nonterminal against the remaining sequence succeeds,
 the characters consumed by that match are removed from the sequence.
 
-Otherwise, if an attempt to match the `RESERVED` nonterminal defined in the frontmatter grammar against the remaining sequence succeeds,
+Otherwise, if an attempt to match the `RESERVED` nonterminal against the remaining sequence succeeds,
 the input is rejected.
 
-The frontmatter grammar is the following [Parsing Expression Grammar](pegs.md):
+These nonterminals are defined in the following [Parsing Expression Grammar](pegs.md) (the <dfn>frontmatter grammar</dfn>):
 
 ```
 {{#include frontmatter_anchored.pest:main}}

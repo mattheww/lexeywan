@@ -59,7 +59,7 @@ This operation considers a match of a token-kind nonterminal against part of the
 and either produces a [fine-grained token] or rejects the match.
 
 The following pages describe how to process a match of each token-kind nonterminal,
-underneath the presentation of that nonterminal's section of the grammar.
+underneath the presentation of that nonterminal's section of the tokenisation grammar.
 
 Each description specifies which matches are rejected.
 For matches which are not rejected,

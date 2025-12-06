@@ -111,7 +111,7 @@ Other hexadecimal escapes have no represented character.
 
 ##### Single-escape interpretation
 
-If an attempt to match the `LITERAL_COMPONENT` nonterminal defined in the escape-processing grammar against a character sequence succeeds and consumes the entire sequence,
+If an attempt to match the `LITERAL_COMPONENT` nonterminal against a character sequence succeeds and consumes the entire sequence,
 and the match is not a string continuation escape,
 the <dfn>single-escape interpretation</dfn> of that character sequence is the resulting match.
 
@@ -123,7 +123,7 @@ Otherwise the character sequence has no single-escape interpretation.
 
 ##### Escape interpretation
 
-If an attempt to match the `LITERAL_COMPONENTS` nonterminal defined in the escape-processing grammar against a character sequence succeeds and consumes the entire sequence,
+If an attempt to match the `LITERAL_COMPONENTS` nonterminal against a character sequence succeeds and consumes the entire sequence,
 the <dfn>escape interpretation</dfn> of that character sequence is
 the [sequence of participating matches][participating] of `LITERAL_COMPONENT` in the resulting match, omitting any string continuation escapes.
 

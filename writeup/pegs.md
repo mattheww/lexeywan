@@ -124,14 +124,19 @@ The binary parsing operators `~` and `|` are left-associative:
 ### Matching
 
 A <dfn>match attempt</dfn> is characterised by
-a grammar,
-a parsing expression <var>e</var>, and
-a character sequence <var>s</var>.
-On the remainder of this page the grammar is treated as implicit.
+a grammar, a parsing expression, and a character sequence.
 
-A match attempt is identified using the form "a match attempt of <var>e</var> against <var>s</var>" or "an attempt to match <var>e</var> against <var>s</var>".
-On this page,
-a match attempt may be referred to simply as an <dfn>attempt</dfn>.
+In the main part of this document
+references to match attempts for nonterminals do not explicitly mention the grammar:
+the grammar which contains the nonterminal is assumed
+(no nonterminal name appears in more than one of the grammars).
+
+On the remainder of this page the grammar is assumed to be held constant.
+
+A match attempt is identified using the form "a match attempt of <var>e</var> against <var>s</var>" or "an attempt to match <var>e</var> against <var>s</var>",
+where <var>e</var> is a parsing expression and <var>s</var> is a character sequence.
+
+On this page a match attempt may be referred to simply as an <dfn>attempt</dfn>.
 
 The descriptions of terminals, nonterminals, and compound expressions below, taken together,
 define the outcome of any match attempt.
