@@ -1,5 +1,8 @@
 ## Grammar for raw string literals
 
+##### Table of contents
+<!-- toc -->
+
 I believe the PEG formalism can't naturally describe Rust's rule for matching the number of `#` characters in raw string literals.
 
 (The same limitations apply to matching the number of `-` characters in frontmatter fences.)
@@ -7,14 +10,20 @@ I believe the PEG formalism can't naturally describe Rust's rule for matching th
 I can think of the following ways to handle this:
 
 
-### Ad-hoc extension
+### Corresponding nonterminal extension { #corresponding-nonterminal }
 
 This writeup uses an [ad-hoc extension][rdql-token] to the formalism,
 along similar lines to the stack extension described below
 (but without needing a full stack).
 
-This extension isn't formalised in the [appendix on PEGs](pegs.md).
-I don't think a formalisation would be simpler than formalising the stack extension described below.
+It's described as follows:
+
+ > an attempt to match one of the parsing expressions marked as HASHES² fails unless the characters it consumes are the same as the characters consumed by the (only) match of the expression marked as HASHES¹ under the same match attempt of a token-kind nonterminal.
+
+This extension isn't formalised in the [appendix on PEGs].
+
+It could be formalised in a similar way to the [mark/check] extension below,
+with the addition of some notion of a _scoping nonterminal_ which uses an empty context for its sub-attempt.
 
 
 ### Pest's stack extension
@@ -59,6 +68,73 @@ Additionally, if it succeeds it then pops the top entry from the stack.
 All other parsing expressions leave the stack unmodified.
 
 </div>
+
+
+### Mark/check extension { #mark-check }
+
+This extension uses the same notation as the [corresponding nonterminal] extension.
+It might be described along the following lines:
+
+<div class=pegs-description>
+
+<div class=sketch>
+An attempt to match a parsing expression marked with ² fails
+unless the characters it consumes are the same as the characters consumed by the previous match of an expression marked as ¹.
+</div>
+
+A formalisation of this extension in the style used in the [appendix on PEGs] is sketched below.
+
+Treat ¹ and ² as operators, defining a _mark expression_ and a _check expression_ respectively.
+
+Extend the characterisation of a match attempt to include a _context_, which is a sequence of matches
+(this formalises a notion of the matches preceding the attempt).
+
+Alter the description of most kinds of expression to consider a context and use the same context for each sub-attempt,
+for example:
+
+<div class=sketch>
+An attempt <var>A</var> to match a nonterminal against <var>s</var> in context <var>c</var> succeeds if and only if
+an attempt <var>A′</var> to match the nonterminal's expression against <var>s</var> in context <var>c</var> succeeds.
+</div>
+
+Alter the description of sequencing expressions to use an updated context when attempting the right-hand side:
+
+<div class=sketch>
+The outcome of an attempt <var>A</var> to match a <dfn>sequencing expression</dfn> <code><var>e₁</var> ~ <var>e₂</var></code> against <var>s</var> in context <var>c</var> is as follows:
+
+ - If an attempt <var>A₁</var> to match the expression <var>e₁</var> against <var>s</var> in context <var>c</var> fails,
+   <var>A</var> fails.
+ - Otherwise, <var>A</var> succeeds if and only if
+   an attempt <var>A₂</var> to match <var>e₂</var> against <var>s′</var> in context <var>c′</var> succeeds,
+   where <var>s′</var> is the sequence of characters obtained by removing the prefix consumed by <var>A₁</var> from <var>s</var>,
+   and <var>c′</var> is <var>c</var> followed by the elaboration of <var>A₁</var>.
+</div>
+
+Include mark expressions in the elaboration:
+
+<div class=sketch>
+An attempt <var>A</var> to match a <dfn>mark expression</dfn> <code><var>e¹</var></code> against <var>s</var> in context <var>c</var> succeeds
+if and only if an attempt <var>A′</var> to match <var>e</var> against <var>s</var> in context <var>c</var> succeeds.
+
+If <var>A</var> is successful,
+it consumes the characters consumed by <var>A′</var>
+and its elaboration is <var>A</var> followed by the elaboration of <var>A′</var>.
+</div>
+
+Describe a check expression as failing unless the characters its subexpression consumes are the same as the characters consumed by the last mark expression in its context:
+
+<div class=sketch>
+An attempt <var>A</var> to match a <dfn>check expression</dfn> <code><var>e²</var></code> against <var>s</var> in context <var>c</var> succeeds if
+
+ - an attempt <var>A′</var> to match <var>e</var> against <var>s</var> in context <var>c</var> succeeds; and
+ - <var>c</var> includes at least one mark expression; and
+ - the characters consumed by <var>A′</var> are the same as the characters consumed by the last mark expression in <var>c</var>.
+
+Otherwise <var>A</var> fails.
+</div>
+
+</div>
+
 
 ### Scheme of definitions
 
@@ -106,6 +182,9 @@ RDQ_255_CONTENT = {
 
 ```
 
+[appendix on PEGs]: pegs.md
+[mark/check]: #mark-check
+[corresponding nonterminal]: #corresponding-nonterminal
 
 [rdql-token]: quoted_literal_tokens.html#rdql
 [pest-stack]: https://docs.rs/pest/2.8.0/pest/#special-rules
