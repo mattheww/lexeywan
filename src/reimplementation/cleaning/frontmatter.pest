@@ -46,5 +46,5 @@ RESERVED = {
 }
 // ANCHOR_END: main
 
-LF = { "\u{000a}" }
-TAB = { "\u{0009}" }
+LF = _{ "\u{000a}" }
+TAB = _{ "\u{0009}" }

@@ -88,7 +88,7 @@ impl<NONTERMINAL: RuleType> std::fmt::Debug for MatchData<NONTERMINAL> {
     }
 }
 
-impl<NONTERMINAL: RuleType + WrittenUp> MatchData<NONTERMINAL> {
+impl<NONTERMINAL: RuleType> MatchData<NONTERMINAL> {
     /// Make a MatchData instance from the raw data provided by Pest.
     pub fn new(pair: Pair<NONTERMINAL>) -> Self {
         Self {
@@ -97,7 +97,6 @@ impl<NONTERMINAL: RuleType + WrittenUp> MatchData<NONTERMINAL> {
             elaboration: pair
                 .into_inner()
                 .flatten()
-                .filter(|sub| !(sub.as_rule().is_documented_as_terminal()))
                 .map(|sub| (sub.as_rule(), sub.as_str().into()))
                 .collect(),
         }
@@ -165,12 +164,5 @@ impl<NONTERMINAL: RuleType + WrittenUp> MatchData<NONTERMINAL> {
         self.elaboration
             .iter()
             .map(|(rule, consumed)| format!("{rule:?} {consumed:?}"))
-    }
-}
-
-pub trait WrittenUp {
-    /// Reports whether a nonterminal is documented as a terminal in the writeup.
-    fn is_documented_as_terminal(&self) -> bool {
-        true
     }
 }

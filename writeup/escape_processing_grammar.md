@@ -8,7 +8,10 @@ See [Parsing Expression Grammars](pegs.md) for an explanation of the notation.
 
 `TAB`, `CR`, `LF`, `DOUBLEQUOTE`, and `BACKSLASH` are treated as special terminals in this writeup,
 but they are not built in to Pest so they have definitions below using character-sequence terminals which include escapes.
+These definitions use Pest's [silent rules].
 
 ```
 {{#include escape_processing.pest}}
 ```
+
+[silent rules]: https://pest.rs/book/grammars/syntax.html#silent

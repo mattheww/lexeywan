@@ -36,8 +36,8 @@ HEXADECIMAL_DIGIT = {
 }
 // ANCHOR_END: main
 
-TAB = { "\u{0009}" }
-CR = { "\u{000d}" }
-LF = { "\u{000a}" }
-DOUBLEQUOTE = { "\"" }
-BACKSLASH = { "\\" }
+TAB = _{ "\u{0009}" }
+CR = _{ "\u{000d}" }
+LF = _{ "\u{000a}" }
+DOUBLEQUOTE = _{ "\"" }
+BACKSLASH = _{ "\\" }

@@ -6,7 +6,7 @@
 
 use crate::Edition;
 use crate::reimplementation::pegs::{
-    MatchData, Multiplicity, Outcome, WrittenUp, attempt_pest_match, extract_only_item,
+    MatchData, Multiplicity, Outcome, attempt_pest_match, extract_only_item,
 };
 
 /// Matches as much as possible using the specified edition's tokens nonterminal.
@@ -88,11 +88,3 @@ fn token_rules_for_edition(edition: Edition) -> (Rule, Rule) {
 /// As far as the type system is concerned this could be a match of any nonterminal from the
 /// tokenisation grammar, but we only use it for token-kind nonterminals.
 pub type TokenKindMatch = MatchData<Nonterminal>;
-
-impl WrittenUp for Nonterminal {
-    fn is_documented_as_terminal(&self) -> bool {
-        *self == Nonterminal::DOUBLEQUOTE
-            || *self == Nonterminal::BACKSLASH
-            || *self == Nonterminal::LF
-    }
-}

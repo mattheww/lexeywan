@@ -10,7 +10,10 @@ This version of the grammar uses Pest's [`PUSH`, `PEEK`, and `POP`](raw_strings.
 
 `LF` and `TAB` are treated as special terminals in this writeup,
 but they are not built in to Pest so they have definitions below using character-sequence terminals which include escapes.
+These definitions use Pest's [silent rules].
 
 ```
 {{#include frontmatter.pest}}
 ```
+
+[silent rules]: https://pest.rs/book/grammars/syntax.html#silent

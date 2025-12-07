@@ -329,6 +329,6 @@ IDENT_START = { XID_START | "_" }
 // ANCHOR_END: idents
 
 
-LF = { "\u{000a}" }
-DOUBLEQUOTE = { "\"" }
-BACKSLASH = { "\\" }
+LF = _{ "\u{000a}" }
+DOUBLEQUOTE = _{ "\"" }
+BACKSLASH = _{ "\\" }

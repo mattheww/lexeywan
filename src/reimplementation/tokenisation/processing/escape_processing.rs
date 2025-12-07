@@ -1,7 +1,7 @@
 //! Implementation of the writeup's "Escape processing" page.
 
 use crate::datatypes::char_sequences::Charseq;
-use crate::reimplementation::pegs::{self, MatchData, Outcome, WrittenUp, attempt_pest_match};
+use crate::reimplementation::pegs::{self, MatchData, Outcome, attempt_pest_match};
 
 /// Error from the `escape_processing` module.
 ///
@@ -358,16 +358,6 @@ pub type Nonterminal = Rule;
 
 /// Information from a successful match attempt from the escape-processing grammar
 type EscapingMatch = MatchData<Nonterminal>;
-
-impl WrittenUp for Nonterminal {
-    fn is_documented_as_terminal(&self) -> bool {
-        *self == Nonterminal::TAB
-            || *self == Nonterminal::CR
-            || *self == Nonterminal::LF
-            || *self == Nonterminal::DOUBLEQUOTE
-            || *self == Nonterminal::BACKSLASH
-    }
-}
 
 impl EscapingMatch {
     /// Returns the characters consumed by the specified nonterminal.
