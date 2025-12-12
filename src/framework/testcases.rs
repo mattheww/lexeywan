@@ -1509,6 +1509,7 @@ pub const LONGLIST: &[&str] = [
     // What's inside the front matter
     "---\n\n---\nident",
     "---\nline one\nline two\n---\nident",
+    "---\nline one\rline two\n---\nident",
     "---\nline one\r\nline two\n---\nident",
     "---\nfront £ matter\n---\nident",
     "---\nfront matter 🦀\n---\nident",
