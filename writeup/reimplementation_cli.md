@@ -136,7 +136,7 @@ Uses a specified [dialect].
 
 Unlike `compare`, this shows the tokens before regularisation.
 
-For the reimplementation, it shows the token-kind nonterminal matches,
+For the reimplementation, it shows the tokenisation nonterminal matches,
 together with the characters consumed by any subsidiary nonterminal matches inside them,
 and fine-grained tokens.
 

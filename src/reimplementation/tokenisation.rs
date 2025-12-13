@@ -8,7 +8,7 @@ use super::fine_tokens::FineToken;
 mod processing;
 mod tokens_matching;
 
-pub use tokens_matching::TokenKindMatch;
+pub use tokens_matching::TokenisationMatch;
 use tokens_matching::TokensMatchData;
 
 const MAX_INPUT_LENGTH: usize = 0x100_0000;
@@ -39,7 +39,7 @@ pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
     }
 
     let TokensMatchData {
-        token_kind_matches,
+        tokenisation_matches,
         consumed_entire_input: matched_entire_input,
     } = match tokens_matching::match_tokens(edition, input.chars()) {
         Ok(tokens_match_data) => tokens_match_data,
@@ -48,11 +48,11 @@ pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
         }
     };
 
-    // Note that if there's a processing error we only report the token-kind matches up to the match
-    // that failed processing.
+    // Note that if there's a processing error we only report the tokenisation matches up to the
+    // match that failed processing.
     let mut tokens = Vec::new();
     let mut reported_matches = Vec::new();
-    for match_data in token_kind_matches {
+    for match_data in tokenisation_matches {
         match processing::process(&match_data) {
             Ok(token) => {
                 reported_matches.push(match_data);
@@ -91,7 +91,7 @@ pub fn analyse(input: &Charseq, edition: Edition) -> Analysis {
 /// Result of running lexical analysis on a string.
 pub enum Analysis {
     /// Lexical analysis accepted the input.
-    Accepts(Vec<TokenKindMatch>, Vec<FineToken>),
+    Accepts(Vec<TokenisationMatch>, Vec<FineToken>),
 
     /// Lexical analysis rejected the input.
     Rejects(Reason),
@@ -102,15 +102,15 @@ pub enum Analysis {
 
 /// Explanation of why and where input was rejected.
 pub enum Reason {
-    /// Rejected when trying to match the edition's token nonterminal.
+    /// Rejected when trying to match the edition's tokens nonterminal.
     ///
     /// The string describes the reason for rejection (or a model error).
     ///
-    /// The lists of matches and tokens represent what was lexed successfully before the token
+    /// The lists of matches and tokens represent what was lexed successfully before the tokens
     /// nonterminal ceased to match.
-    Matching(String, Vec<TokenKindMatch>, Vec<FineToken>),
+    Matching(String, Vec<TokenisationMatch>, Vec<FineToken>),
 
-    /// Rejected when processing a match of a token-kind nonterminal.
+    /// Rejected when processing a match of a tokenisation nonterminal.
     ///
     /// The string describes the reason for rejection (or a model error).
     ///
@@ -118,7 +118,12 @@ pub enum Reason {
     /// when we encountered a problem with the model).
     ///
     /// The lists of matches and tokens represent what was lexed successfully first.
-    Processing(String, TokenKindMatch, Vec<TokenKindMatch>, Vec<FineToken>),
+    Processing(
+        String,
+        TokenisationMatch,
+        Vec<TokenisationMatch>,
+        Vec<FineToken>,
+    ),
 }
 
 impl Reason {
@@ -159,13 +164,13 @@ impl Reason {
 /// Otherwise returns None.
 pub fn lex_as_single_token(input: &[char], edition: Edition) -> Option<FineToken> {
     let Ok(TokensMatchData {
-        token_kind_matches,
+        tokenisation_matches,
         consumed_entire_input: true,
     }) = tokens_matching::match_tokens(edition, input)
     else {
         return None;
     };
-    let [match_data] = &token_kind_matches[..] else {
+    let [match_data] = &tokenisation_matches[..] else {
         return None;
     };
     processing::process(match_data).ok()
@@ -186,14 +191,15 @@ pub fn first_nonwhitespace_token(input: &[char], edition: Edition) -> Option<Fin
 
     use crate::reimplementation::fine_tokens::{CommentStyle, FineTokenData::*};
 
-    let token_kind_matches = match tokens_matching::match_tokens(edition, input) {
+    let tokenisation_matches = match tokens_matching::match_tokens(edition, input) {
         Ok(TokensMatchData {
-            token_kind_matches, ..
-        }) => token_kind_matches,
+            tokenisation_matches,
+            ..
+        }) => tokenisation_matches,
         Err(_) => return None,
     };
 
-    for match_data in token_kind_matches {
+    for match_data in tokenisation_matches {
         let Ok(token) = processing::process(&match_data) else {
             return None;
         };

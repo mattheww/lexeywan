@@ -8,18 +8,18 @@ use crate::reimplementation::tokenisation::processing::escape_processing::{
 };
 use crate::tokens_common::{NumericBase, Origin};
 
-use super::tokens_matching::{Nonterminal, TokenKindMatch};
+use super::tokens_matching::{Nonterminal, TokenisationMatch};
 
 mod escape_processing;
 
 /// Converts a match to a fine-grained token, or rejects the match.
 ///
-/// This is the "Processing a match" stage of extracting a fine-grained token.
+/// This implements "Processing a tokenisation nonterminal match".
 ///
 /// If the match is accepted, returns a fine-grained token.
 ///
-/// If the match is rejected, distinguishes rejection from "model error".
-pub fn process(match_data: &TokenKindMatch) -> Result<FineToken, Error> {
+/// If the match is not accepted, distinguishes rejection from "model error".
+pub fn process(match_data: &TokenisationMatch) -> Result<FineToken, Error> {
     let token_data = match match_data.matched_nonterminal {
         Nonterminal::Whitespace => process_whitespace(match_data)?,
         Nonterminal::Line_comment => process_line_comment(match_data)?,
@@ -54,7 +54,7 @@ pub fn process(match_data: &TokenKindMatch) -> Result<FineToken, Error> {
                 match_data.matched_nonterminal
             )));
         }
-        _ => return model_error("unhandled token-kind nonterminal"),
+        _ => return model_error("unhandled tokenisation nonterminal"),
     };
     Ok(FineToken {
         data: token_data,
@@ -97,7 +97,7 @@ impl From<escape_processing::Error> for Error {
     }
 }
 
-impl TokenKindMatch {
+impl TokenisationMatch {
     /// Returns the characters consumed by the specified subsidiary nonterminal, or None if that
     /// nonterminal did not participate in the match.
     ///
@@ -138,11 +138,11 @@ impl TokenKindMatch {
     }
 }
 
-fn process_whitespace(_m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_whitespace(_m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     Ok(FineTokenData::Whitespace)
 }
 
-fn process_line_comment(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_line_comment(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let comment_content = m.consumed(Nonterminal::LINE_COMMENT_CONTENT)?;
     let (style, body) = match comment_content.chars() {
         ['/', '/', ..] => (CommentStyle::NonDoc, &[] as &[char]),
@@ -159,7 +159,7 @@ fn process_line_comment(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_block_comment(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_block_comment(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let comment_content = m.consumed_by_first_participating(Nonterminal::BLOCK_COMMENT_CONTENT)?;
     let (style, body) = match comment_content.chars() {
         ['*', '*', ..] => (CommentStyle::NonDoc, &[] as &[char]),
@@ -176,7 +176,7 @@ fn process_block_comment(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_character_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_character_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     use LiteralComponent::*;
     let single_quoted_content = m.consumed(Nonterminal::SINGLE_QUOTED_CONTENT)?;
     let single_escape_interpretation =
@@ -209,7 +209,7 @@ fn process_character_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error>
     })
 }
 
-fn process_byte_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_byte_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     use LiteralComponent::*;
     let single_quoted_content = m.consumed(Nonterminal::SINGLE_QUOTED_CONTENT)?;
     let single_escape_interpretation =
@@ -246,7 +246,7 @@ fn process_byte_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_string_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     use LiteralComponent::*;
     let double_quoted_content = m.consumed(Nonterminal::DOUBLE_QUOTED_CONTENT)?;
     let escape_interpretation = match try_escape_interpretation(double_quoted_content)? {
@@ -282,7 +282,7 @@ fn process_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_byte_string_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     use LiteralComponent::*;
     let double_quoted_content = m.consumed(Nonterminal::DOUBLE_QUOTED_CONTENT)?;
     let escape_interpretation = match try_escape_interpretation(double_quoted_content)? {
@@ -321,7 +321,7 @@ fn process_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Erro
     })
 }
 
-fn process_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_c_string_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     use LiteralComponent::*;
     let double_quoted_content = m.consumed(Nonterminal::DOUBLE_QUOTED_CONTENT)?;
     let escape_interpretation = match try_escape_interpretation(double_quoted_content)? {
@@ -377,7 +377,7 @@ fn process_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> 
     })
 }
 
-fn process_raw_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_raw_string_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let raw_double_quoted_content = m.consumed(Nonterminal::RAW_DOUBLE_QUOTED_CONTENT)?.clone();
     if raw_double_quoted_content.contains('\u{000d}') {
         return rejected("CR non-escape");
@@ -392,7 +392,7 @@ fn process_raw_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error
     })
 }
 
-fn process_raw_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_raw_byte_string_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let raw_double_quoted_content = m.consumed(Nonterminal::RAW_DOUBLE_QUOTED_CONTENT)?;
     if raw_double_quoted_content.scalar_values().any(|n| n > 127) {
         return rejected("non-ASCII character");
@@ -414,7 +414,7 @@ fn process_raw_byte_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, 
     })
 }
 
-fn process_raw_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_raw_c_string_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let raw_double_quoted_content = m.consumed(Nonterminal::RAW_DOUBLE_QUOTED_CONTENT)?;
     if raw_double_quoted_content.contains('\u{000d}') {
         return rejected("CR in raw content");
@@ -433,7 +433,7 @@ fn process_raw_c_string_literal(m: &TokenKindMatch) -> Result<FineTokenData, Err
     })
 }
 
-fn process_float_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_float_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let body = match (
         m.maybe_consumed(Nonterminal::FLOAT_BODY_WITH_EXPONENT)?,
         m.maybe_consumed(Nonterminal::FLOAT_BODY_WITHOUT_EXPONENT)?,
@@ -453,7 +453,7 @@ fn process_float_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_integer_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_integer_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let base = match (
         m.maybe_consumed(Nonterminal::INTEGER_BINARY_LITERAL)?,
         m.maybe_consumed(Nonterminal::INTEGER_OCTAL_LITERAL)?,
@@ -504,7 +504,7 @@ fn process_integer_literal(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     })
 }
 
-fn process_raw_lifetime_or_label(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_raw_lifetime_or_label(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let name = m.consumed(Nonterminal::IDENT)?.clone();
     let s = name.to_string();
     if s == "_" || s == "crate" || s == "self" || s == "super" || s == "Self" {
@@ -513,12 +513,12 @@ fn process_raw_lifetime_or_label(m: &TokenKindMatch) -> Result<FineTokenData, Er
     Ok(FineTokenData::RawLifetimeOrLabel { name })
 }
 
-fn process_lifetime_or_label(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_lifetime_or_label(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let name = m.consumed(Nonterminal::IDENT)?.clone();
     Ok(FineTokenData::LifetimeOrLabel { name })
 }
 
-fn process_raw_ident(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_raw_ident(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let represented_ident = m.consumed(Nonterminal::IDENT)?.nfc();
     let s = represented_ident.to_string();
     if s == "_" || s == "crate" || s == "self" || s == "super" || s == "Self" {
@@ -527,13 +527,13 @@ fn process_raw_ident(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
     Ok(FineTokenData::RawIdent { represented_ident })
 }
 
-fn process_ident(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_ident(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     Ok(FineTokenData::Ident {
         represented_ident: m.consumed(Nonterminal::IDENT)?.nfc(),
     })
 }
 
-fn process_punctuation(m: &TokenKindMatch) -> Result<FineTokenData, Error> {
+fn process_punctuation(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
     let mark = match m.consumed.chars() {
         [c] => *c,
         _ => return rejected("impossible Punctuation match"),

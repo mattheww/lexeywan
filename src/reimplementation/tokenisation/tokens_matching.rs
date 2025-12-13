@@ -26,7 +26,7 @@ pub fn match_tokens(edition: Edition, input: &[char]) -> Result<TokensMatchData,
         return Err("Pest reported no match of the tokens rule".to_owned());
     };
 
-    let mut token_kind_matches = Vec::new();
+    let mut tokenisation_matches = Vec::new();
     for token_pair in tokens_pair.into_inner() {
         if token_pair.as_rule() != token_rule {
             return Err(format!(
@@ -34,14 +34,15 @@ pub fn match_tokens(edition: Edition, input: &[char]) -> Result<TokensMatchData,
                 token_pair.as_rule()
             ));
         }
-        let token_kind_pair = extract_only_item(token_pair.into_inner()).map_err(|m| match m {
-            NoItems => "Pest reported empty match of the token rule".to_owned(),
-            Multiple => "Pest reported multiple tokens under the token rule".to_owned(),
-        })?;
-        token_kind_matches.push(TokenKindMatch::new(token_kind_pair));
+        let tokenisation_pair =
+            extract_only_item(token_pair.into_inner()).map_err(|m| match m {
+                NoItems => "Pest reported empty match of the token rule".to_owned(),
+                Multiple => "Pest reported multiple tokens under the token rule".to_owned(),
+            })?;
+        tokenisation_matches.push(TokenisationMatch::new(tokenisation_pair));
     }
     Ok(TokensMatchData {
-        token_kind_matches,
+        tokenisation_matches,
         consumed_entire_input,
     })
 }
@@ -51,8 +52,8 @@ pub fn match_tokens(edition: Edition, input: &[char]) -> Result<TokensMatchData,
 /// The tokens nonterminal's expression is a zero-or-more repetitions expression, so the match
 /// attempt is always successful.
 pub struct TokensMatchData {
-    /// Each sub-match of a token-kind nonterminal
-    pub token_kind_matches: Vec<TokenKindMatch>,
+    /// Each sub-match of a tokenisation nonterminal
+    pub tokenisation_matches: Vec<TokenisationMatch>,
     /// Whether the edition's tokens nonterminal consumed all the input
     pub consumed_entire_input: bool,
 }
@@ -65,10 +66,9 @@ struct TokenParser;
 /// Enumeration of the nonterminals used in the tokenisation grammar.
 ///
 /// This includes:
-/// - the tokens nonterminals     (named like TOKENS_yyyy)
-/// - the token nonterminals      (named like TOKEN_yyyy)
-/// - the token-kind nonterminals (named in Title_case)
-/// - subsidiary nonterminals     (named in UPPER_CASE)
+/// - the tokens nonterminals       (named like TOKENS_yyyy)
+/// - the tokenisation nonterminals (named in Title_case)
+/// - subsidiary nonterminals       (named in UPPER_CASE)
 ///
 /// The nonterminals which are documented as terminals don't appear here, because they are defined
 /// using Pest silent rules.
@@ -83,8 +83,8 @@ fn token_rules_for_edition(edition: Edition) -> (Rule, Rule) {
     }
 }
 
-/// Information from a successful match attempt of a token-kind nonterminal.
+/// Information from a successful match attempt of a tokenisation nonterminal.
 ///
 /// As far as the type system is concerned this could be a match of any nonterminal from the
-/// tokenisation grammar, but we only use it for token-kind nonterminals.
-pub type TokenKindMatch = MatchData<Nonterminal>;
+/// tokenisation grammar, but we only use it for tokenisation nonterminals.
+pub type TokenisationMatch = MatchData<Nonterminal>;

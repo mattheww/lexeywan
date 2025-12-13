@@ -18,7 +18,7 @@ along similar lines to the stack extension described below
 
 It's described as follows:
 
- > an attempt to match one of the parsing expressions marked as HASHES² fails unless the characters it consumes are the same as the characters consumed by the (only) match of the expression marked as HASHES¹ under the same match attempt of a token-kind nonterminal.
+ > an attempt to match one of the parsing expressions marked as HASHES² fails unless the characters it consumes are the same as the characters consumed by the (only) match of the expression marked as HASHES¹ under the same match attempt of a tokenisation nonterminal.
 
 This extension isn't formalised in the [appendix on PEGs].
 

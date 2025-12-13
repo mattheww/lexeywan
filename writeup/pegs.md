@@ -325,7 +325,6 @@ is the sequence obtained by restricting the elaboration of <var>A</var> to match
 [Parsing expression]: #parsing-expressions
 [Matching]: #matching
 
-[token-kind nonterminals]: tokenising.md#token-kind-nonterminals
 [character]: definitions.md#character
 [characters]: definitions.md#character
 

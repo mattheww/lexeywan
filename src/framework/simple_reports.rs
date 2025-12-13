@@ -20,7 +20,7 @@ use crate::datatypes::trees::Forest;
 use crate::reimplementation::cleaning::{self, CleaningOutcome};
 use crate::reimplementation::doc_lowering::lower_doc_comments;
 use crate::reimplementation::fine_tokens::FineToken;
-use crate::reimplementation::tokenisation::{self, TokenKindMatch};
+use crate::reimplementation::tokenisation::{self, TokenisationMatch};
 use crate::rustc_harness::lex_via_rustc;
 use crate::tokens_common::Origin;
 use crate::{CleaningMode, Edition, Lowering};
@@ -128,7 +128,7 @@ pub enum DetailsMode {
     Always,
 }
 
-fn describe_match(match_data: &TokenKindMatch) -> impl Iterator<Item = String> + use<'_> {
+fn describe_match(match_data: &TokenisationMatch) -> impl Iterator<Item = String> + use<'_> {
     once(format!(
         "{:?}, {:?}",
         match_data.matched_nonterminal, match_data.consumed
@@ -249,7 +249,7 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
                     println!("  error: {message}");
                 }
             }
-            println!("  -- token-kind nonterminal matches --");
+            println!("  -- tokenisation nonterminal matches --");
             for match_data in matches {
                 for s in describe_match(&match_data) {
                     println!("  {s}",);
@@ -274,7 +274,7 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
                 }
                 tokenisation::Reason::Processing(message, rejected, matches, tokens) => {
                     println!(
-                        "lex_via_peg: {failure_label} when processing a match of a token-kind nonterminal"
+                        "lex_via_peg: {failure_label} when processing a match of a tokenisation nonterminal"
                     );
                     println!("  error: {message}");
                     println!("  -- when considering match --");
@@ -284,7 +284,7 @@ fn show_inspect(input: &str, edition: Edition, cleaning: CleaningMode, lowering:
                     (matches, tokens)
                 }
             };
-            println!("  -- previous token-kind nonterminal matches --");
+            println!("  -- previous tokenisation nonterminal matches --");
             for match_data in matches {
                 for s in describe_match(&match_data) {
                     println!("  {s}");
