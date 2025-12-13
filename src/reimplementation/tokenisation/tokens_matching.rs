@@ -70,8 +70,8 @@ struct TokenParser;
 /// - the token-kind nonterminals (named in Title_case)
 /// - subsidiary nonterminals     (named in UPPER_CASE)
 ///
-/// Some members are nonterminals in the Pest grammar but documented as terminals in the writeup;
-/// see the is_documented_as_terminal implementation below.
+/// The nonterminals which are documented as terminals don't appear here, because they are defined
+/// using Pest silent rules.
 pub type Nonterminal = Rule;
 
 /// Returns the Pest TOKENS and TOKEN rules to use for the specified Rust edition.

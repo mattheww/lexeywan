@@ -352,8 +352,8 @@ struct EscapeProcessingParser;
 
 /// Enumeration of the nonterminals used in the escape-processing grammar.
 ///
-/// Some members are nonterminals in the Pest grammar but documented as terminals in the writeup;
-/// see [is_documented_as_terminal] below.
+/// The nonterminals which are documented as terminals don't appear here, because they are defined
+/// using Pest silent rules.
 pub type Nonterminal = Rule;
 
 /// Information from a successful match attempt from the escape-processing grammar
