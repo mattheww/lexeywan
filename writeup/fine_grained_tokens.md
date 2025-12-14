@@ -13,21 +13,21 @@ together with their attributes.
 | `Whitespace`              |                                                       |
 | `Line_comment`            | <var>style</var>, <var>body</var>                     |
 | `Block_comment`           | <var>style</var>, <var>body</var>                     |
-| `Punctuation`             | <var>mark</var>                                       |
-| `Ident`                   | <var>represented ident</var>                          |
-| `Raw_ident`               | <var>represented ident</var>                          |
-| `Lifetime_or_label`       | <var>name</var>                                       |
-| `Raw_lifetime_or_label`   | <var>name</var>                                       |
 | `Character_literal`       | <var>represented character</var>, <var>suffix</var>   |
 | `Byte_literal`            | <var>represented byte</var>, <var>suffix</var>        |
 | `String_literal`          | <var>represented string</var>, <var>suffix</var>      |
-| `Raw_string_literal`      | <var>represented string</var>, <var>suffix</var>      |
 | `Byte_string_literal`     | <var>represented bytes</var>, <var>suffix</var>       |
-| `Raw_byte_string_literal` | <var>represented bytes</var>, <var>suffix</var>       |
 | `C_string_literal`        | <var>represented bytes</var>, <var>suffix</var>       |
+| `Raw_string_literal`      | <var>represented string</var>, <var>suffix</var>      |
+| `Raw_byte_string_literal` | <var>represented bytes</var>, <var>suffix</var>       |
 | `Raw_c_string_literal`    | <var>represented bytes</var>, <var>suffix</var>       |
-| `Integer_literal`         | <var>base</var>, <var>digits</var>, <var>suffix</var> |
 | `Float_literal`           | <var>body</var>, <var>suffix</var>                    |
+| `Integer_literal`         | <var>base</var>, <var>digits</var>, <var>suffix</var> |
+| `Raw_lifetime_or_label`   | <var>name</var>                                       |
+| `Lifetime_or_label`       | <var>name</var>                                       |
+| `Raw_ident`               | <var>represented ident</var>                          |
+| `Ident`                   | <var>represented ident</var>                          |
+| `Punctuation`             | <var>mark</var>                                       |
 
 
 These attributes have the following types:
