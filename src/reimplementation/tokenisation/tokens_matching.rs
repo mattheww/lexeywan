@@ -1,48 +1,34 @@
 //! Applies the Pest tokenisation grammar and represents data from the resulting matches.
 //!
 //! See tokenise.pest in this directory for the grammar itself.
-//!
-//! All Pest-specific code is isolated to this module, other than the Nonterminal enumeration.
 
 use crate::Edition;
 use crate::reimplementation::pegs::{
-    MatchData, Multiplicity, Outcome, attempt_pest_match, extract_only_item,
+    MatchData, ParticipationOutcome, attempt_for_participating_matches,
 };
 
-/// Matches as much as possible using the specified edition's tokens nonterminal.
+/// Attempts to match the specified edition's tokens nonterminal.
 ///
-/// Reports an error message if it finds a problem in lex_via_peg's model or implementation
-/// (in particular, if the match attempt fails).
+/// Reports an error message if it finds a problem in the reimplementation's model (in particular,
+/// if the match attempt fails).
 pub fn match_tokens(edition: Edition, input: &[char]) -> Result<TokensMatchData, String> {
-    use Multiplicity::*;
-    let (tokens_rule, token_rule) = token_rules_for_edition(edition);
+    let tokens_nonterminal = tokens_nonterminal_for_edition(edition);
     let s: String = input.iter().collect();
-
-    let Outcome::Success {
-        pair: tokens_pair,
+    let ParticipationOutcome::Success {
+        participating_matches,
         consumed_entire_input,
-    } = attempt_pest_match::<Nonterminal, TokenParser>(tokens_rule, &s)?
+    } = attempt_for_participating_matches::<Nonterminal, TokenParser>(
+        tokens_nonterminal,
+        &s,
+        is_tokenisation_nonterminal,
+    )?
     else {
-        return Err("Pest reported no match of the tokens rule".to_owned());
+        // This shouldn't fail, because the tokens nonterminal's expression is a zero-or-more
+        // repetitions operator.
+        return Err(format!("{tokens_nonterminal:?} match attempt failed"));
     };
-
-    let mut tokenisation_matches = Vec::new();
-    for token_pair in tokens_pair.into_inner() {
-        if token_pair.as_rule() != token_rule {
-            return Err(format!(
-                "Pest matched {:?} under the tokens rule",
-                token_pair.as_rule()
-            ));
-        }
-        let tokenisation_pair =
-            extract_only_item(token_pair.into_inner()).map_err(|m| match m {
-                NoItems => "Pest reported empty match of the token rule".to_owned(),
-                Multiple => "Pest reported multiple tokens under the token rule".to_owned(),
-            })?;
-        tokenisation_matches.push(TokenisationMatch::new(tokenisation_pair));
-    }
     Ok(TokensMatchData {
-        tokenisation_matches,
+        tokenisation_matches: participating_matches,
         consumed_entire_input,
     })
 }
@@ -52,10 +38,66 @@ pub fn match_tokens(edition: Edition, input: &[char]) -> Result<TokensMatchData,
 /// The tokens nonterminal's expression is a zero-or-more repetitions expression, so the match
 /// attempt is always successful.
 pub struct TokensMatchData {
-    /// Each sub-match of a tokenisation nonterminal
+    /// The participating matches of tokenisation nonterminals
     pub tokenisation_matches: Vec<TokenisationMatch>,
-    /// Whether the edition's tokens nonterminal consumed all the input
+    /// Whether the match attempt consumed the complete input
     pub consumed_entire_input: bool,
+}
+
+/// Returns the tokens nonterminal for the specified Rust edition.
+fn tokens_nonterminal_for_edition(edition: Edition) -> Nonterminal {
+    match edition {
+        Edition::E2015 => Nonterminal::TOKENS_2015,
+        Edition::E2021 => Nonterminal::TOKENS_2021,
+        Edition::E2024 => Nonterminal::TOKENS_2024,
+    }
+}
+
+/// Whether a nonterminal from the tokenisation grammar is a tokenisation nonterminal.
+fn is_tokenisation_nonterminal(nonterminal: Nonterminal) -> bool {
+    is_token_nonterminal(nonterminal) || is_reserved_form_nonterminal(nonterminal)
+}
+
+/// Whether a nonterminal from the tokenisation grammar is a token nonterminal.
+fn is_token_nonterminal(nonterminal: Nonterminal) -> bool {
+    matches!(
+        nonterminal,
+        Nonterminal::Whitespace
+            | Nonterminal::Line_comment
+            | Nonterminal::Block_comment
+            | Nonterminal::Character_literal
+            | Nonterminal::Byte_literal
+            | Nonterminal::String_literal
+            | Nonterminal::Byte_string_literal
+            | Nonterminal::C_string_literal
+            | Nonterminal::Raw_string_literal
+            | Nonterminal::Raw_byte_string_literal
+            | Nonterminal::Raw_c_string_literal
+            | Nonterminal::Float_literal
+            | Nonterminal::Integer_literal
+            | Nonterminal::Raw_lifetime_or_label
+            | Nonterminal::Lifetime_or_label
+            | Nonterminal::Raw_ident
+            | Nonterminal::Ident
+            | Nonterminal::Punctuation
+    )
+}
+
+/// Whether a nonterminal from the tokenisation grammar is a reserved-form nonterminal.
+fn is_reserved_form_nonterminal(nonterminal: Nonterminal) -> bool {
+    matches!(
+        nonterminal,
+        Nonterminal::Reserved_block_comment_start
+            | Nonterminal::Reserved_literal_2015
+            | Nonterminal::Reserved_literal_2021
+            | Nonterminal::Reserved_single_quoted_literal_2015
+            | Nonterminal::Reserved_single_quoted_literal_2021
+            | Nonterminal::Reserved_guard
+            | Nonterminal::Reserved_float
+            | Nonterminal::Reserved_lifetime_or_label_prefix
+            | Nonterminal::Reserved_prefix_2015
+            | Nonterminal::Reserved_prefix_2021
+    )
 }
 
 #[derive(pest_derive::Parser)]
@@ -73,15 +115,6 @@ struct TokenParser;
 /// The nonterminals which are documented as terminals don't appear here, because they are defined
 /// using Pest silent rules.
 pub type Nonterminal = Rule;
-
-/// Returns the Pest TOKENS and TOKEN rules to use for the specified Rust edition.
-fn token_rules_for_edition(edition: Edition) -> (Rule, Rule) {
-    match edition {
-        Edition::E2015 => (Nonterminal::TOKENS_2015, Nonterminal::TOKEN_2015),
-        Edition::E2021 => (Nonterminal::TOKENS_2021, Nonterminal::TOKEN_2021),
-        Edition::E2024 => (Nonterminal::TOKENS_2024, Nonterminal::TOKEN_2024),
-    }
-}
 
 /// Information from a successful match attempt of a tokenisation nonterminal.
 ///

@@ -1,7 +1,9 @@
 //! Implementation of the writeup's "Escape processing" page.
 
 use crate::datatypes::char_sequences::Charseq;
-use crate::reimplementation::pegs::{self, MatchData, Outcome, attempt_pest_match};
+use crate::reimplementation::pegs::{
+    MatchData, Outcome, ParticipationOutcome, attempt_for_participating_matches, attempt_match,
+};
 
 /// Error from the `escape_processing` module.
 ///
@@ -239,30 +241,24 @@ pub fn try_single_escape_interpretation(
 ) -> Result<MaybeInterpretation<LiteralComponent>, Error> {
     use MaybeInterpretation::*;
     let s: String = charseq.iter().collect();
-    let literal_component_pair =
-        match attempt_escape_processing_match(Nonterminal::LITERAL_COMPONENT, &s)? {
-            // "If a match attempt of LITERAL_COMPONENT against a character sequence succeeds and
-            // consumes the entire sequence"
-            Outcome::Success {
-                consumed_entire_input: true,
-                pair,
-            } => pair,
-            Outcome::Success {
-                consumed_entire_input: false,
-                ..
-            } => {
-                return Ok(HasNoInterpretation(
-                    "LITERAL_COMPONENT did not consume the entire input",
-                ));
-            }
-            Outcome::Failure => {
-                return Ok(HasNoInterpretation(
-                    "LITERAL_COMPONENT match attempt failed",
-                ));
-            }
-        };
-    let m = EscapingMatch::new(literal_component_pair);
-    let component = classify_escape(&m)?;
+    // "If a match attempt of LITERAL_COMPONENT against a character sequence succeeds"
+    let Outcome::Success {
+        match_data,
+        consumed_entire_input,
+    } = attempt_match::<Nonterminal, EscapeProcessingParser>(Nonterminal::LITERAL_COMPONENT, &s)
+        .map_err(Error::Internal)?
+    else {
+        return Ok(HasNoInterpretation(
+            "LITERAL_COMPONENT match attempt failed",
+        ));
+    };
+    // "and consumes the entire sequence"
+    if !consumed_entire_input {
+        return Ok(HasNoInterpretation(
+            "LITERAL_COMPONENT did not consume the entire input",
+        ));
+    }
+    let component = classify_escape(&match_data)?;
     match component {
         // "and the match is not a string continuation escape"
         LiteralComponent::StringContinuationEscape => {
@@ -283,40 +279,32 @@ pub fn try_escape_interpretation(
 ) -> Result<MaybeInterpretation<Vec<LiteralComponent>>, Error> {
     use MaybeInterpretation::*;
     let s: String = charseq.iter().collect();
-    let literal_components_pair =
-        match attempt_escape_processing_match(Nonterminal::LITERAL_COMPONENTS, &s)? {
-            // "If a match attempt of LITERAL_COMPONENTS against a character sequence succeeds and
-            // consumes the entire sequence"
-            Outcome::Success {
-                consumed_entire_input: true,
-                pair,
-            } => pair,
-            Outcome::Success {
-                consumed_entire_input: false,
-                ..
-            } => {
-                return Ok(HasNoInterpretation(
-                    "LITERAL_COMPONENTS did not consume the entire input",
-                ));
-            }
-            // This can't really fail, because LITERAL_COMPONENTS's expression is a zero-or-more
-            // repetitions operator.
-            Outcome::Failure => {
-                return Ok(HasNoInterpretation(
-                    "LITERAL_COMPONENTS match attempt failed",
-                ));
-            }
-        };
+    // "If a match attempt of LITERAL_COMPONENTS against a character sequence succeeds"
+    let ParticipationOutcome::Success {
+        participating_matches,
+        consumed_entire_input,
+    } = attempt_for_participating_matches::<Nonterminal, EscapeProcessingParser>(
+        Nonterminal::LITERAL_COMPONENTS,
+        &s,
+        |nt| nt == Nonterminal::LITERAL_COMPONENT,
+    )
+    .map_err(Error::Internal)?
+    else {
+        // This can't really fail, because LITERAL_COMPONENTS's expression is a zero-or-more
+        // repetitions operator.
+        return Ok(HasNoInterpretation(
+            "LITERAL_COMPONENTS match attempt failed",
+        ));
+    };
+    // "and consumes the entire sequence"
+    if !consumed_entire_input {
+        return Ok(HasNoInterpretation(
+            "LITERAL_COMPONENTS did not consume the entire input",
+        ));
+    }
     // "sequence of participating matches of LITERAL_COMPONENT in the resulting match"
     let mut components = Vec::new();
-    for literal_component_pair in literal_components_pair.into_inner() {
-        if literal_component_pair.as_rule() != Nonterminal::LITERAL_COMPONENT {
-            return Err(Error::BadParse(format!(
-                "matched {:?} under LITERAL_COMPONENTS",
-                literal_component_pair.as_rule(),
-            )));
-        }
-        let m = EscapingMatch::new(literal_component_pair);
+    for m in participating_matches.into_iter() {
         let component = classify_escape(&m)?;
         match component {
             // "omitting any string continuation escapes"
@@ -334,16 +322,6 @@ pub enum MaybeInterpretation<T> {
     /// The character sequence doesn't have an interpretation.
     /// The string explains why not.
     HasNoInterpretation(&'static str),
-}
-
-/// Attempt to match the specified nonterminal from the escape-processing grammar against the
-/// specified string.
-fn attempt_escape_processing_match<'a>(
-    nonterminal: Nonterminal,
-    against: &'a str,
-) -> Result<pegs::Outcome<'a, Nonterminal>, Error> {
-    attempt_pest_match::<Nonterminal, EscapeProcessingParser>(nonterminal, against)
-        .map_err(Error::Internal)
 }
 
 #[derive(pest_derive::Parser)]

@@ -5,16 +5,84 @@ use pest::{Parser, RuleType};
 
 use crate::datatypes::char_sequences::Charseq;
 
-/// Attempt to match the specified nonterminal against the specified string.
+/// Attempts to match the specified nonterminal against the specified string.
+///
+/// A returned error indicates a problem with the implementation.
+pub fn attempt_match<NONTERMINAL: RuleType, PARSER: Parser<NONTERMINAL>>(
+    nonterminal: NONTERMINAL,
+    against: &str,
+) -> Result<Outcome<NONTERMINAL>, String> {
+    match attempt_pest_match::<NONTERMINAL, PARSER>(nonterminal, against)? {
+        PestAttemptOutcome::Success {
+            pair,
+            consumed_entire_input,
+        } => Ok(Outcome::Success {
+            match_data: MatchData::new(pair),
+            consumed_entire_input,
+        }),
+        PestAttemptOutcome::Failure => Ok(Outcome::Failure),
+    }
+}
+
+/// Information from a call to `attempt_match`.
+pub enum Outcome<NONTERMINAL: RuleType> {
+    Success {
+        /// Description of the match
+        match_data: MatchData<NONTERMINAL>,
+        /// Whether the match's consumed characters were the whole of 'against'
+        consumed_entire_input: bool,
+    },
+    Failure,
+}
+
+/// Attempts to match the nonterminal `attempting` against the specified string, and finds the
+/// participating matches of nonterminals in the class described by `participating`.
+///
+/// A returned error indicates a problem with the implementation.
+pub fn attempt_for_participating_matches<NONTERMINAL: RuleType, PARSER: Parser<NONTERMINAL>>(
+    attempting: NONTERMINAL,
+    against: &str,
+    participating: impl Fn(NONTERMINAL) -> bool,
+) -> Result<ParticipationOutcome<NONTERMINAL>, String> {
+    let PestAttemptOutcome::Success {
+        pair: attempt_pair,
+        consumed_entire_input,
+    } = attempt_pest_match::<NONTERMINAL, PARSER>(attempting, against)?
+    else {
+        return Ok(ParticipationOutcome::Failure);
+    };
+    let participating_matches: Vec<MatchData<NONTERMINAL>> = attempt_pair
+        .into_inner()
+        .flatten()
+        .filter_map(|pair| participating(pair.as_rule()).then(|| MatchData::new(pair)))
+        .collect();
+    Ok(ParticipationOutcome::Success {
+        participating_matches,
+        consumed_entire_input,
+    })
+}
+
+/// Information from a call to `attempt_for_participating_matches`.
+pub enum ParticipationOutcome<NONTERMINAL: RuleType> {
+    Success {
+        /// The participating matches of nonterminals accepted by `participating`
+        participating_matches: Vec<MatchData<NONTERMINAL>>,
+        /// Whether the match's consumed characters were the whole of 'against'
+        consumed_entire_input: bool,
+    },
+    Failure,
+}
+
+/// Attempts to match the specified nonterminal against the specified string, returning a Pest pair.
 ///
 /// A returned error indicates that Pest didn't behave the way we expect.
-pub fn attempt_pest_match<'a, NONTERMINAL: RuleType, PARSER: Parser<NONTERMINAL>>(
+fn attempt_pest_match<'a, NONTERMINAL: RuleType, PARSER: Parser<NONTERMINAL>>(
     nonterminal: NONTERMINAL,
     against: &'a str,
-) -> Result<Outcome<'a, NONTERMINAL>, String> {
+) -> Result<PestAttemptOutcome<'a, NONTERMINAL>, String> {
     use Multiplicity::*;
     let Ok(top_level_pairs) = PARSER::parse(nonterminal, against) else {
-        return Ok(Outcome::Failure);
+        return Ok(PestAttemptOutcome::Failure);
     };
     // Pest's top-level Pairs is 'above' the match for the nonterminal you asked for,
     // with no useful information. It contains a single Pair which is the match for the nonterminal
@@ -29,7 +97,7 @@ pub fn attempt_pest_match<'a, NONTERMINAL: RuleType, PARSER: Parser<NONTERMINAL>
         ));
     }
     let consumed_entire_input = requested_pair.as_span().end() == against.len();
-    Ok(Outcome::Success {
+    Ok(PestAttemptOutcome::Success {
         pair: requested_pair,
         consumed_entire_input,
     })
@@ -38,9 +106,9 @@ pub fn attempt_pest_match<'a, NONTERMINAL: RuleType, PARSER: Parser<NONTERMINAL>
 /// Information from the outcome of a Pest match attempt.
 ///
 /// If we want to know exactly what was consumed, we can find out from 'pair'.
-pub enum Outcome<'a, NONTERMINAL: RuleType> {
+enum PestAttemptOutcome<'a, NONTERMINAL: RuleType> {
     Success {
-        /// Pest Pair representing the match of the specified nonterminal.
+        /// Pest Pair representing the match.
         pair: Pair<'a, NONTERMINAL>,
         /// Whether the match's consumed characters were the whole of 'against'.
         consumed_entire_input: bool,
@@ -49,7 +117,7 @@ pub enum Outcome<'a, NONTERMINAL: RuleType> {
 }
 
 /// Returns the only item from an iterator, or reports an error if it didn't have exactly one item.
-pub fn extract_only_item<T>(mut stream: impl Iterator<Item = T>) -> Result<T, Multiplicity> {
+fn extract_only_item<T>(mut stream: impl Iterator<Item = T>) -> Result<T, Multiplicity> {
     let Some(item) = stream.next() else {
         return Err(Multiplicity::NoItems);
     };
@@ -59,7 +127,7 @@ pub fn extract_only_item<T>(mut stream: impl Iterator<Item = T>) -> Result<T, Mu
     Ok(item)
 }
 
-pub enum Multiplicity {
+enum Multiplicity {
     NoItems,
     Multiple,
 }
