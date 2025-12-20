@@ -27,16 +27,16 @@ A nonterminal whose name appears in the following table is a <dfn>reserved-form 
 
 | Reserved form                         |
 |---------------------------------------|
+| `Reserved_block_comment_start`        |
 | `Reserved_float`                      |
 | `Reserved_guard`                      |
 | `Reserved_lifetime_or_label_prefix`   |
+| `Reserved_literal_2015`               |
 | `Reserved_literal_2021`               |
 | `Reserved_prefix_2015`                |
 | `Reserved_prefix_2021`                |
 | `Reserved_single_quoted_literal_2015` |
 | `Reserved_single_quoted_literal_2021` |
-| `Unterminated_block_comment`          |
-| `Unterminated_literal_2015`           |
 
 A token nonterminal or reserved-form nonterminal is a <dfn>tokenisation nonterminal</dfn>.
 

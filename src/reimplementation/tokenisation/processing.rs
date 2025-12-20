@@ -39,8 +39,8 @@ pub fn process(match_data: &TokenisationMatch) -> Result<FineToken, Error> {
         Nonterminal::Raw_ident => process_raw_ident(match_data)?,
         Nonterminal::Ident => process_ident(match_data)?,
         Nonterminal::Punctuation => process_punctuation(match_data)?,
-        Nonterminal::Unterminated_block_comment
-        | Nonterminal::Unterminated_literal_2015
+        Nonterminal::Reserved_block_comment_start
+        | Nonterminal::Reserved_literal_2015
         | Nonterminal::Reserved_literal_2021
         | Nonterminal::Reserved_single_quoted_literal_2015
         | Nonterminal::Reserved_single_quoted_literal_2021

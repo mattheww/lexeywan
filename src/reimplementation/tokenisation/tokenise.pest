@@ -7,14 +7,14 @@ TOKEN_2015 = {
     Whitespace |
     Line_comment |
     Block_comment |
-    Unterminated_block_comment |
+    Reserved_block_comment_start |
     Character_literal |
     Byte_literal |
     String_literal |
     Byte_string_literal |
     Raw_string_literal |
     Raw_byte_string_literal |
-    Unterminated_literal_2015 |
+    Reserved_literal_2015 |
     Reserved_single_quoted_literal_2015 |
     Float_literal |
     Reserved_float |
@@ -30,7 +30,7 @@ TOKEN_2021 = {
     Whitespace |
     Line_comment |
     Block_comment |
-    Unterminated_block_comment |
+    Reserved_block_comment_start |
     Character_literal |
     Byte_literal |
     String_literal |
@@ -57,7 +57,7 @@ TOKEN_2024 = {
     Whitespace |
     Line_comment |
     Block_comment |
-    Unterminated_block_comment |
+    Reserved_block_comment_start |
     Character_literal |
     Byte_literal |
     String_literal |
@@ -98,9 +98,9 @@ BLOCK_COMMENT = { "/*" ~ BLOCK_COMMENT_CONTENT ~ "*/" }
 BLOCK_COMMENT_CONTENT = { ( BLOCK_COMMENT | !"*/" ~ !"/*" ~ ANY ) * }
 // ANCHOR_END: block_comment
 
-// ANCHOR: unterminated_block_comment
-Unterminated_block_comment = { "/*" }
-// ANCHOR_END: unterminated_block_comment
+// ANCHOR: reserved_block_comment_start
+Reserved_block_comment_start = { "/*" }
+// ANCHOR_END: reserved_block_comment_start
 
 
 // ANCHOR: single_quoted_literals_common
@@ -177,10 +177,10 @@ Raw_c_string_literal = { "cr" ~ RAW_DOUBLE_QUOTED_FORM }
 // ANCHOR_END: raw_c_string_literal
 
 
-// ANCHOR: unterminated_literal
-Unterminated_literal_2015 = { "r" ~ DOUBLEQUOTE | "br" ~ DOUBLEQUOTE | "b'" }
+// ANCHOR: reserved_literal
+Reserved_literal_2015 = { "r" ~ DOUBLEQUOTE | "br" ~ DOUBLEQUOTE | "b'" }
 Reserved_literal_2021 = { IDENT ~ ( DOUBLEQUOTE | "'" ) }
-// ANCHOR_END: unterminated_literal
+// ANCHOR_END: reserved_literal
 
 // ANCHOR: reserved_single_quoted_literal
 Reserved_single_quoted_literal_2015 = { "'" ~ IDENT ~ "'" }

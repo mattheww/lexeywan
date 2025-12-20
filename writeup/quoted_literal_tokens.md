@@ -273,21 +273,21 @@ The match is rejected if:
 
 ### Reserved forms
 
-#### Reserved or unterminated literal { .processing }
+#### Reserved literal { .processing }
 
 ##### Grammar
 ```
-{{#include tokenise_anchored.pest:unterminated_literal}}
+{{#include tokenise_anchored.pest:reserved_literal}}
 ```
 
 ##### Rejection
 
 All matches are rejected.
 
-> Note: I believe in the `Unterminated_literal_2015` definition only the `b'` form is strictly needed:
+> Note: I believe in the `Reserved_literal_2015` definition only the `b'` form is strictly needed:
 > if that definition matches using one of the other subexpressions
 > then the input will be rejected eventually anyway
-> (given that the corresponding string literal nonterminal didn't match).
+> (given that the corresponding quoted literal nonterminal didn't match).
 
 > Note: `Reserved_literal_2021` catches both reserved forms and unterminated `b'` literals.
 

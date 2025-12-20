@@ -99,11 +99,11 @@ The token's <var>style</var> and <var>body</var> are determined from the block c
 The match is rejected if the token's <var>body</var> would include a <kbd>CR</kbd> character.
 
 
-#### Unterminated block comment { .processing }
+#### Reserved block comment start { .processing }
 
 ##### Grammar
 ```
-{{#include tokenise_anchored.pest:unterminated_block_comment}}
+{{#include tokenise_anchored.pest:reserved_block_comment_start}}
 ```
 
 ##### Rejection
