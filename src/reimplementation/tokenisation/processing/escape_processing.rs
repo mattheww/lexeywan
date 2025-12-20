@@ -220,7 +220,7 @@ fn interpret_unicode_escape_digits(digits: &Charseq) -> Result<u32, &'static str
 /// Processes the HEXADECIMAL_DIGITs from a _hexadecimal escape_, returning the represented byte.
 ///
 /// An error return indicates that the grammar accepted something we didn't expect.
-pub fn interpret_hexadecimal_escape_digits(digits: &Charseq) -> Result<u8, &'static str> {
+fn interpret_hexadecimal_escape_digits(digits: &Charseq) -> Result<u8, &'static str> {
     if digits.len() != 2 {
         return Err("hexadecimal escape: wrong number of digits");
     }
