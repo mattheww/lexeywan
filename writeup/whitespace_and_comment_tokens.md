@@ -110,7 +110,7 @@ The match is rejected if the token's <var>body</var> would include a <kbd>CR</kb
 
 All matches are rejected.
 
-> Note: This definition makes sure that an unterminated block comment isn't accepted as punctuation (<b>*</b> followed by <b>/</b>).
+> Note: This definition makes sure that an unterminated block comment isn't accepted as punctuation (<b>/</b> followed by <b>*</b>).
 
 
 [participating]: pegs.md#participating
