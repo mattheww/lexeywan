@@ -29,18 +29,6 @@ h2 + h3 {
     margin-top: 0;
 }
 
-h5 {
-    margin-bottom: 0;
-}
-
-h5 + p {
-    margin-top: 0;
-}
-
-h5 + pre {
-    margin-top: 0;
-}
-
 ul ul {
     padding-left: 1.5em;
 }
@@ -105,6 +93,10 @@ kbd {
 .pegs-description var {
     color: var(--fg);
     font-weight: bolder;
+}
+
+.pegs-description h5 {
+    margin-bottom: 0;
 }
 
 .pegs-description h5 + p {

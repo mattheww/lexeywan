@@ -1,6 +1,6 @@
-## Escape processing
+### Escape processing
 
-### The escape-processing grammar { #escape-grammar }
+#### The escape-processing grammar { #escape-grammar }
 
 The <dfn>escape-processing grammar</dfn> is the following [Parsing Expression Grammar](pegs.md):
 
@@ -8,7 +8,7 @@ The <dfn>escape-processing grammar</dfn> is the following [Parsing Expression Gr
 {{#include escape_processing_anchored.pest:main}}
 ```
 
-### Classifying escapes
+#### Classifying escapes
 
 A match of `LITERAL_COMPONENT` is:
  - a _non-escape_ if `ESCAPE_BODY` did not participate in the match
@@ -21,7 +21,7 @@ It follows from the definitions of `LITERAL_COMPONENT` AND `ESCAPE_BODY`
 that each match of `LITERAL_COMPONENT` is exactly one of the above forms.
 
 
-#### Non-escapes
+##### Non-escapes
 
 The <dfn>represented character</dfn> of a non-escape is the single character consumed by the non-escape.
 
@@ -34,7 +34,7 @@ Other non-escapes have no represented byte.
 > the UTF-8 encoding of its represented character is a single byte.
 
 
-#### Simple escapes
+##### Simple escapes
 
 > A simple escape is a form like `\n` or `\"`.
 > Simple escapes are used to represent common control characters and characters that have special meaning in the tokenisation grammar.
@@ -55,7 +55,7 @@ according to the table below.
 The <dfn>represented byte</dfn> of a simple escape is the [Unicode scalar value] of its represented character.
 
 
-#### Unicode escapes
+##### Unicode escapes
 
 > A Unicode escape is a form like `\u{211d}` or `\u{01_F9_80}`.
 > A Unicode escape can represent any single character.
@@ -71,7 +71,7 @@ the <dfn>represented character</dfn> of the escape is the character with that Un
 Otherwise the Unicode escape has no represented character.
 
 
-#### Hexadecimal escapes
+##### Hexadecimal escapes
 
 > A hexadecimal escape is a form like `\xA0` or `\x1b`.
 > In byte, byte-string, and C-string literals, a hexadecimal escape can represent any single byte.
@@ -92,7 +92,7 @@ Other hexadecimal escapes have no represented character.
 > its represented byte is the UTF-8 encoding of a character.
 
 
-#### String continuation escapes
+##### String continuation escapes
 
 > A string continuation escape is <b>\\</b> followed immediately by <kbd>LF</kbd>,
 > optionally followed by some forms of additional whitespace
@@ -103,10 +103,10 @@ Other hexadecimal escapes have no represented character.
 > see [String continuation escapes].
 
 
-### Escape interpretations
+#### Escape interpretations
 
 
-#### Single-escape interpretation
+##### Single-escape interpretation
 
 If an attempt to match the `LITERAL_COMPONENT` nonterminal against a character sequence succeeds and consumes the entire sequence,
 and the match is not a string continuation escape,
@@ -118,7 +118,7 @@ Otherwise the character sequence has no single-escape interpretation.
 > other than a string continuation escape.
 
 
-#### Escape interpretation
+##### Escape interpretation
 
 If an attempt to match the `LITERAL_COMPONENTS` nonterminal against a character sequence succeeds and consumes the entire sequence,
 the <dfn>escape interpretation</dfn> of that character sequence is
