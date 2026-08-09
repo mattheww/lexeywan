@@ -69,7 +69,7 @@ are called <dfn>parsing operators</dfn>.
 
 Each nonterminal which appears in a parsing expression has a definition in the grammar.
 
-> The `EMPTY` terminal doesn't appear in any of grammars in this writeup;
+> The `EMPTY` terminal doesn't appear in any of the grammars in this writeup;
 > it's used below in the descriptions of matching option and repetition expressions.
 
 
