@@ -1,20 +1,17 @@
 ## Punctuation tokens
 
-##### Table of contents
-<!-- toc -->
+### Punctuation { .processing }
 
-#### Punctuation { .processing }
-
-##### Grammar
+#### Grammar
 ```
 {{#include tokenise_anchored.pest:punctuation}}
 ```
 
-##### Attributes
+#### Attributes
 
 The token's <var>mark</var> is the single character consumed by the match.
 
-##### Rejection
+#### Rejection
 
 No matches are rejected.
 

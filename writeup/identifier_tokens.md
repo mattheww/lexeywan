@@ -1,8 +1,5 @@
 ## Ident, lifetime, and label tokens
 
-##### Table of contents
-<!-- toc -->
-
 This writeup uses the term <dfn>ident</dfn> to refer to a token that lexically has the form of an identifier,
 including keywords and <b>_</b>.
 
@@ -10,7 +7,7 @@ including keywords and <b>_</b>.
 
 The following nonterminals are common to the definitions below:
 
-##### Grammar
+### Grammar
 ```
 {{#include tokenise_anchored.pest:idents}}
 ```
@@ -22,21 +19,21 @@ The following nonterminals are common to the definitions below:
 [Special terminals]: grammars.md#special-terminals
 
 
-#### Raw lifetime or label (Rust 2021 and 2024) { .processing }
+### Raw lifetime or label (Rust 2021 and 2024) { .processing }
 
-##### Grammar
+#### Grammar
 ```
 {{#include tokenise_anchored.pest:raw_lifetime_or_label_2021}}
 ```
 
-##### Attributes
+#### Attributes
 
 The token's <var>name</var> is <u>IDENT</u>.
 
 > Note that the name is not NFC-normalised.
 > See [NFC normalisation for lifetime/label].
 
-##### Rejection
+#### Rejection
 
 The match is rejected if <u>IDENT</u> is one of the following sequences of characters:
 
@@ -47,21 +44,21 @@ The match is rejected if <u>IDENT</u> is one of the following sequences of chara
 - <b>Self</b>
 
 
-#### Reserved lifetime or label prefix (Rust 2021 and 2024) { .processing }
+### Reserved lifetime or label prefix (Rust 2021 and 2024) { .processing }
 
-##### Grammar
+#### Grammar
 ```
 {{#include tokenise_anchored.pest:reserved_lifetime_or_label_prefix_2021}}
 ```
 
-##### Rejection
+#### Rejection
 
 All matches are rejected.
 
 
-#### (Non-raw) lifetime or label { .processing }
+### (Non-raw) lifetime or label { .processing }
 
-##### Grammar
+#### Grammar
 ```
 {{#include tokenise_anchored.pest:lifetime_or_label}}
 ```
@@ -72,30 +69,30 @@ All matches are rejected.
 
 [Modelling lifetimes and labels]: rationale.md#modelling-lifetimes-and-labels
 
-##### Attributes
+#### Attributes
 
 The token's <var>name</var> is <u>IDENT</u>.
 
 > Note that the name is not NFC-normalised.
 > See [NFC normalisation for lifetime/label].
 
-##### Rejection
+#### Rejection
 
 No matches are rejected.
 
 
-#### Raw ident { .processing }
+### Raw ident { .processing }
 
-##### Grammar
+#### Grammar
 ```
 {{#include tokenise_anchored.pest:raw_ident}}
 ```
 
-##### Attributes
+#### Attributes
 
 The token's <var>represented ident</var> is the [NFC-normalised] form of <u>IDENT</u>.
 
-##### Rejection
+#### Rejection
 
 The match is rejected if the token's <var>represented ident</var> would be one of the following sequences of characters:
 
@@ -106,14 +103,14 @@ The match is rejected if the token's <var>represented ident</var> would be one o
 - <b>Self</b>
 
 
-#### Reserved prefix { .processing }
+### Reserved prefix { .processing }
 
-##### Grammar
+#### Grammar
 ```
 {{#include tokenise_anchored.pest:reserved_prefix}}
 ```
 
-##### Rejection
+#### Rejection
 
 All matches are rejected.
 
@@ -121,9 +118,9 @@ All matches are rejected.
 > Tokens added in future which match these reserved forms wouldn't necessarily be forms of identifier.
 
 
-#### (Non-raw) ident { .processing }
+### (Non-raw) ident { .processing }
 
-##### Grammar
+#### Grammar
 ```
 {{#include tokenise_anchored.pest:ident}}
 ```
@@ -132,11 +129,11 @@ All matches are rejected.
 > "Zero width non-joiner (ZWNJ U+200C) and zero width joiner (ZWJ U+200D) characters are not allowed in identifiers."
 > Those characters don't have `XID_Start` or `XID_Continue`, so that's only informative text, not an additional constraint.
 
-##### Attributes
+#### Attributes
 
 The token's <var>represented ident</var> is the [NFC-normalised] form of <u>IDENT</u>
 
-##### Rejection
+#### Rejection
 
 No matches are rejected.
 

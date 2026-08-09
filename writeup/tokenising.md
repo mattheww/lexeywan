@@ -1,8 +1,5 @@
 # Tokenising
 
-##### Table of contents
-<!-- toc -->
-
 ## The tokenisation grammar
 
 The <dfn>tokenisation grammar</dfn> is a [Parsing Expression Grammar](pegs.md)

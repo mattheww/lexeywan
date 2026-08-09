@@ -1,8 +1,5 @@
 # Processing that happens before tokenising
 
-##### Table of contents
-<!-- toc -->
-
 This document's description of tokenising takes a sequence of characters as input.
 
 That sequence of characters is derived from an input sequence of bytes by performing the steps listed below in order.

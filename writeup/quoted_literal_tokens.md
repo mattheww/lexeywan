@@ -1,8 +1,5 @@
 ## Quoted literal tokens
 
-##### Table of contents
-<!-- toc -->
-
 > Each kind of quoted literal represents a character, byte, sequence of characters, or sequence of bytes.
 >
 > These representations are obtained by interpreting the literal content
@@ -47,7 +44,7 @@
 
 The following nonterminals are common to the definitions below:
 
-##### Grammar
+#### Grammar
 ```
 {{#include tokenise_anchored.pest:single_quoted_literals_common}}
 
@@ -106,7 +103,7 @@ The match is rejected if:
 
 The following nonterminals are common to the definitions below:
 
-##### Grammar
+#### Grammar
 ```
 {{#include tokenise_anchored.pest:double_quoted_literals_common}}
 
@@ -193,7 +190,7 @@ The match is rejected if:
 
 The following nonterminals are common to the definitions below:
 
-##### Grammar
+#### Grammar
 ```
 {{#include tokenise_anchored.pest:raw_double_quoted_literals_common}}
 

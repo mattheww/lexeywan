@@ -9,9 +9,6 @@ This page describes a subset of the formalism that is sufficient for the grammar
 See [Grammars] above for a less formal treatment.
 
 
-##### Table of contents
-<!-- toc -->
-
 <div class=pegs-description>
 
 ### Nonterminal definitions

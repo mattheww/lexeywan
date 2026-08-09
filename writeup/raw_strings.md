@@ -1,8 +1,5 @@
 ## Grammar for raw string literals
 
-##### Table of contents
-<!-- toc -->
-
 I believe the PEG formalism can't naturally describe Rust's rule for matching the number of `#` characters in raw string literals.
 
 (The same limitations apply to matching the number of `-` characters in frontmatter fences.)

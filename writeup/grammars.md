@@ -16,9 +16,6 @@ See [Grammar for raw string literals](raw_strings.md) for a discussion of extens
 Those extensions are not described on this page.
 
 
-##### Table of contents
-<!-- toc -->
-
 <div class=pegs-description>
 
 ## Grammars

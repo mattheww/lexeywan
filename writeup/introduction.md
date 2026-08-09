@@ -11,9 +11,6 @@ the reimplementation uses the [Pest] library to generate the corresponding parse
 
 [framework]: reimplementation_cli.md
 
-##### Table of contents
-<!-- toc -->
-
 
 ## Scope
 
@@ -64,7 +61,7 @@ It's not attempting to describe `rustc`'s "recovery" behaviour
 (where input which will be reported as an error provides tokens to later stages of the compiler anyway).
 
 
-##### Size limits
+### Size limits
 
 This description doesn't attempt to characterise `rustc`'s limits on the size of the input as a whole.
 

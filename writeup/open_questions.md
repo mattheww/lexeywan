@@ -1,8 +1,5 @@
 ## Open questions
 
-##### Table of contents
-<!-- toc -->
-
 
 ### Terminology
 

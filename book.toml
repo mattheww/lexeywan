@@ -12,11 +12,6 @@ create-missing = false
 [preprocessor.index]
 [preprocessor.links]
 
-[preprocessor.toc]
-command = "mdbook-toc"
-renderer = ["html"]
-max-level = 4
-
 [output.html]
 smart-punctuation = false
 default-theme = "rust"

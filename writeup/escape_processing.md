@@ -1,8 +1,5 @@
 ## Escape processing
 
-##### Table of contents
-<!-- toc -->
-
 ### The escape-processing grammar { #escape-grammar }
 
 The <dfn>escape-processing grammar</dfn> is the following [Parsing Expression Grammar](pegs.md):
@@ -109,7 +106,7 @@ Other hexadecimal escapes have no represented character.
 ### Escape interpretations
 
 
-##### Single-escape interpretation
+#### Single-escape interpretation
 
 If an attempt to match the `LITERAL_COMPONENT` nonterminal against a character sequence succeeds and consumes the entire sequence,
 and the match is not a string continuation escape,
@@ -121,7 +118,7 @@ Otherwise the character sequence has no single-escape interpretation.
 > other than a string continuation escape.
 
 
-##### Escape interpretation
+#### Escape interpretation
 
 If an attempt to match the `LITERAL_COMPONENTS` nonterminal against a character sequence succeeds and consumes the entire sequence,
 the <dfn>escape interpretation</dfn> of that character sequence is

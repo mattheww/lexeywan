@@ -6,17 +6,15 @@ h2 + h3 {
     margin-top: 1.2em;
 }
 
-#table-of-contents + ul + h3 {
-    margin-top: 1.2em;
-}
-
-h4.processing {
+.processing {
     border: 1px solid var(--fg);
     border-radius: 3px;
     padding: 1ex 0.5em;
     background-color: var(--table-header-bg);
     vertical-align: baseline;
     height: 1.55em;
+    font-size: 1em;
+    margin-top: 2em;
     font-weight: bold;
 }
 
@@ -42,17 +40,6 @@ table {
 
 th:empty {
     display: none;
-}
-
-#table-of-contents + ul {
-    margin-top: 0.2em;
-    padding-left: 0;
-    list-style: none;
-    font-size: 0.9em;
-}
-
-#table-of-contents + ul ul {
-    list-style: none;
 }
 
 /* we abuse <var> for token attributes */

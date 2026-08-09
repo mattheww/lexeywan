@@ -27,10 +27,10 @@ Note the provided `rust-toolchain.toml` will cause `cargo run` to install the re
 
 ## Building the description
 
-Install [`mdbook`] and [`mdbook-toc`]:
+Install [`mdbook`] (version 0.5.x):
 
 ```
-cargo install mdbook mdbook-toc
+cargo install mdbook --version ^0.5
 ```
 
 Then run
@@ -43,7 +43,6 @@ The output will appear in `book/`
 
 
 [`mdbook`]: https://github.com/rust-lang/mdBook
-[`mdbook-toc`]: https://github.com/badboy/mdbook-toc
 
 
 ## License
