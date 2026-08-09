@@ -301,7 +301,7 @@ the first match of <var>N</var> in the elaboration of <var>A</var>.
 
 #### Sequences of matches
 
-The characters consumed by a sequence of matches <var>A₁</var>…<var>Aₙ</var></dfn>
+The <dfn>characters consumed by a sequence of matches <var>A₁</var>…<var>Aₙ</var></dfn>
 are the sequence of characters obtained by
 concatenating the character sequences consumed by each <var>Aᵢ</var>,
 in order.
