@@ -21,4 +21,4 @@ max-level = 4
 default-theme = "rust"
 additional-css = ["css/writeup.css"]
 git-repository-url = "https://github.com/mattheww/lexeywan"
-git-repository-icon = "fa-code-fork"
+git-repository-icon = "fas-code-fork"
