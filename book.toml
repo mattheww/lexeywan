@@ -18,6 +18,7 @@ renderer = ["html"]
 max-level = 4
 
 [output.html]
+smart-punctuation = false
 default-theme = "rust"
 additional-css = ["css/writeup.css"]
 git-repository-url = "https://github.com/mattheww/lexeywan"
