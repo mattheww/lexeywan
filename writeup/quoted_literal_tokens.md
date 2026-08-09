@@ -19,9 +19,9 @@
 
 | Literal | Forbidden                                       | Simple | Unicode    | Hexadecimal | String continuation |
 |---------|-------------------------------------------------|--------|------------|-------------|---------------------|
-| `''`    | <kbd>CR</kbd> <kbd>LF</kbd> <kbd>HT</kbd>       | ✓      | ✓          | ✓ (<= 127)  |                     |
+| `''`    | <kbd>CR</kbd> <kbd>LF</kbd> <kbd>HT</kbd>       | ✓      | ✓          | ✓ (≤ 127)  |                     |
 | `b''`   | <kbd>CR</kbd> <kbd>LF</kbd> <kbd>HT</kbd> > 127 | ✓      |            | ✓           |                     |
-| `""`    | <kbd>CR</kbd>                                   | ✓      | ✓          | ✓ (<= 127)  | ✓                   |
+| `""`    | <kbd>CR</kbd>                                   | ✓      | ✓          | ✓ (≤ 127)  | ✓                   |
 | `b""`   | <kbd>CR</kbd> > 127                             | ✓      |            | ✓           | ✓                   |
 | `c""`   | <kbd>CR</kbd>                                   | ✓      | ✓          | ✓           | ✓                   |
 | `r""`   | <kbd>CR</kbd>                                   |        |            |             |                     |
@@ -35,7 +35,7 @@
 >
 > The remaining columns indicate which [forms of escape][classifying escapes] are accepted.
 >
-> The "(<= 127)" annotation means that hexadecimal escapes whose first hexadecimal digit is greater than 7 aren't accepted.
+> The "(≤ 127)" annotation means that hexadecimal escapes whose first hexadecimal digit is greater than 7 aren't accepted.
 >
 > In raw literals the <b>\\</b> character represents itself; otherwise a <b>\\</b> that doesn't introduce an escape is forbidden.
 

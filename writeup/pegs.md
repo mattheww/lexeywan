@@ -59,7 +59,7 @@ Parsing expressions have the following forms, where
 | <code><var>e</var> ?</code>                                                                | Option suffix expression            |
 | <code><var>e</var> *</code>                                                                | Zero-or-more repetitions expression |
 | <code><var>e</var> +</code>                                                                | One-or-more repetitions expression  |
-| <code><var>e</var> {<var>m</var>, <var>n</var>}</code> (with <var>m</var> <= <var>n</var>) | limited repetitions expression      |
+| <code><var>e</var> {<var>m</var>, <var>n</var>}</code> (with <var>m</var> ≤ <var>n</var>) | limited repetitions expression      |
 | <code>! <var>e</var></code>                                                                | Negative lookahead expression       |
 | __Grouping__                                                                               |                                     |
 | <code>( <var>e</var> )</code>                                                              |                                     |
@@ -275,7 +275,7 @@ A <dfn>limited repetition expression</dfn> of the form <code><var>e</var>{0, 0}<
 A <dfn>limited repetition expression</dfn> of the form <code><var>e</var>{0, <var>n</var>}</code>, for <var>n</var> > 0, reduces to
 <code><var>e</var>? ~ <var>e</var>{0, <var>n</var>-1}</code>.
 
-A <dfn>limited repetition expression</dfn> of the form <code><var>e</var>{<var>m</var>, <var>n</var>}</code>, for <var>m</var> > 0 and <var>n</var> >= <var>m</var>, reduces to
+A <dfn>limited repetition expression</dfn> of the form <code><var>e</var>{<var>m</var>, <var>n</var>}</code>, for <var>m</var> > 0 and <var>n</var> ≥ <var>m</var>, reduces to
 <code><var>e</var> ~ <var>e</var>{<var>m</var>-1, <var>n</var>-1}</code>.
 
 
