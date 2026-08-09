@@ -2,7 +2,7 @@
 
 ### Whitespace { .processing }
 
-#### Grammar
+#### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:whitespace}}
 ```
@@ -12,22 +12,22 @@
 [Special terminals]: grammars.md#special-terminals
 
 
-#### Attributes
+#### Attributes { .attributes }
 (none)
 
-#### Rejection
+#### Rejection { .rejection }
 
 No matches are rejected.
 
 
 ### Line comment { .processing }
 
-#### Grammar
+#### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:line_comment}}
 ```
 
-#### Attributes
+#### Attributes { .attributes }
 
 The token's <var>style</var> and <var>body</var> are determined from <u>LINE_COMMENT_CONTENT</u> as follows:
 
@@ -49,21 +49,21 @@ The token's <var>style</var> and <var>body</var> are determined from <u>LINE_COM
 
 > Note: The body of a non-doc comment is ignored by the rest of the compilation process
 
-#### Rejection
+#### Rejection { .rejection }
 
 The match is rejected if the token's <var>body</var> would include a <kbd>CR</kbd> character.
 
 
 ### Block comment { .processing }
 
-#### Grammar
+#### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:block_comment}}
 ```
 > Note: See [Nested block comments] for discussion of the `!"/*"` subexpression.
 
 
-#### Attributes
+#### Attributes { .attributes }
 
 The <dfn>comment content</dfn> is the sequence of characters consumed by the [first participating match][participating] (that is, the outermost match)
 of `BLOCK_COMMENT_CONTENT` in the match.
@@ -91,19 +91,19 @@ The token's <var>style</var> and <var>body</var> are determined from the block c
 
 > Note: The body of a non-doc comment is ignored by the rest of the compilation process
 
-#### Rejection
+#### Rejection { .rejection }
 
 The match is rejected if the token's <var>body</var> would include a <kbd>CR</kbd> character.
 
 
 ### Reserved block comment start { .processing }
 
-#### Grammar
+#### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:reserved_block_comment_start}}
 ```
 
-#### Rejection
+#### Rejection { .rejection }
 
 All matches are rejected.
 

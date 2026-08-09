@@ -44,7 +44,7 @@
 
 The following nonterminals are common to the definitions below:
 
-#### Grammar
+#### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:single_quoted_literals_common}}
 
@@ -54,18 +54,18 @@ The following nonterminals are common to the definitions below:
 
 #### Character literal { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:character_literal}}
 ```
 
-##### Attributes
+##### Attributes { .attributes }
 
 The token's <var>represented character</var> is the represented character of <u>SINGLE_QUOTED_CONTENT</u>'s [single-escape interpretation].
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
-##### Rejection
+##### Rejection { .rejection }
 
 The match is rejected if:
  - <u>SINGLE_QUOTED_CONTENT</u> has no single-escape interpretation; or
@@ -77,18 +77,18 @@ The match is rejected if:
 
 #### Byte literal { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:byte_literal}}
 ```
 
-##### Attributes
+##### Attributes { .attributes }
 
 The token's <var>represented byte</var> is the represented byte of <u>SINGLE_QUOTED_CONTENT</u>'s [single-escape interpretation].
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
-##### Rejection
+##### Rejection { .rejection }
 
 The match is rejected if:
  - <u>SINGLE_QUOTED_CONTENT</u> has no single-escape interpretation; or
@@ -103,7 +103,7 @@ The match is rejected if:
 
 The following nonterminals are common to the definitions below:
 
-#### Grammar
+#### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:double_quoted_literals_common}}
 
@@ -113,19 +113,19 @@ The following nonterminals are common to the definitions below:
 
 #### String literal { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:string_literal}}
 ```
 
-##### Attributes
+##### Attributes { .attributes }
 
 The token's <var>represented string</var> is the sequence made up of
 the represented character of each component of <u>DOUBLE_QUOTED_CONTENT</u>'s [escape interpretation].
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
-##### Rejection
+##### Rejection { .rejection }
 
 The match is rejected if:
  - <u>DOUBLE_QUOTED_CONTENT</u> has no escape interpretation; or
@@ -137,19 +137,19 @@ The match is rejected if:
 
 #### Byte-string literal { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:byte_string_literal}}
 ```
 
-##### Attributes
+##### Attributes { .attributes }
 
 The token's <var>represented bytes</var> are
 the represented byte of each component of <u>DOUBLE_QUOTED_CONTENT</u>'s [escape interpretation].
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
-##### Rejection
+##### Rejection { .rejection }
 
 The match is rejected if:
  - <u>DOUBLE_QUOTED_CONTENT</u> has no escape interpretation; or
@@ -162,12 +162,12 @@ The match is rejected if:
 
 #### C-string literal { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:c_string_literal}}
 ```
 
-##### Attributes
+##### Attributes { .attributes }
 
 The token's <var>represented bytes</var> are derived from <u>DOUBLE_QUOTED_CONTENT</u>'s [escape interpretation] in the following way:
 - Each [non-escape], [simple escape], or [Unicode escape] contributes the UTF-8 encoding of its represented character.
@@ -175,7 +175,7 @@ The token's <var>represented bytes</var> are derived from <u>DOUBLE_QUOTED_CONTE
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
-##### Rejection
+##### Rejection { .rejection }
 
 The match is rejected if:
  - <u>DOUBLE_QUOTED_CONTENT</u> has no escape interpretation; or
@@ -190,7 +190,7 @@ The match is rejected if:
 
 The following nonterminals are common to the definitions below:
 
-#### Grammar
+#### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:raw_double_quoted_literals_common}}
 
@@ -207,18 +207,18 @@ unless the characters it consumes are the same as the characters consumed by the
 
 #### Raw string literal { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:raw_string_literal}}
 ```
 
-##### Attributes
+##### Attributes { .attributes }
 
 The token's <var>represented string</var> is <u>RAW_DOUBLE_QUOTED_CONTENT</u>.
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
-##### Rejection
+##### Rejection { .rejection }
 
 The match is rejected if:
  - a <kbd>CR</kbd> character appears in <u>RAW_DOUBLE_QUOTED_CONTENT</u>; or
@@ -227,19 +227,19 @@ The match is rejected if:
 
 #### Raw byte-string literal { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:raw_byte_string_literal}}
 ```
 
-##### Attributes
+##### Attributes { .attributes }
 
 The token's <var>represented bytes</var> are the [Unicode scalar values] of the characters in <u>RAW_DOUBLE_QUOTED_CONTENT</u>.
 (This is well defined because of the first rejection case below.)
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
-##### Rejection
+##### Rejection { .rejection }
 
 The match is rejected if:
  - any character whose Unicode scalar value is greater than 127 appears in <u>RAW_DOUBLE_QUOTED_CONTENT</u>; or
@@ -249,18 +249,18 @@ The match is rejected if:
 
 #### Raw C-string literal { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:raw_c_string_literal}}
 ```
 
-##### Attributes
+##### Attributes { .attributes }
 
 The token's <var>represented bytes</var> are the UTF-8 encoding of <u>RAW_DOUBLE_QUOTED_CONTENT</u>
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
-##### Rejection
+##### Rejection { .rejection }
 
 The match is rejected if:
  - a <kbd>CR</kbd> character appears in <u>RAW_DOUBLE_QUOTED_CONTENT</u>; or
@@ -272,12 +272,12 @@ The match is rejected if:
 
 #### Reserved literal { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:reserved_literal}}
 ```
 
-##### Rejection
+##### Rejection { .rejection }
 
 All matches are rejected.
 
@@ -291,12 +291,12 @@ All matches are rejected.
 
 #### Reserved single-quoted literal { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:reserved_single_quoted_literal}}
 ```
 
-##### Rejection
+##### Rejection { .rejection }
 
 All matches are rejected.
 
@@ -306,12 +306,12 @@ All matches are rejected.
 
 #### Reserved guard (Rust 2024) { .processing }
 
-##### Grammar
+##### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:reserved_guard}}
 ```
 
-##### Rejection
+##### Rejection { .rejection }
 
 All matches are rejected.
 

@@ -15,7 +15,7 @@ The full grammar is also available on a [single page](complete_token_grammar.md)
 
 [explained above]: tokenising.md#the-tokenisation-grammar
 
-### Grammar
+### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:tokens}}
 ```

@@ -2,7 +2,7 @@
 
 The following nonterminals are common to the definitions below:
 
-### Grammar
+### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:numeric_common}}
 
@@ -12,7 +12,7 @@ The following nonterminals are common to the definitions below:
 
 ### Float literal { .processing }
 
-#### Grammar
+#### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:float_literal}}
 ```
@@ -20,32 +20,32 @@ The following nonterminals are common to the definitions below:
 > Note: The `! "."` subexpression makes sure that forms like `1..2` aren't treated as starting with a float.
 > The `! IDENT_START` subexpression makes sure that forms like `1.some_method()` aren't treated as starting with a float.
 
-#### Attributes
+#### Attributes { .attributes }
 
 The token's <var>body</var> is <u>FLOAT_BODY_WITH_EXPONENT</u>, <u>FLOAT_BODY_WITHOUT_EXPONENT</u>, or <u>FLOAT_BODY_WITH_FINAL_DOT</u>, whichever one participated in the match.
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
-#### Rejection
+#### Rejection { .rejection }
 
 No matches are rejected.
 
 
 ### Reserved float { .processing }
 
-#### Grammar
+#### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:reserved_float}}
 ```
 
-#### Rejection
+#### Rejection { .rejection }
 
 All matches are rejected.
 
 
 ### Integer literal { .processing }
 
-#### Grammar
+#### Grammar { .grammar }
 ```
 {{#include tokenise_anchored.pest:integer_literals}}
 ```
@@ -59,7 +59,7 @@ All matches are rejected.
 > - `0xy` (which is rejected, not accepted as `0` with suffix `xy`)
 > - `0x·` (which is rejected, not accepted as `0` with suffix `x·`)
 
-#### Attributes
+#### Attributes { .attributes }
 
 The token's <var>base</var> is looked up in the following table,
 depending on which nonterminal participated in the match:
@@ -77,7 +77,7 @@ whichever one participated in the match.
 
 The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did not participate in the match.
 
-#### Rejection
+#### Rejection { .rejection }
 
 The match is rejected if:
 

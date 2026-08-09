@@ -18,6 +18,17 @@ h2 + h3 {
     font-weight: bold;
 }
 
+:is(.grammar, .attributes, .rejection) {
+    font-size: 0.83em;
+    font-weight: bold;
+    margin-top: 2em;
+    margin-bottom: 0;
+}
+
+:is(.grammar, .attributes, .rejection) + :is(p, pre) {
+    margin-top: 0;
+}
+
 h5 {
     margin-bottom: 0;
 }
