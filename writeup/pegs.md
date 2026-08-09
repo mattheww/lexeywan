@@ -270,12 +270,12 @@ A <dfn>zero-or-more repetitions expression</dfn> <code><var>e</var>\*</code> red
 A <dfn>one-or-more repetitions expression</dfn> <code><var>e</var>+</code> reduces to
 <code><var>e</var> ~ <var>e</var>*</code>.
 
-A <dfn>limited repetition expression</dfn> of the form <code><var>e</var>{0, 0}</code> reduces to `EMPTY`.
+A <dfn>limited repetitions expression</dfn> of the form <code><var>e</var>{0, 0}</code> reduces to `EMPTY`.
 
-A <dfn>limited repetition expression</dfn> of the form <code><var>e</var>{0, <var>n</var>}</code>, for <var>n</var> > 0, reduces to
+A <dfn>limited repetitions expression</dfn> of the form <code><var>e</var>{0, <var>n</var>}</code>, for <var>n</var> > 0, reduces to
 <code><var>e</var>? ~ <var>e</var>{0, <var>n</var>-1}</code>.
 
-A <dfn>limited repetition expression</dfn> of the form <code><var>e</var>{<var>m</var>, <var>n</var>}</code>, for <var>m</var> > 0 and <var>n</var> ≥ <var>m</var>, reduces to
+A <dfn>limited repetitions expression</dfn> of the form <code><var>e</var>{<var>m</var>, <var>n</var>}</code>, for <var>m</var> > 0 and <var>n</var> ≥ <var>m</var>, reduces to
 <code><var>e</var> ~ <var>e</var>{<var>m</var>-1, <var>n</var>-1}</code>.
 
 
