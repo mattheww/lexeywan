@@ -139,7 +139,7 @@ fn run_cli_impl() -> Result<SubcommandStatus, pico_args::Error> {
                 .as_deref()
             {
                 Some("always") => DetailsMode::Always,
-                Some("failures-only") => DetailsMode::Failures,
+                Some("failures") => DetailsMode::Failures,
                 Some("never") => DetailsMode::Never,
                 None => DetailsMode::Failures,
                 _ => {
