@@ -138,8 +138,8 @@ The individual matches in an escape interpretation are referred to as its <dfn>c
 [participating]: pegs.md#participating
 
 [Reference #1042]: https://github.com/rust-lang/reference/pull/1042
-[Unicode scalar value]: http://www.unicode.org/glossary/#unicode_scalar_value
-[Unicode scalar values]: http://www.unicode.org/glossary/#unicode_scalar_value
+[Unicode scalar value]: https://www.unicode.org/glossary/#unicode_scalar_value
+[Unicode scalar values]: https://www.unicode.org/glossary/#unicode_scalar_value
 [`u8::from_str_radix`]: https://doc.rust-lang.org/std/primitive.u8.html#method.from_str_radix
 [`u32::from_str_radix`]: https://doc.rust-lang.org/std/primitive.u32.html#method.from_str_radix
 [String continuation escapes]: rustc_oddities.md#string-continuation-escapes

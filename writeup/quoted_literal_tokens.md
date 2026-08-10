@@ -334,6 +334,6 @@ All matches are rejected.
 [Unicode escape]: escape_processing.md#unicode-escapes
 [Unicode escapes]: escape_processing.md#unicode-escapes
 
-[Unicode scalar value]: http://www.unicode.org/glossary/#unicode_scalar_value
-[Unicode scalar values]: http://www.unicode.org/glossary/#unicode_scalar_value
+[Unicode scalar value]: https://www.unicode.org/glossary/#unicode_scalar_value
+[Unicode scalar values]: https://www.unicode.org/glossary/#unicode_scalar_value
 

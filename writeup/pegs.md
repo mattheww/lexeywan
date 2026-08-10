@@ -328,5 +328,5 @@ is the sequence obtained by restricting the elaboration of <var>A</var> to match
 [Pest]: https://pest.rs/book/grammars/syntax.html
 [pest-grammar]: https://docs.rs/pest_derive/latest/pest_derive/#grammar
 [peg-paper]: https://pdos.csail.mit.edu/papers/parsing:popl04.pdf
-[Unicode scalar value]: http://www.unicode.org/glossary/#unicode_scalar_value
+[Unicode scalar value]: https://www.unicode.org/glossary/#unicode_scalar_value
 
