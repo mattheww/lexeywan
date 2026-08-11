@@ -372,11 +372,17 @@ pub const LONGLIST: &[&str] = [
     r###" r##"xxx##yyy"## "###,
     r###" r##"xxx"#yyy"## "###,
 
+    r##" r"extra"# "##,
+    r###" r"extra"## "###,
     r###" r#"extra"## "###,
     r###" r#"extra"##n "###,
     r####" r###"xxx"### "####,
     r####" r#"extra"### "####,
     r####" r##"extra"### "####,
+
+    r##" r"a"#+" "##,
+    r###" r#"a"##+"# "###,
+    r####" r##"a"###+"## "####,
 
     r##" r""suff "##,
     r##" r"xxx"suff "##,
@@ -424,6 +430,9 @@ pub const LONGLIST: &[&str] = [
     r###" br##"xxx##yyy"## "###,
     r###" br##"xxx"#yyy"## "###,
 
+    r###" br#"extra"## "###,
+    r####" br##"extra"### "####,
+
     r#" cr"" "#,
     r#" cr"yyy" "#,
     r#" cr"\" "#,
@@ -443,6 +452,9 @@ pub const LONGLIST: &[&str] = [
     r###" cr##"xxx#yyy"## "###,
     r###" cr##"xxx##yyy"## "###,
     r###" cr##"xxx"#yyy"## "###,
+
+    r###" cr#"extra"## "###,
+    r####" cr##"extra"### "####,
 
 
     //// Single-quote forms (both character literals and lifetimes/labels)
@@ -1519,6 +1531,9 @@ pub const LONGLIST: &[&str] = [
     "---\nfront matter\n ----\n---\nident",
     "---\n ---🦀\n---\nident",
     "---\nfront matter\n----\n---\nident",
+    "---\n-----\n---\n",
+    "---\nfront matter\n-----\n---\nident",
+    "----\nfront matter\n-----\n----\nident",
     "----\nfront matter\n---\n----\nident",
     "-----\nfront matter\n----\n-----\nident",
     "---\nfront matter\nuse x\n---\nident",
