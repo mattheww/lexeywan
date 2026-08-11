@@ -70,13 +70,13 @@ All other parsing expressions leave the stack unmodified.
 ### Mark/check extension { #mark-check }
 
 This extension uses the same notation as the [corresponding nonterminal] extension.
-It might be described along the following lines:
+It might be described on the [Grammars] page along the following lines:
 
 <div class=pegs-description>
 
 <div class=sketch>
-An attempt to match a parsing expression marked with ² fails
-unless the characters it consumes are the same as the characters consumed by the previous match of an expression marked as ¹.
+A parsing expression marked with ² matches
+the characters consumed by the most recent match of the same expression marked as ¹.
 </div>
 
 A formalisation of this extension in the style used in the [appendix on PEGs] is sketched below.
@@ -107,7 +107,7 @@ The outcome of an attempt <var>A</var> to match a <dfn>sequencing expression</df
    and <var>c′</var> is <var>c</var> followed by the elaboration of <var>A₁</var>.
 </div>
 
-Include mark expressions in the elaboration:
+Include matches of mark expressions in the elaboration:
 
 <div class=sketch>
 An attempt <var>A</var> to match a <dfn>mark expression</dfn> <code><var>e¹</var></code> against <var>s</var> in context <var>c</var> succeeds
@@ -118,17 +118,17 @@ it consumes the characters consumed by <var>A′</var>
 and its elaboration is <var>A</var> followed by the elaboration of <var>A′</var>.
 </div>
 
-Describe a check expression as failing unless the characters its subexpression consumes are the same as the characters consumed by the last mark expression in its context:
+Describe a check expression as attempting to match the characters consumed by the last match of a mark expression in its context:
 
 <div class=sketch>
-An attempt <var>A</var> to match a <dfn>check expression</dfn> <code><var>e²</var></code> against <var>s</var> in context <var>c</var> succeeds if
+An attempt <var>A</var> to match a <dfn>check expression</dfn> <code><var>e²</var></code> against <var>s</var> in context <var>c</var> succeeds if and only if
+<var>c</var> includes at least one match of the mark expression <code><var>e¹</var></code>
+and the character sequence consumed by the last such match in <var>c</var> is a prefix of <var>s</var>.
 
- - an attempt <var>A′</var> to match <var>e</var> against <var>s</var> in context <var>c</var> succeeds; and
- - <var>c</var> includes at least one mark expression; and
- - the characters consumed by <var>A′</var> are the same as the characters consumed by the last mark expression in <var>c</var>.
-
-Otherwise <var>A</var> fails.
+If <var>A</var> is successful it consumes that character sequence and has an empty elaboration.
 </div>
+
+Note that in a check expression no match attempt is made for <var>e</var> itself.
 
 </div>
 
@@ -179,6 +179,7 @@ RDQ_255_CONTENT = {
 
 ```
 
+[Grammars]: grammars.md
 [appendix on PEGs]: pegs.md
 [mark/check]: #mark-check
 [corresponding nonterminal]: #corresponding-nonterminal
