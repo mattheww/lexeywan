@@ -96,6 +96,8 @@ is interpreted as
 is interpreted as
 <code><var>e₁</var> ~ (<var>e₂</var>?)</code>.
 
+The unary parsing operators have higher precedence than the binary parsing operators.
+
 The grammars used in this writeup do not rely on a defined precedence between the unary parsing operators.
 
 The binary parsing operators `~` and `|` are left-associative:
