@@ -41,7 +41,7 @@ Shebang removal is performed if:
  - the result of [finding the first non-whitespace token] with the characters following the <b>#!</b> as input is not a `Punctuation` token whose <var>mark</var> is the <b>[</b> character.
 
 If shebang removal is performed:
-- the characters up to and including the first <kbd>LF</kbd> character are removed from the sequence
+- the characters up to (but not including) the first <kbd>LF</kbd> character are removed from the sequence
 - if the sequence did not contain a <kbd>LF</kbd> character, all characters are removed from the sequence.
 
 > Note: The check for <b>[</b> prevents an inner attribute at the start of the input being removed.
