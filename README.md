@@ -20,7 +20,7 @@ See also the [rendered description][1].
 
 See [Reimplementation command-line interface] for what's available from the CLI:
 
-[Reimplementation command-line interface]: https://mjw.woodcraft.me.uk/2025-lexeywan//reimplementation_cli.html
+[Reimplementation command-line interface]: https://mjw.woodcraft.me.uk/2025-lexeywan/reimplementation_cli.html
 
 Note the provided `rust-toolchain.toml` will cause `cargo run` to install the required nightly version of `rustc`.
 
