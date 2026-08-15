@@ -199,8 +199,9 @@ The following nonterminals are common to the definitions below:
 ```
 
 These definitions require an extension to the Parsing Expression Grammar formalism:
-an attempt to match one of the parsing expressions marked as `HASHES²` fails
-unless the characters it consumes are the same as the characters consumed by the (only) match of the expression marked as `HASHES¹` under the same match attempt of a tokenisation nonterminal.
+an attempt to match one of the parsing expressions written as `HASHES²`
+behaves like an attempt to match an exact string containing
+the characters consumed by the (only) match of the expression written as `HASHES¹` under the same match attempt of a tokenisation nonterminal.
 
 > See [Grammar for raw string literals](raw_strings.md) for a discussion of alternatives to this extension.
 

@@ -69,8 +69,10 @@ These nonterminals are defined in the following [Parsing Expression Grammar](peg
 > See [Special terminals] for the definition of `PATTERN_WHITE_SPACE`.
 
 These definitions require an extension to the Parsing Expression Grammar formalism:
-each of the parsing expressions marked as `FENCE²` fails
-unless the characters it consumes are the same as the characters consumed by the (only) match of the expression marked as `FENCE¹`.
+an attempt to match one of the parsing expressions written as `FENCE²`
+behaves like an attempt to match an exact string containing
+the characters consumed by the (only) match of the expression written as `FENCE¹`.
+
 
 > See [Grammar for raw string literals](raw_strings.md) for a discussion of alternatives to this extension.
 
