@@ -85,7 +85,7 @@ The following forms of parsing expression are available:
 | <code>( <var>e</var> )</code>                          | Match <var>e</var>, overriding the usual precedence                                    |
 
 Here, <var>e</var>, <var>e₁</var>, and <var>e₂</var> can be any parsing expression,
-and <var>m</var> and <var>n</var> can be any positive whole number.
+and <var>m</var> and <var>n</var> can be any positive whole number or zero.
 
 
 ### Special terminals
