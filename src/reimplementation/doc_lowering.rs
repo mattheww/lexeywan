@@ -16,8 +16,8 @@ const MAX_HASH_COUNT: usize = 255;
 /// Each comment token in the input with style other than NonDoc is replaced by a sequence of
 /// synthetic tokens, which together represent an attribute.
 ///
-/// The sequence does't include any synthetic whitespace tokens (and so I think it doesn't provide
-/// enough information to reproduce the Spacing that a proc macro would see).
+/// The sequence includes synthetic whitespace tokens appropriate for reproducing the Spacing that a
+/// proc macro would see.
 ///
 /// The comment body is represented using a synthetic raw string literal token. The stringified form
 /// recorded in that token uses the minimal number of hashes which would be required in the input to
