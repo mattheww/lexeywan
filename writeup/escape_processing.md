@@ -17,7 +17,7 @@ A match of `LITERAL_COMPONENT` is:
  - a _hexadecimal escape_ if `HEXADECIMAL_ESCAPE_BODY` participated in the match
  - a _string continuation escape_ if `STRING_CONTINUATION_ESCAPE_BODY` participated in the match.
 
-It follows from the definitions of `LITERAL_COMPONENT` AND `ESCAPE_BODY`
+It follows from the definitions of `LITERAL_COMPONENT` and `ESCAPE_BODY`
 that each match of `LITERAL_COMPONENT` is exactly one of the above forms.
 
 
