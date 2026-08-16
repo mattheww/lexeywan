@@ -70,6 +70,8 @@ If a Unicode escape's numeric value is a [Unicode scalar value],
 the <dfn>represented character</dfn> of the escape is the character with that Unicode scalar value.
 Otherwise the Unicode escape has no represented character.
 
+A Unicode escape has no represented byte.
+
 
 ##### Hexadecimal escapes
 

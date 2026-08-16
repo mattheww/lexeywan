@@ -171,9 +171,7 @@ impl LiteralComponent {
                     ))
                 }
             }
-            LiteralComponent::UnicodeEscape { .. } => {
-                Err(Error::Undefined("represented byte of a unicode escape"))
-            }
+            LiteralComponent::UnicodeEscape { .. } => Ok(None),
             LiteralComponent::HexadecimalEscape { represented_byte } => Ok(Some(represented_byte)),
             LiteralComponent::StringContinuationEscape => Err(Error::Undefined(
                 "represented byte of a string continuation escape",

@@ -92,11 +92,12 @@ The token's <var>suffix</var> is <u>SUFFIX</u>, or empty if <u>SUFFIX</u> did no
 
 The match is rejected if:
  - <u>SINGLE_QUOTED_CONTENT</u> has no single-escape interpretation; or
- - <u>SINGLE_QUOTED_CONTENT</u>'s single-escape interpretation is any of the following:
-   - a [non-escape] whose represented character is <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>HT</kbd>
-   - a [Unicode escape]; or
+ - <u>SINGLE_QUOTED_CONTENT</u>'s single-escape interpretation is
+   a [non-escape] whose represented character is <kbd>LF</kbd>, <kbd>CR</kbd>, or <kbd>HT</kbd>; or
  - <u>SINGLE_QUOTED_CONTENT</u>'s single-escape interpretation has no represented byte; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.
+
+> Note: Unicode escapes are rejected because they have no represented byte.
 
 
 ### (Non-raw) double-quoted literals
@@ -155,9 +156,10 @@ The match is rejected if:
  - <u>DOUBLE_QUOTED_CONTENT</u> has no escape interpretation; or
  - <u>DOUBLE_QUOTED_CONTENT</u>'s escape interpretation contains any of the following:
    - a [non-escape] whose represented character is <kbd>CR</kbd>
-   - a [Unicode escape]
    - a component that has no represented byte; or
  - the token's <var>suffix</var> would consist of the single character <b>_</b>.
+
+> Note: Unicode escapes are rejected because they have no represented byte.
 
 
 #### C-string literal { .processing }

@@ -227,10 +227,6 @@ fn process_byte_literal(m: &TokenisationMatch) -> Result<FineTokenData, Error> {
         // rejected: "non-escape whose represented character is LF, CR, or HT"
         return rejected("escape-only char");
     }
-    if matches!(single_escape_interpretation, UnicodeEscape { .. }) {
-        // rejected: "Unicode escape"
-        return rejected("unicode escape");
-    }
     let Some(represented_byte) = single_escape_interpretation.represented_byte()? else {
         // rejected: "has no represented byte"
         return rejected("no represented byte");
@@ -297,10 +293,6 @@ fn process_byte_string_literal(m: &TokenisationMatch) -> Result<FineTokenData, E
         {
             // rejected: "a non-escape whose represented character is CR"
             return rejected("CR non-escape");
-        }
-        if matches!(component, UnicodeEscape { .. }) {
-            // rejected: "a Unicode escape"
-            return rejected("unicode escape in byte string literal");
         }
         let Some(represented_byte) = component.represented_byte()? else {
             // rejected: "a component that has no represented byte"
