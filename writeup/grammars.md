@@ -78,9 +78,9 @@ The following forms of parsing expression are available:
 | <code><var>e₁</var> ~ <var>e₂</var></code>             | First match <var>e₁</var>, then match <var>e₂</var>                                    |
 | <code><var>e₁</var> \| <var>e₂</var></code>            | Match either <var>e₁</var> or <var>e₂</var>, with <var>e₁</var> having higher priority |
 | <code><var>e</var> ?</code>                            | Match <var>e</var> if possible                                                         |
-| <code><var>e</var> *</code>                            | Match as many repetitions of <var>e</var> as possible (possibly zero)                  |
-| <code><var>e</var> +</code>                            | Match as many repetitions of <var>e</var> as possible (at least one)                   |
-| <code><var>e</var> {<var>m</var>, <var>n</var>}</code> | Match between <var>m</var> and <var>n</var> (inclusive) repetitions of <var>e</var>    |
+| <code><var>e</var> *</code>                            | Match <var>e</var> repeatedly until it fails (possibly zero successes)                 |
+| <code><var>e</var> +</code>                            | Match <var>e</var> repeatedly until it fails (at least one success)                    |
+| <code><var>e</var> {<var>m</var>, <var>n</var>}</code> | Match <var>e</var> between <var>m</var> and <var>n</var> times (inclusive)             |
 | <code>! <var>e</var></code>                            | Fail if <var>e</var> would match at this point                                         |
 | <code>( <var>e</var> )</code>                          | Match <var>e</var>, overriding the usual precedence                                    |
 
@@ -145,7 +145,7 @@ If the match of `ONE` fails it attempts to match `TWO` instead.
 
 ### Repetition and backtracking
 
-The repetition operators `*` and `+` always match as many repetitions as possible.
+The repetition operators `*` and `+` always repeat their match attempt until it fails.
 If they are used as part of a larger match attempt which later fails,
 the matching process does not backtrack to see if the whole match can succeed if the repetition expression consumes fewer repetitions.
 
