@@ -92,10 +92,10 @@ fn lowered(
 
     let mut tokens = Vec::new();
     tokens.push(punct('#'));
-    tokens.push(whitespace());
     if style != CommentStyle::OuterDoc {
         tokens.push(punct('!'));
     }
+    tokens.push(whitespace());
     tokens.push(punct('['));
     tokens.push(ident("doc"));
     tokens.push(punct('='));

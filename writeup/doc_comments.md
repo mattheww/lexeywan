@@ -6,8 +6,8 @@ The new sequence is the same as the input sequence,
 except that each `Line_comment` or `Block_comment` token whose <var>style</var> is **inner doc** or **outer doc** is replaced with the following sequence:
 
 - `Punctuation` with <var>mark</var> <b>#</b>
-- `Whitespace`
 - `Punctuation` with <var>mark</var> <b>!</b> (omitted if the comment token's <var>style</var> is **outer doc**)
+- `Whitespace`
 - `Punctuation` with <var>mark</var> <b>[</b>
 - `Ident` with <var>represented ident</var> <b>doc</b>
 - `Punctuation` with <var>mark</var> <b>=</b>
