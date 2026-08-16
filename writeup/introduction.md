@@ -94,7 +94,7 @@ This document and the accompanying lexer implementation are released under the t
 
 ## Authorship and source access
 
-© Matthew Woodcraft 2024,2025
+© Matthew Woodcraft 2024,2025,2026
 
 The source code for this document and the accompanying lexer implementation is available at <https://github.com/mattheww/lexeywan>
 
